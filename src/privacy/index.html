@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Vereli</title>
+  <meta name="description" content="How Vereli collects, uses, and protects information when you use our platform. Plain language, no legal fog.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { teal:'#0B4F52','teal-light':'#17A39B',mist:'#E4F2F0',orange:'#17A39B',graphite:'#0B4F52','warm-gray':'#F5FAF9','mid-gray':'#DCE5E6','text-soft':'#5A6E70' },
+        fontFamily: { tight:['"General Sans"','sans-serif'], body:['Inter','sans-serif'] }
+      }}
+    }
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+    body{background:#FFFFFF;color:#0B4F52;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    .ht{font-family:'General Sans',sans-serif}
+    #nav{transition:background .3s ease,border-color .3s ease,backdrop-filter .3s ease}
+    #nav.scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:#EEF2F2}
+    .nav-link{font-family:'General Sans',sans-serif;font-size:13px;font-weight:500;color:#5A6E70;text-decoration:none;transition:color .15s ease}
+    .nav-link:hover{color:#0B4F52}
+    .cta-primary{display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 18px;border-radius:9px;background:#17A39B;color:#fff;font-family:'General Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:-.01em;box-shadow:0 4px 16px rgba(23,163,155,.3);transition:transform .18s ease,box-shadow .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(23,163,155,.4)}
+    #drawer{transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.2,1)}#drawer.open{transform:translateX(0)}
+
+    /* Prose */
+    .prose-section{padding-top:48px;padding-bottom:48px;border-bottom:1px solid #EEF3F1}
+    .prose-section:last-child{border-bottom:none;padding-bottom:0}
+    .prose-section h2{font-family:'General Sans',sans-serif;font-size:19px;font-weight:700;color:#0B4F52;letter-spacing:-.022em;line-height:1.3;margin-bottom:16px}
+    .prose-section p{font-size:15.5px;line-height:1.82;color:#5A6E70;margin-bottom:16px}
+    .prose-section p:last-child{margin-bottom:0}
+    .prose-section ul{padding-left:0;margin-bottom:16px;list-style:none}
+    .prose-section ul li{font-size:15px;line-height:1.78;color:#5A6E70;margin-bottom:10px;padding-left:22px;position:relative}
+    .prose-section ul li::before{content:'';position:absolute;left:0;top:10px;width:5px;height:5px;border-radius:50%;background:#B8D4CC}
+    .prose-section a{color:#0B4F52;font-weight:600;text-decoration:underline;text-underline-offset:3px;text-decoration-color:#B8D4CC}
+    .prose-section a:hover{color:#17A39B;text-decoration-color:#17A39B}
+    .prose-section strong{color:#0B4F52;font-weight:600}
+
+    /* Callout */
+    .callout{background:#E4F2F0;border:1px solid #C8E2DB;border-radius:14px;padding:16px 20px;margin-bottom:20px}
+    .callout p{font-size:14px;color:#2E6050;margin-bottom:0}
+
+    /* TOC sidebar */
+    .toc-link{display:block;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:500;color:#7A9E99;text-decoration:none;padding:5px 0;border-left:2px solid transparent;padding-left:12px;transition:color .15s,border-color .15s}
+    .toc-link:hover,.toc-link.active{color:#0B4F52;border-left-color:#0B4F52}
+
+    @media(max-width:1023px){.toc-col{display:none}}
+  </style>
+</head>
+<body>
+
+<nav id="nav" class="fixed top-0 left-0 right-0 z-50 border-b border-transparent">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-[66px] flex items-center justify-between">
+    <a href="/"><img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto"></a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="/features/"  class="nav-link">Features</a>
+      <a href="/pricing/"   class="nav-link">Pricing</a>
+      <a href="/resources/" class="nav-link">Resources</a>
+      <a href="/about/"     class="nav-link">About</a>
+    </div>
+    <div class="hidden md:flex items-center gap-3">
+      <a href="/login/"  class="nav-link px-2">Log in</a>
+      <a href="/signup/" class="cta-primary">Start Free Trial</a>
+    </div>
+    <button id="hamburger" aria-label="Open menu" class="md:hidden p-2 -mr-1"><i data-lucide="menu" class="w-5 h-5"></i></button>
+  </div>
+</nav>
+
+<div id="drawer-overlay" class="fixed inset-0 z-[40] bg-black/25 hidden" onclick="closeDrawer()"></div>
+<div id="drawer" class="fixed top-0 right-0 bottom-0 z-[60] w-[300px] flex flex-col shadow-2xl" style="background:#FFFFFF;">
+  <div class="h-[66px] flex items-center justify-between px-5 border-b" style="border-color:#DCE5E6;">
+    <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto">
+    <button id="close-drawer" aria-label="Close menu" class="p-2 -mr-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+  </div>
+  <nav class="flex-1 flex flex-col gap-1 p-4">
+    <a href="/features/"  class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Features</a>
+    <a href="/pricing/"   class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Pricing</a>
+    <a href="/resources/" class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Resources</a>
+    <a href="/about/"     class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">About</a>
+  </nav>
+  <div class="p-4 border-t flex flex-col gap-2.5" style="border-color:#DCE5E6;">
+    <a href="/signup/" class="cta-primary w-full justify-center" style="height:46px;font-size:14px;border-radius:10px;">Start Free Trial</a>
+    <a href="/login/"  class="nav-link w-full text-center py-3 rounded-xl hover:bg-warm-gray transition-colors">Log in</a>
+  </div>
+</div>
+
+<main>
+
+<!-- Header -->
+<section class="pt-[100px] pb-12 md:pb-16" style="background:#FBFBFA;border-bottom:1px solid #EEF2F2;">
+  <div class="max-w-[1100px] mx-auto px-6 md:px-12">
+    <div class="flex items-center gap-2 mb-5">
+      <a href="/" class="nav-link text-[12px]">Home</a>
+      <span style="color:#B8CECC;font-size:12px;">/</span>
+      <span class="text-[12px]" style="color:#7A9E99;">Privacy Policy</span>
+    </div>
+    <div class="max-w-[680px]">
+      <p class="ht font-semibold text-[11px] uppercase tracking-[0.1em] mb-4" style="color:#7A9E99;">Legal</p>
+      <h1 class="ht font-black text-[34px] md:text-[46px] tracking-[-0.04em] leading-[1.0] mb-5" style="color:#0B4F52;">Privacy Policy</h1>
+      <p class="text-[15px] leading-[1.76]" style="color:#6B7C7D;">We built Vereli for service businesses that care about their clients. We apply the same standard of care to the data you trust us with. This policy explains, in plain language, what we collect, how we use it, and what you control.</p>
+      <p class="text-[13px] mt-5" style="color:#9AADA8;">Last updated: <span id="last-updated"></span></p>
+    </div>
+  </div>
+</section>
+
+<!-- Body: two-column on desktop -->
+<section class="py-12 md:py-20">
+  <div class="max-w-[1100px] mx-auto px-6 md:px-12">
+    <div class="flex gap-16 items-start">
+
+      <!-- TOC (desktop only) -->
+      <nav class="toc-col w-[200px] shrink-0 sticky top-[90px]" aria-label="Table of contents">
+        <p class="ht font-bold text-[10.5px] uppercase tracking-[0.1em] mb-4" style="color:#B8CECC;">On this page</p>
+        <div class="flex flex-col gap-0.5">
+          <a href="#collect"    class="toc-link">What we collect</a>
+          <a href="#use"        class="toc-link">How we use it</a>
+          <a href="#share"      class="toc-link">What we share</a>
+          <a href="#portal"     class="toc-link">Client portal data</a>
+          <a href="#retention"  class="toc-link">Retention</a>
+          <a href="#security"   class="toc-link">Security</a>
+          <a href="#cookies"    class="toc-link">Cookies</a>
+          <a href="#rights"     class="toc-link">Your rights</a>
+          <a href="#changes"    class="toc-link">Changes</a>
+          <a href="#contact-us" class="toc-link">Contact</a>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <div class="flex-1 min-w-0">
+
+        <div class="callout">
+          <p><strong>The short version:</strong> We collect what we need to run the service. We don't sell your data. Your client data belongs to you. You can delete your account and your data at any time.</p>
+        </div>
+
+        <div id="collect" class="prose-section">
+          <h2>What we collect</h2>
+          <p>We collect information in two ways: what you give us directly, and what we collect automatically when you use the platform.</p>
+          <p><strong>What you give us directly:</strong></p>
+          <ul>
+            <li>Account details — your name, email address, and business name when you sign up</li>
+            <li>Workspace content — clients, files, contracts, tasks, messages, and deliverables you create or upload</li>
+            <li>Payment information — processed through Stripe, Paystack, or Flutterwave; we do not store full card numbers or banking credentials</li>
+            <li>Support communications — emails or messages you send to our team</li>
+          </ul>
+          <p><strong>What we collect automatically:</strong></p>
+          <ul>
+            <li>Log data — IP address, browser type, pages visited, and time of access</li>
+            <li>Device information — operating system, screen size, and device identifiers</li>
+            <li>Usage patterns — which features you use and how often, to help us improve the product</li>
+          </ul>
+          <p>We do not collect data you don't create or authorize. We do not scrape your email, monitor your other tools, or access your files except to deliver the service.</p>
+        </div>
+
+        <div id="use" class="prose-section">
+          <h2>How we use it</h2>
+          <p>We use your information for a narrow set of purposes:</p>
+          <ul>
+            <li>To operate Vereli — provision your workspace, store your content, process payments, and keep the platform running</li>
+            <li>To improve the product — understand how features are used so we can make them better</li>
+            <li>To support you — respond to questions, resolve issues, and communicate product updates</li>
+            <li>To protect the platform — detect abuse, prevent fraud, and maintain security</li>
+            <li>To comply with law — where applicable</li>
+          </ul>
+          <p>We send transactional emails (account confirmations, payment receipts, security alerts) and occasional product announcements. You can unsubscribe from product announcements at any time.</p>
+        </div>
+
+        <div id="share" class="prose-section">
+          <h2>What we share</h2>
+          <p>We do not sell your personal data. We do not share your information with advertisers. We share data only in these limited circumstances:</p>
+          <ul>
+            <li><strong>Infrastructure and service providers</strong> — hosting, analytics, email delivery, and payment processing partners who help us operate Vereli. These providers are bound by data processing agreements and may not use your data for their own purposes.</li>
+            <li><strong>Legal requirements</strong> — when disclosure is compelled by law, a valid court order, or government authority. We will notify you where we are legally permitted to do so.</li>
+            <li><strong>Business continuity</strong> — in the event of a merger, acquisition, or asset transfer. We will give you advance notice and the choice to delete your data if ownership changes materially.</li>
+          </ul>
+        </div>
+
+        <div id="portal" class="prose-section">
+          <h2>Client portal data</h2>
+          <p>When you invite clients to access their Vereli portal, they interact only with content you have explicitly shared with them. Your clients see their workspace — nothing else.</p>
+          <p>Vereli does not use client portal activity data for advertising or profiling. Portal usage data (logins, file downloads, approval actions) is stored to power the platform's audit trail and to help you understand client engagement. It belongs to you.</p>
+          <p>If a client asks to have their portal activity deleted, that is a matter between you and your client. Contact us and we will support you in fulfilling that request.</p>
+        </div>
+
+        <div id="retention" class="prose-section">
+          <h2>Data retention</h2>
+          <p>We retain your account and workspace data for as long as your account is active. If you choose to close your account, we will delete or irreversibly anonymize your data within 30 days, except where we are required by law to retain specific records.</p>
+          <p>You can export your workspace data at any time from your account settings before deletion.</p>
+        </div>
+
+        <div id="security" class="prose-section">
+          <h2>Security</h2>
+          <p>We use industry-standard technical and organizational controls to protect your data — encrypted data transmission, access controls, and regular security reviews.</p>
+          <p>No system is perfectly secure. We encourage you to use a strong, unique password and enable any additional security features available on your account. If you believe your account has been compromised, contact us immediately at <a href="mailto:hello@vereli.app">hello@vereli.app</a>.</p>
+        </div>
+
+        <div id="cookies" class="prose-section">
+          <h2>Cookies</h2>
+          <p>Vereli uses cookies and similar browser storage to keep you logged in, remember your preferences, and understand how the platform is used. We do not use cookies for behavioral advertising.</p>
+          <p>You can control or clear cookies through your browser settings. Disabling cookies may affect your ability to log in or use certain features.</p>
+        </div>
+
+        <div id="rights" class="prose-section">
+          <h2>Your rights</h2>
+          <p>You have the right to:</p>
+          <ul>
+            <li>Access the personal data we hold about you</li>
+            <li>Correct inaccurate data</li>
+            <li>Request deletion of your data</li>
+            <li>Export your data in a portable format</li>
+            <li>Withdraw consent for communications at any time</li>
+          </ul>
+          <p>To exercise any of these rights, email us at <a href="mailto:hello@vereli.app">hello@vereli.app</a>. We will respond within a reasonable timeframe.</p>
+        </div>
+
+        <div id="changes" class="prose-section">
+          <h2>Changes to this policy</h2>
+          <p>We may update this Privacy Policy when our practices change or when required by law. When we make material changes, we will notify you by email and update the date at the top of this page. Your continued use of Vereli after changes take effect constitutes acceptance of the updated policy.</p>
+        </div>
+
+        <div id="contact-us" class="prose-section">
+          <h2>Contact</h2>
+          <p>Questions, concerns, or data requests — we're reachable at <a href="mailto:hello@vereli.app">hello@vereli.app</a>. We take privacy questions seriously and aim to respond within two business days.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Footer -->
+<footer style="background:#062B2D;color:#fff;">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 py-10">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4" style="border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;">
+      <p class="text-[12px]" id="footer-copy" style="color:rgba(255,255,255,0.46);">© 2026 Vereli Inc.</p>
+      <div class="flex items-center gap-6 text-[12px]" style="color:rgba(255,255,255,0.38);">
+        <a href="/privacy/" class="hover:text-white transition-colors" style="color:rgba(255,255,255,0.65);">Privacy</a>
+        <a href="/terms/"   class="hover:text-white transition-colors">Terms</a>
+        <a href="/features/" class="hover:text-white transition-colors">Features</a>
+        <a href="/"         class="hover:text-white transition-colors">Home</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script id="content" type="application/json">{"company":"content/company.json"}</script>
+<script type="module">
+import { submitContactForm } from '@appsmithorg/template-frontend/utility';
+document.dispatchEvent(new CustomEvent('kite:core-ready', { detail: { submitContactForm } }));
+</script>
+<script>
+lucide.createIcons();
+document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' Vereli Inc.';
+document.getElementById('last-updated').textContent = 'May 2026';
+var nav=document.getElementById('nav');
+window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40)},{passive:true});
+var drawer=document.getElementById('drawer'),overlay=document.getElementById('drawer-overlay');
+function openDrawer(){drawer.classList.add('open');overlay.classList.remove('hidden');document.body.style.overflow='hidden';}
+function closeDrawer(){drawer.classList.remove('open');overlay.classList.add('hidden');document.body.style.overflow='';}
+document.getElementById('hamburger').addEventListener('click',openDrawer);
+document.getElementById('close-drawer').addEventListener('click',closeDrawer);
+
+// TOC highlight on scroll
+var tocLinks=document.querySelectorAll('.toc-link');
+var sections=Array.from(tocLinks).map(function(l){return document.querySelector(l.getAttribute('href'))}).filter(Boolean);
+window.addEventListener('scroll',function(){
+  var scrollY=window.scrollY+120;
+  var active=sections.filter(function(s){return s.offsetTop<=scrollY});
+  var current=active.length?active[active.length-1]:sections[0];
+  tocLinks.forEach(function(l){l.classList.toggle('active',l.getAttribute('href')==='#'+current.id)});
+},{passive:true});
+</script>
+<script src="https://assets.appsmith.com/kite_script_injector_v020.js"></script>
+</body>
+</html>

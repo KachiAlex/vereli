@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set up your workspace — Vereli</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;background:#FFFFFF;color:#0B4F52;}
+    .ht{font-family:'General Sans',sans-serif;}
+    .orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0;}
+    .field{width:100%;height:50px;padding:0 14px;border-radius:10px;border:1.5px solid #DCE5E6;background:#fff;color:#0B4F52;font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color 0.15s ease,box-shadow 0.15s ease;}
+    .field:focus{border-color:#17A39B;box-shadow:0 0 0 3px rgba(31,138,112,0.15);}
+    .field::placeholder{color:#8E9E9E;}
+    .btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;height:50px;border-radius:12px;background:#17A39B;color:#fff;font-family:'General Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.01em;border:none;cursor:pointer;box-shadow:0 6px 24px rgba(23,163,155,0.3);transition:transform 0.15s ease,box-shadow 0.15s ease;width:100%;}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(23,163,155,0.4);}
+    .btn-ghost{display:flex;align-items:center;justify-content:center;height:50px;border-radius:12px;background:transparent;color:#0B4F52;font-family:'General Sans',sans-serif;font-size:14px;font-weight:600;border:1.5px solid #DCE5E6;cursor:pointer;transition:border-color 0.15s ease;width:100%;}
+    .btn-ghost:hover{border-color:#B8CECC;}
+    .step-dot{width:8px;height:8px;border-radius:50%;background:#EEF2F2;transition:background 0.2s;}
+    .step-dot.active{background:#17A39B;}
+    .step-dot.done{background:#2D6A4F;}
+    .provider-opt{padding:14px 16px;border-radius:12px;border:1.5px solid #EEF2F2;background:#fff;cursor:pointer;transition:border-color 0.15s ease,box-shadow 0.15s ease;display:flex;align-items:center;gap:12px;}
+    .provider-opt:hover{border-color:#B8CECC;}
+    .provider-opt.selected{border-color:#17A39B;box-shadow:0 0 0 3px rgba(31,138,112,0.15);}
+    .color-swatch{width:36px;height:36px;border-radius:8px;border:2px solid transparent;cursor:pointer;transition:border-color 0.12s;flex-shrink:0;}
+    .color-swatch.picked{border-color:#0B4F52;}
+    select.field{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B6B68' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+  </style>
+</head>
+<body>
+  <div class="orb" style="width:700px;height:500px;top:-150px;left:50%;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(31,138,112,0.1) 0%,transparent 65%);filter:blur(100px);"></div>
+
+  <div class="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative z-10">
+
+    <!-- Logo -->
+    <a href="/" class="mb-10"><img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto"></a>
+
+    <!-- Step indicator -->
+    <div class="flex items-center gap-2 mb-10" id="step-indicators">
+      <div class="step-dot active" id="dot-1"></div>
+      <div style="width:24px;height:1px;background:#EEF2F2;"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div style="width:24px;height:1px;background:#EEF2F2;"></div>
+      <div class="step-dot" id="dot-3"></div>
+    </div>
+
+    <!-- Card wrapper -->
+    <div class="w-full max-w-[460px]" style="background:#fff;border:1px solid #EEF2F2;border-radius:24px;padding:36px;box-shadow:0 4px 32px rgba(0,0,0,0.06);">
+
+      <!-- ─── STEP 1: Create organisation ─── -->
+      <div id="step-1">
+        <p class="ht font-bold text-[11px] uppercase tracking-[0.1em] mb-2" style="color:#8E9E9E;">Step 1 of 3</p>
+        <h2 class="ht font-black text-[22px] tracking-[-0.025em] mb-1" style="color:#0B4F52;">Create your workspace</h2>
+        <p class="text-[14px] mb-7" style="color:#6B7C7D;">Tell us about your business so we can set things up correctly.</p>
+
+        <div class="space-y-4">
+          <div>
+            <label class="ht font-semibold text-[12px] block mb-1.5" style="color:#0B4F52;">Business name</label>
+            <input type="text" class="field" placeholder="e.g. Meridian Agency" id="biz-name">
+          </div>
+          <div>
+            <label class="ht font-semibold text-[12px] block mb-1.5" style="color:#0B4F52;">Service type</label>
+            <select class="field" id="service-type">
+              <option value="" disabled selected>Select your service type</option>
+              <option>Marketing agency</option>
+              <option>Creative studio</option>
+              <option>Consulting firm</option>
+              <option>Advisory practice</option>
+              <option>PR / Communications</option>
+              <option>Development agency</option>
+              <option>Other service business</option>
+            </select>
+          </div>
+          <div>
+            <label class="ht font-semibold text-[12px] block mb-1.5" style="color:#0B4F52;">Business logo <span style="color:#7A9E99;font-weight:400;">(optional)</span></label>
+            <div class="field flex items-center gap-3 cursor-pointer" style="height:50px;padding:0 14px;" onclick="document.getElementById('logo-upload').click()">
+              <i data-lucide="upload" class="w-4 h-4" style="color:#8E9E9E;"></i>
+              <span id="logo-label" style="font-size:14px;color:#8E9E9E;">Upload logo</span>
+              <input type="file" id="logo-upload" accept="image/*" class="hidden" onchange="handleLogo(this)">
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary mt-7" onclick="goStep(2)">Continue <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+      </div>
+
+      <!-- ─── STEP 2: Set branding ─── -->
+      <div id="step-2" class="hidden">
+        <p class="ht font-bold text-[11px] uppercase tracking-[0.1em] mb-2" style="color:#8E9E9E;">Step 2 of 3</p>
+        <h2 class="ht font-black text-[22px] tracking-[-0.025em] mb-1" style="color:#0B4F52;">Brand your client portal</h2>
+        <p class="text-[14px] mb-7" style="color:#6B7C7D;">Clients see your branding when they log in to their portal.</p>
+
+        <div class="space-y-5">
+          <div>
+            <label class="ht font-semibold text-[12px] block mb-2" style="color:#0B4F52;">Primary colour</label>
+            <div class="flex gap-2 flex-wrap">
+              <div class="color-swatch picked" style="background:#17A39B;" onclick="pickColor(this,'#F4C542')"></div>
+              <div class="color-swatch" style="background:#121212;" onclick="pickColor(this,'#121212')"></div>
+              <div class="color-swatch" style="background:#2D6A4F;" onclick="pickColor(this,'#2D6A4F')"></div>
+              <div class="color-swatch" style="background:#3558CC;" onclick="pickColor(this,'#3558CC')"></div>
+              <div class="color-swatch" style="background:#635BFF;" onclick="pickColor(this,'#635BFF')"></div>
+              <div class="color-swatch" style="background:#E0435C;" onclick="pickColor(this,'#E0435C')"></div>
+              <label class="color-swatch flex items-center justify-center" style="background:#F5FAF9;border:1.5px dashed #EEF2F2;" title="Custom colour">
+                <i data-lucide="pipette" style="width:14px;height:14px;color:#8E9E9E;"></i>
+                <input type="color" class="hidden" onchange="pickCustomColor(this)">
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="ht font-semibold text-[12px] block mb-1.5" style="color:#0B4F52;">Portal banner image <span style="color:#7A9E99;font-weight:400;">(optional)</span></label>
+            <div class="field flex items-center gap-3 cursor-pointer" style="height:50px;" onclick="document.getElementById('banner-upload').click()">
+              <i data-lucide="image" class="w-4 h-4" style="color:#8E9E9E;"></i>
+              <span id="banner-label" style="font-size:14px;color:#8E9E9E;">Upload banner image</span>
+              <input type="file" id="banner-upload" accept="image/*" class="hidden" onchange="handleBanner(this)">
+            </div>
+          </div>
+
+          <!-- Preview -->
+          <div style="border-radius:14px;overflow:hidden;border:1px solid #EEF2F2;">
+            <div id="portal-preview-header" style="height:48px;background:#0B4F52;display:flex;align-items:center;padding:0 16px;gap:10px;">
+              <div style="width:22px;height:22px;border-radius:6px;background:rgba(0,0,0,0.15);"></div>
+              <span id="portal-preview-name" class="ht font-bold text-[12px]" style="color:rgba(0,0,0,0.7);">Your Business</span>
+            </div>
+            <div style="background:#FBFBFA;padding:16px;display:flex;align-items:center;gap:12px;">
+              <div style="flex:1;">
+                <div style="height:8px;border-radius:4px;background:#EEF2F2;width:60%;margin-bottom:8px;"></div>
+                <div style="height:6px;border-radius:3px;background:#F5FAF9;width:40%;"></div>
+              </div>
+              <div style="width:56px;height:28px;border-radius:6px;background:#17A39B;" id="portal-preview-btn"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-7">
+          <button class="btn-ghost" onclick="goStep(1)">Back</button>
+          <button class="btn-primary" onclick="goStep(3)">Continue <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+      <!-- ─── STEP 3: Connect payment ─── -->
+      <div id="step-3" class="hidden">
+        <p class="ht font-bold text-[11px] uppercase tracking-[0.1em] mb-2" style="color:#8E9E9E;">Step 3 of 3</p>
+        <h2 class="ht font-black text-[22px] tracking-[-0.025em] mb-1" style="color:#0B4F52;">Connect a payment provider</h2>
+        <p class="text-[14px] mb-7" style="color:#6B7C7D;">Clients will use this to pay invoices through their portal.</p>
+
+        <div class="space-y-3" id="provider-list">
+          <div class="provider-opt selected" onclick="selectProvider(this,'stripe')" data-provider="stripe">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#635BFF;">
+              <i data-lucide="credit-card" class="w-4 h-4" style="color:#fff;"></i>
+            </div>
+            <div>
+              <p class="ht font-bold text-[13px]" style="color:#0B4F52;">Stripe</p>
+              <p class="text-[11px]" style="color:#8E9E9E;">Global cards &amp; bank transfers</p>
+            </div>
+            <div class="ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center provider-radio" style="border-color:#17A39B;">
+              <div class="w-2 h-2 rounded-full" style="background:#17A39B;"></div>
+            </div>
+          </div>
+          <div class="provider-opt" onclick="selectProvider(this,'paystack')" data-provider="paystack">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#0BA4DB;">
+              <i data-lucide="zap" class="w-4 h-4" style="color:#fff;"></i>
+            </div>
+            <div>
+              <p class="ht font-bold text-[13px]" style="color:#0B4F52;">Paystack</p>
+              <p class="text-[11px]" style="color:#8E9E9E;">Africa-first payments</p>
+            </div>
+            <div class="ml-auto w-4 h-4 rounded-full border-2 provider-radio" style="border-color:#DCE5E6;"></div>
+          </div>
+          <div class="provider-opt" onclick="selectProvider(this,'flutterwave')" data-provider="flutterwave">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#F5A623;">
+              <i data-lucide="waves" class="w-4 h-4" style="color:#fff;"></i>
+            </div>
+            <div>
+              <p class="ht font-bold text-[13px]" style="color:#0B4F52;">Flutterwave</p>
+              <p class="text-[11px]" style="color:#8E9E9E;">Pan-African payment gateway</p>
+            </div>
+            <div class="ml-auto w-4 h-4 rounded-full border-2 provider-radio" style="border-color:#DCE5E6;"></div>
+          </div>
+          <div class="provider-opt" onclick="selectProvider(this,'manual')" data-provider="manual">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#F5FAF9;border:1px solid #EEF2F2;">
+              <i data-lucide="building-2" class="w-4 h-4" style="color:#6B7C7D;"></i>
+            </div>
+            <div>
+              <p class="ht font-bold text-[13px]" style="color:#0B4F52;">Manual bank transfer</p>
+              <p class="text-[11px]" style="color:#8E9E9E;">Clients transfer directly to your account</p>
+            </div>
+            <div class="ml-auto w-4 h-4 rounded-full border-2 provider-radio" style="border-color:#DCE5E6;"></div>
+          </div>
+        </div>
+
+        <p class="text-[12px] mt-4 mb-6" style="color:#8E9E9E;">You can add or change providers later in Settings.</p>
+
+        <div class="flex gap-3">
+          <button class="btn-ghost" onclick="goStep(2)">Back</button>
+          <button class="btn-primary" onclick="finish()">Go to workspace <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script id="content" type="application/json">{}</script>
+  <script type="module">
+    import { submitContactForm } from '@appsmithorg/template-frontend/utility';
+    document.dispatchEvent(new CustomEvent('kite:core-ready', { detail: { submitContactForm } }));
+  </script>
+  <script>
+    lucide.createIcons();
+    var currentStep = 1;
+    function goStep(n) {
+      document.getElementById('step-' + currentStep).classList.add('hidden');
+      document.getElementById('dot-' + currentStep).classList.remove('active');
+      document.getElementById('dot-' + currentStep).classList.add('done');
+      currentStep = n;
+      document.getElementById('step-' + n).classList.remove('hidden');
+      document.getElementById('dot-' + n).classList.add('active');
+      lucide.createIcons();
+      // Update preview name
+      var name = document.getElementById('biz-name') ? document.getElementById('biz-name').value || 'Your Business' : 'Your Business';
+      var el = document.getElementById('portal-preview-name');
+      if (el) el.textContent = name;
+    }
+    function handleLogo(input) {
+      if (input.files && input.files[0]) {
+        document.getElementById('logo-label').textContent = input.files[0].name;
+        document.getElementById('logo-label').style.color = '#121212';
+      }
+    }
+    function handleBanner(input) {
+      if (input.files && input.files[0]) {
+        document.getElementById('banner-label').textContent = input.files[0].name;
+        document.getElementById('banner-label').style.color = '#121212';
+      }
+    }
+    function pickColor(el, hex) {
+      document.querySelectorAll('.color-swatch').forEach(function(s){ s.classList.remove('picked'); });
+      el.classList.add('picked');
+      document.getElementById('portal-preview-header').style.background = hex;
+      document.getElementById('portal-preview-btn').style.background = hex;
+    }
+    function pickCustomColor(input) {
+      document.querySelectorAll('.color-swatch').forEach(function(s){ s.classList.remove('picked'); });
+      input.parentElement.classList.add('picked');
+      document.getElementById('portal-preview-header').style.background = input.value;
+      document.getElementById('portal-preview-btn').style.background = input.value;
+    }
+    function selectProvider(el, key) {
+      document.querySelectorAll('.provider-opt').forEach(function(o) {
+        o.classList.remove('selected');
+        o.querySelector('.provider-radio').style.borderColor = '#EEF2F2';
+        o.querySelector('.provider-radio').innerHTML = '';
+      });
+      el.classList.add('selected');
+      var r = el.querySelector('.provider-radio');
+      r.style.borderColor = '#17A39B';
+      r.innerHTML = '<div style="width:8px;height:8px;border-radius:50%;background:#17A39B;"></div>';
+    }
+    function finish() {
+      window.location.href = '/app/';
+    }
+  </script>
+  <script src="https://assets.appsmith.com/kite_script_injector_v020.js"></script>
+</body>
+</html>

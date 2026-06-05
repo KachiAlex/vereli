@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service — Vereli</title>
+  <meta name="description" content="The terms that govern your use of Vereli — written clearly, without unnecessary legal complexity.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { teal:'#0B4F52','teal-light':'#17A39B',mist:'#E4F2F0',orange:'#17A39B',graphite:'#0B4F52','warm-gray':'#F5FAF9','mid-gray':'#DCE5E6','text-soft':'#5A6E70' },
+        fontFamily: { tight:['"General Sans"','sans-serif'], body:['Inter','sans-serif'] }
+      }}
+    }
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+    body{background:#FFFFFF;color:#0B4F52;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    .ht{font-family:'General Sans',sans-serif}
+    #nav{transition:background .3s ease,border-color .3s ease,backdrop-filter .3s ease}
+    #nav.scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:#EEF2F2}
+    .nav-link{font-family:'General Sans',sans-serif;font-size:13px;font-weight:500;color:#5A6E70;text-decoration:none;transition:color .15s ease}
+    .nav-link:hover{color:#0B4F52}
+    .cta-primary{display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 18px;border-radius:9px;background:#17A39B;color:#fff;font-family:'General Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:-.01em;box-shadow:0 4px 16px rgba(23,163,155,.3);transition:transform .18s ease,box-shadow .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(23,163,155,.4)}
+    #drawer{transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.2,1)}#drawer.open{transform:translateX(0)}
+
+    /* Prose */
+    .prose-section{padding-top:48px;padding-bottom:48px;border-bottom:1px solid #EEF3F1}
+    .prose-section:last-child{border-bottom:none;padding-bottom:0}
+    .prose-section h2{font-family:'General Sans',sans-serif;font-size:19px;font-weight:700;color:#0B4F52;letter-spacing:-.022em;line-height:1.3;margin-bottom:16px}
+    .prose-section p{font-size:15.5px;line-height:1.82;color:#5A6E70;margin-bottom:16px}
+    .prose-section p:last-child{margin-bottom:0}
+    .prose-section ul{padding-left:0;margin-bottom:16px;list-style:none}
+    .prose-section ul li{font-size:15px;line-height:1.78;color:#5A6E70;margin-bottom:10px;padding-left:22px;position:relative}
+    .prose-section ul li::before{content:'';position:absolute;left:0;top:10px;width:5px;height:5px;border-radius:50%;background:#B8D4CC}
+    .prose-section a{color:#0B4F52;font-weight:600;text-decoration:underline;text-underline-offset:3px;text-decoration-color:#B8D4CC}
+    .prose-section a:hover{color:#17A39B;text-decoration-color:#17A39B}
+    .prose-section strong{color:#0B4F52;font-weight:600}
+
+    /* Callout */
+    .callout{background:#E4F2F0;border:1px solid #C8E2DB;border-radius:14px;padding:16px 20px;margin-bottom:20px}
+    .callout p{font-size:14px;color:#2E6050;margin-bottom:0}
+
+    /* TOC sidebar */
+    .toc-link{display:block;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:500;color:#7A9E99;text-decoration:none;padding:5px 0;border-left:2px solid transparent;padding-left:12px;transition:color .15s,border-color .15s}
+    .toc-link:hover,.toc-link.active{color:#0B4F52;border-left-color:#0B4F52}
+
+    @media(max-width:1023px){.toc-col{display:none}}
+  </style>
+</head>
+<body>
+
+<nav id="nav" class="fixed top-0 left-0 right-0 z-50 border-b border-transparent">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-[66px] flex items-center justify-between">
+    <a href="/"><img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto"></a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="/features/"  class="nav-link">Features</a>
+      <a href="/pricing/"   class="nav-link">Pricing</a>
+      <a href="/resources/" class="nav-link">Resources</a>
+      <a href="/about/"     class="nav-link">About</a>
+    </div>
+    <div class="hidden md:flex items-center gap-3">
+      <a href="/login/"  class="nav-link px-2">Log in</a>
+      <a href="/signup/" class="cta-primary">Start Free Trial</a>
+    </div>
+    <button id="hamburger" aria-label="Open menu" class="md:hidden p-2 -mr-1"><i data-lucide="menu" class="w-5 h-5"></i></button>
+  </div>
+</nav>
+
+<div id="drawer-overlay" class="fixed inset-0 z-[40] bg-black/25 hidden" onclick="closeDrawer()"></div>
+<div id="drawer" class="fixed top-0 right-0 bottom-0 z-[60] w-[300px] flex flex-col shadow-2xl" style="background:#FFFFFF;">
+  <div class="h-[66px] flex items-center justify-between px-5 border-b" style="border-color:#DCE5E6;">
+    <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto">
+    <button id="close-drawer" aria-label="Close menu" class="p-2 -mr-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+  </div>
+  <nav class="flex-1 flex flex-col gap-1 p-4">
+    <a href="/features/"  class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Features</a>
+    <a href="/pricing/"   class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Pricing</a>
+    <a href="/resources/" class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Resources</a>
+    <a href="/about/"     class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">About</a>
+  </nav>
+  <div class="p-4 border-t flex flex-col gap-2.5" style="border-color:#DCE5E6;">
+    <a href="/signup/" class="cta-primary w-full justify-center" style="height:46px;font-size:14px;border-radius:10px;">Start Free Trial</a>
+    <a href="/login/"  class="nav-link w-full text-center py-3 rounded-xl hover:bg-warm-gray transition-colors">Log in</a>
+  </div>
+</div>
+
+<main>
+
+<!-- Header -->
+<section class="pt-[100px] pb-12 md:pb-16" style="background:#FBFBFA;border-bottom:1px solid #EEF2F2;">
+  <div class="max-w-[1100px] mx-auto px-6 md:px-12">
+    <div class="flex items-center gap-2 mb-5">
+      <a href="/" class="nav-link text-[12px]">Home</a>
+      <span style="color:#B8CECC;font-size:12px;">/</span>
+      <span class="text-[12px]" style="color:#7A9E99;">Terms of Service</span>
+    </div>
+    <div class="max-w-[680px]">
+      <p class="ht font-semibold text-[11px] uppercase tracking-[0.1em] mb-4" style="color:#7A9E99;">Legal</p>
+      <h1 class="ht font-black text-[34px] md:text-[46px] tracking-[-0.04em] leading-[1.0] mb-5" style="color:#0B4F52;">Terms of Service</h1>
+      <p class="text-[15px] leading-[1.76]" style="color:#6B7C7D;">By using Vereli, you agree to these terms. We've written them to be clear and reasonable — covering your responsibilities as a user, what we provide, and the limits of our liability. If something isn't clear, contact us.</p>
+      <p class="text-[13px] mt-5" style="color:#9AADA8;">Last updated: <span id="last-updated"></span></p>
+    </div>
+  </div>
+</section>
+
+<!-- Body: two-column on desktop -->
+<section class="py-12 md:py-20">
+  <div class="max-w-[1100px] mx-auto px-6 md:px-12">
+    <div class="flex gap-16 items-start">
+
+      <!-- TOC (desktop only) -->
+      <nav class="toc-col w-[200px] shrink-0 sticky top-[90px]" aria-label="Table of contents">
+        <p class="ht font-bold text-[10.5px] uppercase tracking-[0.1em] mb-4" style="color:#B8CECC;">On this page</p>
+        <div class="flex flex-col gap-0.5">
+          <a href="#about"        class="toc-link">About Vereli</a>
+          <a href="#account"      class="toc-link">Your account</a>
+          <a href="#content"      class="toc-link">Your content</a>
+          <a href="#portals"      class="toc-link">Client portals</a>
+          <a href="#billing"      class="toc-link">Billing</a>
+          <a href="#acceptable"   class="toc-link">Acceptable use</a>
+          <a href="#ip"           class="toc-link">Intellectual property</a>
+          <a href="#warranties"   class="toc-link">Warranties</a>
+          <a href="#liability"    class="toc-link">Liability</a>
+          <a href="#changes-t"    class="toc-link">Changes</a>
+          <a href="#governing"    class="toc-link">Governing law</a>
+          <a href="#contact-t"    class="toc-link">Contact</a>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <div class="flex-1 min-w-0">
+
+        <div class="callout">
+          <p><strong>The short version:</strong> Use Vereli lawfully and professionally. Your content belongs to you. We provide the service as-is. Either party can terminate at any time. Nigerian law applies.</p>
+        </div>
+
+        <div id="about" class="prose-section">
+          <h2>About Vereli</h2>
+          <p>Vereli is a client operations platform for service businesses. It provides a workspace for managing client relationships, contracts, files, delivery, feedback, approvals, invoices, and payments — organized around each client.</p>
+          <p>These Terms of Service apply to all users of Vereli, including team account holders, team members, and clients accessing their portals. By accessing or using Vereli in any capacity, you accept these Terms.</p>
+        </div>
+
+        <div id="account" class="prose-section">
+          <h2>Your account</h2>
+          <p>You are responsible for maintaining the security of your account. Use a strong, unique password and do not share your credentials. Notify us immediately at <a href="mailto:hello@vereli.app">hello@vereli.app</a> if you suspect unauthorized access.</p>
+          <p>You may not create accounts on behalf of someone else, impersonate another person, or use Vereli for any purpose that violates applicable law. Vereli reserves the right to suspend or terminate accounts that violate these Terms or that are used in ways that harm the platform or other users.</p>
+        </div>
+
+        <div id="content" class="prose-section">
+          <h2>Your content</h2>
+          <p>You retain full ownership of all content you create, upload, or store in Vereli — client data, files, contracts, messages, and everything else. We do not claim ownership of your content.</p>
+          <p>By using the platform, you grant Vereli a limited, non-exclusive license to store, process, and display your content solely for the purpose of operating the service. We do not use your content for any other purpose.</p>
+          <p>You are responsible for the content you upload and share through Vereli, including content shared with your clients. Do not upload content that is illegal, defamatory, harmful, or that infringes any third-party intellectual property or privacy rights.</p>
+        </div>
+
+        <div id="portals" class="prose-section">
+          <h2>Client portals</h2>
+          <p>When you invite clients to access their Vereli portal, you are responsible for that invitation and the client relationship it represents. You control what your clients can see and do inside their portal.</p>
+          <p>Vereli is a platform, not a party to your agreements with your clients. Confidentiality obligations, contractual terms, and service-level expectations between you and your clients are your responsibility to manage.</p>
+          <p>Client portal access is governed by the portal link you share. Keep portal links appropriately controlled.</p>
+        </div>
+
+        <div id="billing" class="prose-section">
+          <h2>Billing and payments</h2>
+          <p>Paid plans are billed in advance on the cycle you select (monthly or annual). All fees are charged in the currency displayed at time of purchase.</p>
+          <p>Fees are non-refundable except where required by applicable consumer protection law or where we have expressly stated otherwise. If you downgrade mid-cycle, you retain access until the end of the current billing period.</p>
+          <p>Vereli reserves the right to adjust pricing with at least 30 days advance notice to active subscribers. Price changes will not affect your current billing cycle.</p>
+          <p>Payment processing is handled by Stripe, Paystack, or Flutterwave depending on your region and settings. By entering payment information, you also agree to the applicable terms of those providers.</p>
+        </div>
+
+        <div id="acceptable" class="prose-section">
+          <h2>Acceptable use</h2>
+          <p>You agree not to use Vereli to:</p>
+          <ul>
+            <li>Send spam, phishing content, or unsolicited commercial messages</li>
+            <li>Distribute malware, viruses, or any harmful code</li>
+            <li>Attempt to access other users' accounts or data without authorization</li>
+            <li>Scrape, reverse engineer, or attempt to extract Vereli's source code, algorithms, or proprietary data</li>
+            <li>Interfere with the operation or availability of the platform for other users</li>
+            <li>Violate any applicable law or regulation</li>
+          </ul>
+          <p>Vereli may investigate suspected violations and suspend or terminate access without notice where necessary to protect users or the platform.</p>
+        </div>
+
+        <div id="ip" class="prose-section">
+          <h2>Intellectual property</h2>
+          <p>The Vereli name, logo, design system, and all platform code are owned by Vereli Inc. and protected by applicable intellectual property law. These Terms do not grant you any right to use Vereli's trademarks, trade names, or branding without explicit written permission.</p>
+          <p>Feedback, suggestions, or ideas you share with us about Vereli may be used by us to improve the product. We appreciate input — it does not create an obligation to compensate you or attribute the idea.</p>
+        </div>
+
+        <div id="warranties" class="prose-section">
+          <h2>Disclaimer of warranties</h2>
+          <p>Vereli is provided "as is" and "as available." We do not warrant that the platform will be available continuously, free from errors, or free from harmful components. We work hard to keep Vereli reliable, but we cannot guarantee uninterrupted uptime.</p>
+          <p>To the extent permitted by law, we disclaim all implied warranties, including warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
+        </div>
+
+        <div id="liability" class="prose-section">
+          <h2>Limitation of liability</h2>
+          <p>To the fullest extent permitted by applicable law, Vereli Inc. and its team shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of or inability to use the platform — including loss of data, loss of revenue, or loss of business — even if advised of the possibility of such damages.</p>
+          <p>Our total liability to you for any claim arising out of or related to these Terms or your use of Vereli shall not exceed the fees you paid to us in the three months preceding the event giving rise to the claim.</p>
+        </div>
+
+        <div id="changes-t" class="prose-section">
+          <h2>Changes to these terms</h2>
+          <p>We may update these Terms from time to time. When we make material changes, we will notify you by email and update the date at the top of this page. If you continue using Vereli after changes take effect, you accept the updated Terms.</p>
+          <p>If you disagree with material changes, you may close your account before the effective date. We will provide reasonable notice — typically at least 14 days — for material changes.</p>
+        </div>
+
+        <div id="governing" class="prose-section">
+          <h2>Governing law</h2>
+          <p>These Terms are governed by the laws of the Federal Republic of Nigeria. Any dispute arising from these Terms or your use of Vereli shall be subject to the non-exclusive jurisdiction of the courts of Lagos State, Nigeria.</p>
+        </div>
+
+        <div id="contact-t" class="prose-section">
+          <h2>Contact</h2>
+          <p>Questions about these Terms? Reach us at <a href="mailto:hello@vereli.app">hello@vereli.app</a>. We aim to respond to legal and compliance questions within three business days.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Footer -->
+<footer style="background:#062B2D;color:#fff;">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 py-10">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4" style="border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;">
+      <p class="text-[12px]" id="footer-copy" style="color:rgba(255,255,255,0.46);">© 2026 Vereli Inc.</p>
+      <div class="flex items-center gap-6 text-[12px]" style="color:rgba(255,255,255,0.38);">
+        <a href="/privacy/" class="hover:text-white transition-colors">Privacy</a>
+        <a href="/terms/"   class="hover:text-white transition-colors" style="color:rgba(255,255,255,0.65);">Terms</a>
+        <a href="/features/" class="hover:text-white transition-colors">Features</a>
+        <a href="/"         class="hover:text-white transition-colors">Home</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script id="content" type="application/json">{"company":"content/company.json"}</script>
+<script type="module">
+import { submitContactForm } from '@appsmithorg/template-frontend/utility';
+document.dispatchEvent(new CustomEvent('kite:core-ready', { detail: { submitContactForm } }));
+</script>
+<script>
+lucide.createIcons();
+document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' Vereli Inc.';
+document.getElementById('last-updated').textContent = 'May 2026';
+var nav=document.getElementById('nav');
+window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40)},{passive:true});
+var drawer=document.getElementById('drawer'),overlay=document.getElementById('drawer-overlay');
+function openDrawer(){drawer.classList.add('open');overlay.classList.remove('hidden');document.body.style.overflow='hidden';}
+function closeDrawer(){drawer.classList.remove('open');overlay.classList.add('hidden');document.body.style.overflow='';}
+document.getElementById('hamburger').addEventListener('click',openDrawer);
+document.getElementById('close-drawer').addEventListener('click',closeDrawer);
+
+// TOC highlight on scroll
+var tocLinks=document.querySelectorAll('.toc-link');
+var sections=Array.from(tocLinks).map(function(l){return document.querySelector(l.getAttribute('href'))}).filter(Boolean);
+window.addEventListener('scroll',function(){
+  var scrollY=window.scrollY+120;
+  var active=sections.filter(function(s){return s.offsetTop<=scrollY});
+  var current=active.length?active[active.length-1]:sections[0];
+  tocLinks.forEach(function(l){l.classList.toggle('active',l.getAttribute('href')==='#'+current.id)});
+},{passive:true});
+</script>
+<script src="https://assets.appsmith.com/kite_script_injector_v020.js"></script>
+</body>
+</html>

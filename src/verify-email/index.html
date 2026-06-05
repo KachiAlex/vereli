@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify your email — Vereli</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+    body{background:#FFFFFF;color:#0B4F52;display:flex;flex-direction:column;align-items:center;padding:40px 24px 60px;min-height:100vh;}
+    .ht{font-family:'General Sans',sans-serif;}
+    .orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0;}
+    .btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border-radius:10px;border:1.5px solid #DCE5E6;background:#fff;font-family:'General Sans',sans-serif;font-size:13px;font-weight:600;color:#0B4F52;cursor:pointer;transition:border-color 0.15s ease;}
+    .btn-ghost:hover{border-color:#B8CECC;}
+    .verify-wrap{width:100%;max-width:420px;margin-top:auto;margin-bottom:auto;}
+  </style>
+</head>
+<body>
+  <div class="orb" style="width:600px;height:400px;top:-100px;left:50%;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(31,138,112,0.12) 0%,transparent 65%);filter:blur(80px);"></div>
+
+  <div class="verify-wrap relative z-10 text-center">
+    <!-- Logo -->
+    <a href="/" class="inline-block mb-8">
+      <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" style="height:44px;width:auto;display:block;margin:0 auto;">
+    </a>
+
+    <!-- Card -->
+    <div style="background:#fff;border:1px solid #E2ECE9;border-radius:20px;padding:36px 28px 32px;box-shadow:0 4px 24px rgba(11,79,82,0.06),inset 0 0 0 1px rgba(255,255,255,0.8);">
+      <!-- Icon -->
+      <div style="width:52px;height:52px;border-radius:16px;background:#E4F2F0;border:1px solid #C0E4DE;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+        <i data-lucide="mail" style="width:22px;height:22px;color:#0B4F52;"></i>
+      </div>
+
+      <!-- Heading -->
+      <h1 class="ht" style="font-size:22px;font-weight:900;letter-spacing:-0.03em;color:#062B2D;margin-bottom:10px;line-height:1.2;">Check your email</h1>
+
+      <!-- Body -->
+      <p style="font-size:14px;line-height:1.7;color:#5A7872;margin-bottom:22px;">
+        We've sent a verification link to your email address.<br>Click the link to activate your account.
+      </p>
+
+      <!-- Divider -->
+      <div style="height:1px;background:#EEF4F2;margin-bottom:20px;"></div>
+
+      <!-- Resend -->
+      <p style="font-size:12.5px;color:#8E9E9E;margin-bottom:12px;">Didn't receive it? Check your spam folder, or resend below.</p>
+      <button class="btn-ghost" style="width:100%;justify-content:center;" id="resend-btn" onclick="resend()">
+        <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i>
+        Resend verification email
+      </button>
+      <p id="resend-msg" style="font-size:12px;color:#17A39B;margin-top:10px;display:none;">Email resent — check your inbox.</p>
+    </div>
+
+    <!-- Footer link -->
+    <p style="font-size:13px;color:#7A9E99;margin-top:20px;">
+      Wrong account? <a href="/login/" style="color:#0B4F52;font-weight:600;text-decoration:none;border-bottom:1px solid #DCE5E6;">Log in with a different email</a>
+    </p>
+  </div>
+
+  <script id="content" type="application/json">{}</script>
+  <script type="module">
+    import { submitContactForm } from '@appsmithorg/template-frontend/utility';
+    document.dispatchEvent(new CustomEvent('kite:core-ready', { detail: { submitContactForm } }));
+  </script>
+  <script>
+    lucide.createIcons();
+    function resend() {
+      var btn = document.getElementById('resend-btn');
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+      setTimeout(function() {
+        document.getElementById('resend-msg').style.display = 'block';
+      }, 700);
+    }
+  </script>
+  <script src="https://assets.appsmith.com/kite_script_injector_v020.js"></script>
+</body>
+</html>

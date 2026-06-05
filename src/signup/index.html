@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Start your free trial — Vereli</title>
+  <meta name="description" content="Start your 14-day free trial. Set up your Vereli workspace and start organizing client work in minutes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            teal: '#0B4F52', 'teal-light': '#17A39B', mist: '#E4F2F0', orange: '#17A39B', graphite: '#0B4F52', cream: '#FFFFFF',
+            'warm-gray': '#F5FAF9', 'mid-gray': '#DCE5E6', 'text-soft': '#5A6E70',
+            green: '#2D6A4F', 'green-pale': '#EAF2EE',
+          },
+          fontFamily: { tight: ['"General Sans"', 'sans-serif'], body: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: #FFFFFF; color: #0B4F52; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+    .ht { font-family: 'General Sans', sans-serif; }
+
+    .field {
+      width: 100%; height: 50px; padding: 0 14px;
+      border-radius: 10px; border: 1.5px solid #DCE5E6;
+      background: #fff; color: #0B4F52;
+      font-family: 'Inter', sans-serif; font-size: 15px;
+      outline: none; transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .field:focus { border-color: #17A39B; box-shadow: 0 0 0 3px rgba(31,138,112,0.15); }
+    .field::placeholder { color: #8E9E9E; }
+    .field-error { border-color: #E87070; }
+    .field-error:focus { border-color: #E87070; box-shadow: 0 0 0 3px rgba(232,112,112,0.12); }
+
+    .btn-primary {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; height: 52px; border-radius: 12px;
+      background: #17A39B; color: #fff;
+      font-family: 'General Sans', sans-serif; font-size: 15px; font-weight: 700;
+      letter-spacing: -0.01em; border: none; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(23,163,155,0.3);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(23,163,155,0.4); }
+    .btn-primary:active { transform: none; }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    .link { color: #0B4F52; font-weight: 600; text-decoration: none; border-bottom: 1px solid #DCE5E6; transition: border-color 0.15s ease; }
+    .link:hover { border-color: #0B4F52; }
+    .link-teal { color: #17A39B; font-weight: 600; text-decoration: none; }
+    .link-teal:hover { text-decoration: underline; }
+
+    .orb { position: absolute; border-radius: 50%; pointer-events: none; z-index: 0; }
+    .auth-card { background: #fff; border-radius: 20px; box-shadow: 0 4px 40px rgba(0,0,0,0.07), inset 0 0 0 1px rgba(0,0,0,0.055); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.15); border-top-color: #0B4F52; border-radius: 50%; animation: spin 0.7s linear infinite; }
+
+    .pw-wrapper { position: relative; }
+    .pw-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #8E9E9E; padding: 0; display: flex; align-items: center; }
+    .pw-toggle:hover { color: #6B7C7D; }
+
+    /* Two-col layout on wide screens */
+    @media (min-width: 1024px) {
+      .signup-layout { display: grid; grid-template-columns: 1fr 480px; gap: 0; min-height: 100vh; }
+      .signup-left { display: flex; flex-direction: column; justify-content: center; padding: 80px 72px; }
+      .signup-right { display: flex; align-items: center; justify-content: center; padding: 80px 56px; border-left: 1px solid #EEF2F2; }
+    }
+    @media (max-width: 1023px) {
+      .signup-layout { display: block; }
+      .signup-left { display: none; }
+      .signup-right { padding: 32px 24px 60px; display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 66px); }
+    }
+
+    /* Trust item */
+    .trust-item { display: flex; align-items: flex-start; gap: 12px; }
+    .trust-dot { width: 20px; height: 20px; border-radius: 50%; background: #EAF2EE; border: 1px solid #B8D6C8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- Background glow -->
+<div class="orb" style="width:800px;height:600px;top:-80px;left:30%;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(31,138,112,0.1) 0%,transparent 60%);filter:blur(90px);position:fixed;z-index:0;"></div>
+
+<!-- Nav -->
+<nav class="relative z-10 flex items-center justify-between px-6 md:px-12 h-[66px] max-w-[1400px] mx-auto">
+  <a href="/" aria-label="Vereli home">
+    <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png"
+         alt="Vereli" class="h-9 w-auto">
+  </a>
+  <p class="text-[13px] text-text-soft">
+    Already have an account? <a href="/login/" class="link-teal">Log in</a>
+  </p>
+</nav>
+
+<main class="relative z-10">
+  <div class="signup-layout">
+
+    <!-- Left: value proposition (desktop only) -->
+    <div class="signup-left">
+      <div class="max-w-[440px]">
+
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-8" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+          <span class="w-1.5 h-1.5 rounded-full" style="background:#17A39B;"></span>
+          <span class="ht font-semibold text-[11px] uppercase tracking-[0.1em]" style="color:#0B4F52;">14-day free trial</span>
+        </div>
+
+        <h1 class="ht font-black leading-[0.94] tracking-[-0.04em] text-graphite mb-6" style="font-size:clamp(38px,4vw,54px);">
+          One workspace<br>for every client.
+        </h1>
+
+        <p class="text-[16px] text-text-soft leading-[1.75] mb-10 max-w-[380px]">
+          Set up your workspace, add your clients, and start delivering work in a way that stays organized.
+        </p>
+
+        <!-- Trust list -->
+        <div class="space-y-4 mb-10">
+          <div class="trust-item">
+            <div class="trust-dot"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></div>
+            <div>
+              <p class="ht font-semibold text-[14px] text-graphite">One workspace per client</p>
+              <p class="text-[13px] text-text-soft mt-0.5">Files, tasks, and approvals all in one place</p>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-dot"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></div>
+            <div>
+              <p class="ht font-semibold text-[14px] text-graphite">Built-in client portal</p>
+              <p class="text-[13px] text-text-soft mt-0.5">Share a portal link — clients review and approve without an account</p>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-dot"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></div>
+            <div>
+              <p class="ht font-semibold text-[14px] text-graphite">Works for retainers and ongoing work</p>
+              <p class="text-[13px] text-text-soft mt-0.5">No need to start over when the project continues</p>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-dot"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></div>
+            <div>
+              <p class="ht font-semibold text-[14px] text-graphite">No credit card required</p>
+              <p class="text-[13px] text-text-soft mt-0.5">Free for 14 days, then choose your plan</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Small product types -->
+        <p class="text-[12px] text-text-soft leading-relaxed">
+          Used by agencies, consultants, studios, comms firms, and advisory businesses.
+        </p>
+
+      </div>
+    </div>
+
+    <!-- Right: signup form -->
+    <div class="signup-right">
+      <div class="w-full max-w-[400px]">
+
+        <!-- Mobile headline -->
+        <div class="text-center mb-8 lg:hidden">
+          <h1 class="ht font-black text-[28px] tracking-[-0.035em] text-graphite mb-2">Start your free trial</h1>
+          <p class="text-[14px] text-text-soft">14 days free. No credit card required.</p>
+        </div>
+
+        <!-- Desktop headline -->
+        <div class="mb-7 hidden lg:block">
+          <h2 class="ht font-black text-[24px] tracking-[-0.03em] text-graphite mb-1">Create your account</h2>
+          <p class="text-[14px] text-text-soft">14 days free. No credit card required.</p>
+        </div>
+
+        <!-- Signup form card -->
+        <div class="auth-card p-7">
+
+          <form id="signup-form" novalidate>
+
+            <!-- Name -->
+            <div class="mb-4">
+              <label class="ht font-semibold text-[12px] text-graphite block mb-1.5" for="name">Your name</label>
+              <input id="name" name="name" type="text" autocomplete="name"
+                     placeholder="Full name" class="field" required>
+              <p id="name-error" class="text-[11px] mt-1.5 hidden" style="color:#C0392B;"></p>
+            </div>
+
+            <!-- Work email -->
+            <div class="mb-4">
+              <label class="ht font-semibold text-[12px] text-graphite block mb-1.5" for="email">Work email</label>
+              <input id="email" name="email" type="email" autocomplete="email"
+                     placeholder="you@company.com" class="field" required>
+              <p id="email-error" class="text-[11px] mt-1.5 hidden" style="color:#C0392B;"></p>
+            </div>
+
+            <!-- Business name -->
+            <div class="mb-4">
+              <label class="ht font-semibold text-[12px] text-graphite block mb-1.5" for="business">
+                Business or team name
+                <span class="text-text-soft font-normal ml-1">(appears in your workspace)</span>
+              </label>
+              <input id="business" name="business" type="text" autocomplete="organization"
+                     placeholder="e.g. Meridian Agency" class="field" required>
+              <p id="business-error" class="text-[11px] mt-1.5 hidden" style="color:#C0392B;"></p>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-6">
+              <label class="ht font-semibold text-[12px] text-graphite block mb-1.5" for="password">
+                Password
+                <span class="text-text-soft font-normal ml-1">(min. 8 characters)</span>
+              </label>
+              <div class="pw-wrapper">
+                <input id="password" name="password" type="password" autocomplete="new-password"
+                       placeholder="Create a password" class="field" required>
+                <button type="button" class="pw-toggle" id="pw-toggle" aria-label="Show password">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <p id="password-error" class="text-[11px] mt-1.5 hidden" style="color:#C0392B;"></p>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" id="submit-btn" class="btn-primary mb-4">
+              <span id="btn-text">Start free trial</span>
+              <span id="btn-spinner" class="spinner hidden"></span>
+            </button>
+
+            <!-- Global error -->
+            <div id="global-error" class="hidden text-center mb-2 py-3 px-4 rounded-xl text-[13px]" style="background:#FEF2F2;color:#C0392B;border:1px solid #FECACA;">
+              Something went wrong. Please try again.
+            </div>
+
+            <!-- Terms -->
+            <p class="text-center text-[11.5px] text-text-soft leading-relaxed">
+              By creating an account you agree to our
+              <a href="/terms/" class="link-teal">Terms of Service</a> and <a href="/privacy/" class="link-teal">Privacy Policy</a>.
+            </p>
+
+          </form>
+
+        </div>
+
+        <!-- Log in link -->
+        <p class="text-center text-[13px] text-text-soft mt-5">
+          Already have an account? <a href="/login/" class="link">Log in</a>
+        </p>
+
+        <!-- Client portal note — calm, minimal -->
+        <p class="text-center text-[11.5px] mt-5" style="color:#8E9E9E;">
+          Clients access their portal via the link your team shares — no account needed.
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Footer note -->
+<footer class="relative z-10 text-center pb-8">
+  <p class="text-[12px]" style="color:#8E9E9E;">
+    <a href="/privacy/" class="hover:text-graphite transition-colors">Privacy</a> · <a href="/terms/" class="hover:text-graphite transition-colors">Terms</a> · © <span id="yr"></span> Vereli Inc.
+  </p>
+</footer>
+
+<script id="content" type="application/json">{"company":"content/company.json"}</script>
+<script type="module">
+import { submitContactForm } from '@appsmithorg/template-frontend/utility';
+document.dispatchEvent(new CustomEvent('kite:core-ready', { detail: { submitContactForm } }));
+</script>
+<script>
+lucide.createIcons();
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Password visibility toggle
+var pwToggle = document.getElementById('pw-toggle');
+var pwField  = document.getElementById('password');
+var pwShown  = false;
+pwToggle.addEventListener('click', function() {
+  pwShown = !pwShown;
+  pwField.type = pwShown ? 'text' : 'password';
+  pwToggle.innerHTML = pwShown
+    ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
+    : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+});
+
+// Validation helpers
+function showFieldError(id, msg) {
+  var el = document.getElementById(id + '-error');
+  var field = document.getElementById(id);
+  if (el) { el.textContent = msg; el.classList.remove('hidden'); }
+  if (field) field.classList.add('field-error');
+}
+function clearErrors() {
+  ['name','email','business','password'].forEach(function(id) {
+    var el = document.getElementById(id + '-error');
+    var field = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+    if (field) field.classList.remove('field-error');
+  });
+  var globalErr = document.getElementById('global-error');
+  if (globalErr) globalErr.classList.add('hidden');
+}
+
+// Form submission stub
+var form      = document.getElementById('signup-form');
+var submitBtn = document.getElementById('submit-btn');
+var btnText   = document.getElementById('btn-text');
+var btnSpinner= document.getElementById('btn-spinner');
+var globalErr = document.getElementById('global-error');
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  clearErrors();
+
+  var name     = document.getElementById('name').value.trim();
+  var email    = document.getElementById('email').value.trim();
+  var business = document.getElementById('business').value.trim();
+  var password = document.getElementById('password').value;
+  var valid    = true;
+
+  if (!name || name.length < 2) {
+    showFieldError('name', 'Please enter your name.'); valid = false;
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showFieldError('email', 'Please enter a valid work email.'); valid = false;
+  }
+  if (!business || business.length < 2) {
+    showFieldError('business', 'Please enter your business name.'); valid = false;
+  }
+  if (!password || password.length < 8) {
+    showFieldError('password', 'Password must be at least 8 characters.'); valid = false;
+  }
+  if (!valid) return;
+
+  submitBtn.disabled = true;
+  btnText.classList.add('hidden');
+  btnSpinner.classList.remove('hidden');
+
+  setTimeout(function() {
+    window.location.href = '/verify-email/';
+  }, 1200);
+});
+
+// Pre-fill demo mode from URL param
+var params = new URLSearchParams(window.location.search);
+if (params.get('demo') === '1') {
+  var demoNote = document.createElement('div');
+  demoNote.className = 'text-center mb-4 py-2.5 px-4 rounded-xl text-[13px]';
+  demoNote.style.cssText = 'background:#E4F2F0;color:#0B4F52;border:1px solid #C0E4DE;';
+  demoNote.textContent = 'Sign up to request a demo — we\'ll get in touch to schedule a walkthrough.';
+  form.insertBefore(demoNote, form.firstChild);
+}
+</script>
+<script src="https://assets.appsmith.com/kite_script_injector_v020.js"></script>
+</body>
+</html>

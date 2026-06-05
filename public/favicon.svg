@@ -1,0 +1,20 @@
+<svg
+  width="16"
+  height="16"
+  viewBox="0 0 16 16"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <style>
+    path {
+      fill: #181818;
+    }
+    @media (prefers-color-scheme: dark) {
+      path {
+        fill: #f3f5f4;
+      }
+    }
+  </style>
+  <path d="M14 14H4v-2h8V4h2v10Z" />
+  <path d="M12 2v10H2V2h10Zm-9 9h8V3H3v8Z" />
+</svg>

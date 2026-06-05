@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vereli — Client Operations for Service Businesses</title>
+  <meta name="description" content="Vereli helps service businesses manage contracts, payments, delivery, approvals, feedback, and ongoing client work — inside one connected workspace.">
+  <meta property="og:title" content="Vereli — Client Operations for Service Businesses">
+  <meta property="og:description" content="Vereli helps service businesses manage contracts, payments, delivery, approvals, feedback, and ongoing client work — inside one connected workspace.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Vereli — Client Operations for Service Businesses">
+  <meta name="twitter:description" content="Vereli helps service businesses manage contracts, payments, delivery, approvals, feedback, and ongoing client work — inside one connected workspace.">
+  <meta name="twitter:image" content="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://vereli.kite.space/">
+  <meta property="og:image" content="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png">
+
+  <link rel="canonical" href="https://vereli.kite.space/">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "Vereli",
+        "url": "https://vereli.kite.space",
+        "logo": "https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png",
+        "description": "Vereli helps service businesses manage contracts, payments, delivery, approvals, feedback, and ongoing client work inside one connected workspace.",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Lagos",
+          "addressCountry": "NG"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "hello@vereli.io",
+          "contactType": "customer support"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "name": "Vereli",
+        "url": "https://vereli.kite.space"
+      }
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            teal:     '#0B4F52',
+            green:    '#17A39B',
+            mist:     '#E4F2F0',
+            accent:   '#7BE0C5',
+            graphite: '#062B2D',
+            'warm-gray': '#FBFBFA',
+            'mid-gray':  '#EEF2F2',
+            'text-soft': '#6B7C7D',
+          },
+          fontFamily: {
+            tight: ['"General Sans"', 'sans-serif'],
+            body:  ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #fff;
+      color: #062B2D;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    .ht { font-family: 'General Sans', sans-serif; }
+
+    /* NAV */
+    #nav {
+      background: #fff;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+      border-bottom: 2px solid rgba(11,61,58,0.10);
+    }
+    #nav.scrolled {
+      border-bottom-color: rgba(11,61,58,0.15);
+      box-shadow: 0 2px 16px rgba(11,61,58,0.06);
+    }
+    #drawer { transform: translateX(100%); transition: transform 0.34s cubic-bezier(0.4,0,0.2,1); }
+    #drawer.open { transform: translateX(0); }
+
+    /* BUTTONS */
+    .cta-primary {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0 32px; border-radius: 12px; height: 50px;
+      background: #17A39B; color: #fff;
+      font-family: 'General Sans', sans-serif;
+      font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
+      box-shadow: 0 6px 28px rgba(23,163,155,0.32);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      white-space: nowrap; text-decoration: none;
+    }
+    .cta-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(23,163,155,0.44); }
+    .cta-ghost {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 0 28px; border-radius: 12px; height: 50px;
+      background: transparent; color: #0B4F52;
+      font-family: 'General Sans', sans-serif;
+      font-size: 15px; font-weight: 600;
+      border: 1.5px solid rgba(11,61,58,0.2);
+      transition: border-color 0.18s ease, background 0.18s ease;
+      white-space: nowrap; text-decoration: none;
+    }
+    .cta-ghost:hover { border-color: #0B4F52; background: rgba(11,61,58,0.04); }
+    .nav-link {
+      font-family: 'General Sans', sans-serif;
+      font-size: 13px; font-weight: 500; color: #6B7C7D; text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .nav-link:hover { color: #0B4F52; }
+
+    /* GLOBAL */
+    .orb { position: absolute; border-radius: 50%; pointer-events: none; z-index: 0; }
+    .surf {
+      background: #fff;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(0,0,0,0.052);
+      border-radius: 20px;
+    }
+    .glass {
+      background: rgba(255,255,255,0.80);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
+      box-shadow: 0 8px 36px rgba(0,0,0,0.09), inset 0 0 0 1px rgba(11,61,58,0.07);
+    }
+    .hero-panel {
+      background: #fff; border-radius: 28px;
+      box-shadow: 0 36px 100px rgba(0,0,0,0.12), 0 8px 20px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(0,0,0,0.05);
+    }
+    .kicker {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 14px; border-radius: 999px;
+      font-family: 'General Sans', sans-serif;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+    }
+    .kicker-teal { background: #E4F2F0; color: #0B4F52; border: 1px solid #A8D4CC; }
+    .kicker-dark { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.13); }
+
+    /* REVEAL */
+    .rv {
+      opacity: 0; transform: translateY(26px);
+      transition: opacity 0.95s cubic-bezier(0.16,1,0.3,1), transform 0.95s cubic-bezier(0.16,1,0.3,1);
+    }
+    .rv.on { opacity: 1; transform: none; }
+    .rv-d1 { transition-delay: 110ms; }
+    .rv-d2 { transition-delay: 220ms; }
+    .rv-d3 { transition-delay: 330ms; }
+
+    /* FLOAT */
+    @keyframes floatA { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-13px); } }
+    @keyframes floatB { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
+    @keyframes floatC { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-11px); } }
+    .floatA { animation: floatA 5.5s ease-in-out infinite; }
+    .floatB { animation: floatB 4.2s ease-in-out infinite 0.8s; }
+    .floatC { animation: floatC 6.8s ease-in-out infinite 1.5s; }
+
+    /* TICKER */
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .ticker-inner { animation: ticker 38s linear infinite; }
+
+    /* PORTAL TABS */
+    .p-tab { display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:500;color:#6B7C7D; }
+    .p-tab.active { background:#0B4F52;color:#fff;font-weight:700; }
+
+    /* DARK */
+    .dark-section { background: #062B2D; }
+    .watermark { font-family:'General Sans',sans-serif;font-weight:900;letter-spacing:-0.06em;color:rgba(255,255,255,0.04);line-height:0.86;user-select:none;pointer-events:none; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════ NAV ═══════════════════════ -->
+<nav id="nav" class="fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-[66px] flex items-center justify-between">
+    <a href="/" aria-label="Vereli home">
+      <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto">
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="/features/"  class="nav-link">Features</a>
+      <a href="/pricing/"   class="nav-link">Pricing</a>
+      <a href="/resources/" class="nav-link">Resources</a>
+      <a href="/about/"     class="nav-link">About</a>
+    </div>
+    <div class="hidden md:flex items-center gap-3">
+      <a href="/login/" class="nav-link px-2">Log in</a>
+      <a href="/signup/" class="cta-primary" style="height:38px;padding:0 18px;font-size:13px;border-radius:9px;box-shadow:0 4px 16px rgba(23,163,155,0.30);">Start Free Trial</a>
+    </div>
+    <button id="hamburger" aria-label="Open menu" class="md:hidden p-2 -mr-1 relative z-50">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile drawer -->
+<div id="drawer-overlay" class="fixed inset-0 z-30 bg-black/30 hidden" onclick="closeDrawer()"></div>
+<div id="drawer" class="fixed top-0 right-0 bottom-0 z-40 w-[300px] flex flex-col shadow-2xl" style="background:#fff;">
+  <div class="h-[66px] flex items-center justify-between px-5 border-b" style="border-color:#DCE5E6;">
+    <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto">
+    <button id="close-drawer" aria-label="Close menu" class="p-2 -mr-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+  </div>
+  <nav class="flex-1 flex flex-col gap-1 p-4">
+    <a href="/features/"  class="px-4 py-3 text-[15px] font-semibold rounded-xl hover:bg-mist transition-colors ht" style="color:#0B4F52;" onclick="closeDrawer()">Features</a>
+    <a href="/pricing/"   class="px-4 py-3 text-[15px] font-semibold rounded-xl hover:bg-mist transition-colors ht" style="color:#0B4F52;" onclick="closeDrawer()">Pricing</a>
+    <a href="/resources/" class="px-4 py-3 text-[15px] font-semibold rounded-xl hover:bg-mist transition-colors ht" style="color:#0B4F52;" onclick="closeDrawer()">Resources</a>
+    <a href="/about/"     class="px-4 py-3 text-[15px] font-semibold rounded-xl hover:bg-mist transition-colors ht" style="color:#0B4F52;" onclick="closeDrawer()">About</a>
+  </nav>
+  <div class="p-4 border-t flex flex-col gap-2.5" style="border-color:#DCE5E6;">
+    <a href="/signup/" class="cta-primary w-full justify-center" style="border-radius:10px;">Start Free Trial</a>
+    <a href="/login/"  class="cta-ghost  w-full justify-center" style="border-radius:10px;">Log in</a>
+  </div>
+</div>
+
+
+<main>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section class="relative overflow-clip" style="background:#fff;min-height:100vh;display:flex;align-items:center;padding-top:66px;">
+
+  <div class="orb" style="width:1000px;height:800px;top:-250px;right:-250px;background:radial-gradient(ellipse,rgba(31,138,112,0.14) 0%,rgba(11,61,58,0.04) 50%,transparent 72%);filter:blur(110px);"></div>
+  <div class="orb" style="width:540px;height:540px;bottom:-80px;left:-180px;background:radial-gradient(ellipse,rgba(11,61,58,0.07) 0%,transparent 65%);filter:blur(90px);"></div>
+
+  <div class="max-w-[1320px] mx-auto px-6 md:px-12 w-full relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-[500px_1fr] gap-10 xl:gap-14 items-center">
+
+      <!-- LEFT: headline + CTA -->
+      <div class="rv" style="padding-top:60px;padding-bottom:60px;">
+        <h1 class="ht font-black tracking-[-0.046em] leading-[0.93] mb-7"
+            style="font-size:clamp(54px,7.5vw,96px);color:#0B4F52;">
+          Client<br>operations,<br>finally in<br>one place.
+        </h1>
+
+        <p class="text-[17px] leading-[1.76] mb-5" style="max-width:400px;color:#4A6468;">
+          Vereli helps service businesses manage contracts, payments, delivery, approvals, feedback, and ongoing client work — inside one connected workspace.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-3 mb-8">
+          <a href="/signup/" class="cta-primary">Start Free Trial</a>
+          <a href="/features/" class="cta-ghost">See how it works <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+        </div>
+
+        <p class="text-[12px]" style="color:#7A9E99;">Built for agencies, consultants, advisory firms, studios, and media teams.</p>
+      </div>
+
+      <!-- RIGHT: product scene -->
+      <div class="rv rv-d1 relative flex items-center justify-center" style="min-height:560px;padding-top:60px;padding-bottom:60px;overflow:hidden;">
+
+        <div class="orb" style="width:520px;height:450px;top:50%;left:50%;transform:translate(-50%,-52%);background:radial-gradient(ellipse,rgba(31,138,112,0.17) 0%,rgba(11,61,58,0.05) 52%,transparent 72%);filter:blur(80px);z-index:0;"></div>
+
+        <!-- Main workspace card -->
+        <div class="floatA hero-panel relative z-10 w-full" style="max-width:488px;">
+
+          <!-- Topbar -->
+          <div class="flex items-center justify-between px-5 py-3.5" style="border-bottom:1px solid #EEF2F1;">
+            <div class="flex items-center gap-3">
+              <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="" class="h-5 w-auto opacity-60">
+              <p class="ht font-bold text-[12px] tracking-tight" style="color:#0B4F52;">Meridian Advisory</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <div class="w-2 h-2 rounded-full" style="background:#17A39B;"></div>
+              <p class="text-[10px] ht font-medium" style="color:#6B7C7D;">4 clients active</p>
+            </div>
+          </div>
+
+          <!-- Client tabs -->
+          <div class="flex items-center gap-2 px-4 pt-3 pb-2 overflow-x-auto" style="scrollbar-width:none;">
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg shrink-0" style="background:#0B4F52;">
+              <div class="w-4 h-4 rounded flex items-center justify-center ht font-black text-[8px]" style="background:rgba(255,255,255,0.15);color:#fff;">LB</div>
+              <span class="ht font-bold text-[11px] text-white">Lumina Brand</span>
+            </div>
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg shrink-0" style="background:#FBFBFA;">
+              <div class="w-4 h-4 rounded flex items-center justify-center ht font-black text-[8px]" style="background:#DCE5E6;color:#6B7C7D;">VG</div>
+              <span class="ht font-medium text-[11px]" style="color:#6B7C7D;">Vantage Group</span>
+            </div>
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg shrink-0" style="background:#FBFBFA;">
+              <div class="w-4 h-4 rounded flex items-center justify-center ht font-black text-[8px]" style="background:#DCE5E6;color:#6B7C7D;">AS</div>
+              <span class="ht font-medium text-[11px]" style="color:#6B7C7D;">Archer Studio</span>
+            </div>
+          </div>
+
+          <!-- Action items -->
+          <div class="px-4 pt-2 pb-1">
+            <p class="ht font-semibold text-[9.5px] uppercase tracking-[0.12em] mb-2.5" style="color:#7A9E99;">Needs your attention</p>
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-3 p-3 rounded-2xl" style="background:#FBFBFA;border:1px solid #EEF2F2;">
+                <div class="w-6 h-6 rounded-xl flex items-center justify-center shrink-0" style="background:#FFF0E8;">
+                  <i data-lucide="check-circle-2" class="w-3 h-3" style="color:#B04000;"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="ht font-semibold text-[11px]" style="color:#0B4F52;">Q2 Campaign Deliverables</p>
+                  <p class="text-[9.5px]" style="color:#7A9E99;">Lumina Brand · Approval needed</p>
+                </div>
+                <span class="text-[9px] ht font-bold px-2 py-0.5 rounded-full shrink-0" style="background:#FFF0E8;color:#B04000;">Review</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 rounded-2xl" style="background:#FBFBFA;border:1px solid #EEF2F2;">
+                <div class="w-6 h-6 rounded-xl flex items-center justify-center shrink-0" style="background:#EEF3FF;">
+                  <i data-lucide="file-signature" class="w-3 h-3" style="color:#3558CC;"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="ht font-semibold text-[11px]" style="color:#0B4F52;">Retainer Agreement — Vantage</p>
+                  <p class="text-[9.5px]" style="color:#7A9E99;">Vantage Group · Signature pending</p>
+                </div>
+                <span class="text-[9px] ht font-bold px-2 py-0.5 rounded-full shrink-0" style="background:#EEF3FF;color:#3558CC;">Sign</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 rounded-2xl" style="background:#FBFBFA;border:1px solid #EEF2F2;">
+                <div class="w-6 h-6 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;">
+                  <i data-lucide="message-circle" class="w-3 h-3" style="color:#17A39B;"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="ht font-semibold text-[11px]" style="color:#0B4F52;">Brand Strategy v2</p>
+                  <p class="text-[9.5px]" style="color:#7A9E99;">Archer Studio · Feedback waiting</p>
+                </div>
+                <span class="text-[9px] ht font-bold px-2 py-0.5 rounded-full shrink-0" style="background:#E4F2F0;color:#17A39B;">View</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent -->
+          <div class="px-4 py-3">
+            <div class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl" style="background:#F0F5F3;">
+              <div class="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style="background:#C8E8E0;">
+                <i data-lucide="check" class="w-2.5 h-2.5" style="color:#17A39B;"></i>
+              </div>
+              <p class="text-[10.5px] flex-1" style="color:#0B4F52;">Brand Strategy v2 <span style="color:#7A9E99;">approved via client portal</span></p>
+              <span class="text-[9.5px] shrink-0" style="color:#7A9E99;">18m</span>
+            </div>
+          </div>
+
+          <!-- Invoice row -->
+          <div class="px-4 pb-4">
+            <div class="flex items-center justify-between p-3 rounded-2xl" style="background:#0B4F52;">
+              <div class="flex items-center gap-2.5">
+                <div class="w-6 h-6 rounded-xl flex items-center justify-center" style="background:rgba(255,255,255,0.12);">
+                  <i data-lucide="receipt" class="w-3 h-3" style="color:rgba(255,255,255,0.8);"></i>
+                </div>
+                <div>
+                  <p class="ht font-semibold text-[11px] text-white">Invoice · Lumina Brand</p>
+                  <p class="text-[9.5px]" style="color:rgba(255,255,255,0.45);">Due in 5 days</p>
+                </div>
+              </div>
+              <p class="ht font-black text-[15px] text-white">$6,500</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating: revenue -->
+        <div class="floatB glass absolute z-20 hidden sm:block" style="left:-4px;bottom:90px;padding:16px 20px;min-width:186px;">
+          <p class="ht font-semibold text-[9px] uppercase tracking-[0.12em] mb-2.5" style="color:#5A7A78;">Collected this month</p>
+          <p class="ht font-black text-[26px] tracking-[-0.04em] leading-none" style="color:#0B4F52;">$21,800</p>
+          <div class="flex items-center gap-1.5 mt-2">
+            <span class="ht font-bold text-[10px] flex items-center gap-1" style="color:#17A39B;"><i data-lucide="trending-up" class="w-3 h-3"></i>+18%</span>
+            <span class="text-[10px]" style="color:#5A7A78;">vs last month</span>
+          </div>
+        </div>
+
+        <!-- Floating: portal status -->
+        <div class="floatC glass absolute z-20 hidden xl:block" style="right:-14px;top:90px;padding:13px 16px;">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style="background:#C8E8E0;">
+              <i data-lucide="layout-dashboard" class="w-3.5 h-3.5" style="color:#17A39B;"></i>
+            </div>
+            <div>
+              <p class="ht font-bold text-[11.5px]" style="color:#0B4F52;">Portal active</p>
+              <p class="text-[10px]" style="color:#5A7A78;">Lumina Brand · 2 items pending</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ TICKER ═══════════════════════ -->
+<div class="overflow-clip" style="background:#E4F2F0;border-top:1px solid #BCE0D8;border-bottom:1px solid #BCE0D8;padding:13px 0;">
+  <div class="ticker-inner flex items-center gap-8 whitespace-nowrap w-max">
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="folder" class="w-3.5 h-3.5 shrink-0"></i>Contracts &amp; Agreements</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="stamp" class="w-3.5 h-3.5 shrink-0"></i>Client Approvals</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="message-circle" class="w-3.5 h-3.5 shrink-0"></i>Feedback &amp; Communication</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="receipt" class="w-3.5 h-3.5 shrink-0"></i>Invoices &amp; Payments</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="list-checks" class="w-3.5 h-3.5 shrink-0"></i>Delivery &amp; Tasks</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="layout-dashboard" class="w-3.5 h-3.5 shrink-0"></i>Client Portals</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="refresh-cw" class="w-3.5 h-3.5 shrink-0"></i>Retainers &amp; Ongoing Work</span>
+    <span style="color:#6BADA2;">✦</span>
+    <!-- duplicate -->
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="folder" class="w-3.5 h-3.5 shrink-0"></i>Contracts &amp; Agreements</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="stamp" class="w-3.5 h-3.5 shrink-0"></i>Client Approvals</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="message-circle" class="w-3.5 h-3.5 shrink-0"></i>Feedback &amp; Communication</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="receipt" class="w-3.5 h-3.5 shrink-0"></i>Invoices &amp; Payments</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="list-checks" class="w-3.5 h-3.5 shrink-0"></i>Delivery &amp; Tasks</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="layout-dashboard" class="w-3.5 h-3.5 shrink-0"></i>Client Portals</span>
+    <span style="color:#6BADA2;">✦</span>
+    <span class="flex items-center gap-2 text-[11.5px] ht font-semibold" style="color:#1E6862;"><i data-lucide="refresh-cw" class="w-3.5 h-3.5 shrink-0"></i>Retainers &amp; Ongoing Work</span>
+    <span style="color:#6BADA2;">✦</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════ PROBLEM ═══════════════════════ -->
+<section class="relative overflow-clip" style="background:#fff;padding:128px 0 144px;">
+  <div class="orb" style="width:860px;height:660px;top:-80px;left:-200px;background:radial-gradient(ellipse,rgba(11,61,58,0.055) 0%,transparent 65%);filter:blur(120px);"></div>
+
+  <div class="max-w-[1200px] mx-auto px-6 md:px-12 relative z-10">
+
+    <div class="rv mb-16 lg:mb-20 max-w-[560px]">
+      <h2 class="ht font-black tracking-[-0.042em] leading-[1.0]"
+          style="font-size:clamp(38px,5vw,62px);color:#0B4F52;">
+        Work doesn't break.<br>Your systems do.
+      </h2>
+    </div>
+
+    <!-- Two-panel contrast -->
+    <div class="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-5">
+
+      <!-- BEFORE -->
+      <div class="rv rounded-[32px] p-10 md:p-12 relative overflow-clip" style="background:#F6F9F8;border:1px solid #E2EBE9;">
+        <p class="ht font-bold text-[10px] uppercase tracking-[0.14em] mb-8" style="color:#9AACAB;">Before Vereli</p>
+
+        <div class="space-y-2 mb-7">
+          <p class="text-[14px] leading-relaxed" style="color:#6B7C7D;">Most service businesses work across:</p>
+          <div class="grid grid-cols-2 gap-2.5 mt-4">
+            <div class="flex items-center gap-2.5 p-3 rounded-xl" style="background:#EEF2F2;opacity:0.7;">
+              <i data-lucide="mail" class="w-3.5 h-3.5 shrink-0" style="color:#8E9E9E;"></i>
+              <p class="ht font-semibold text-[12px]" style="color:#8E9E9E;text-decoration:line-through;">Email threads</p>
+            </div>
+            <div class="flex items-center gap-2.5 p-3 rounded-xl" style="background:#EEF2F2;opacity:0.7;">
+              <i data-lucide="message-square" class="w-3.5 h-3.5 shrink-0" style="color:#8E9E9E;"></i>
+              <p class="ht font-semibold text-[12px]" style="color:#8E9E9E;text-decoration:line-through;">WhatsApp</p>
+            </div>
+            <div class="flex items-center gap-2.5 p-3 rounded-xl" style="background:#EEF2F2;opacity:0.7;">
+              <i data-lucide="hard-drive" class="w-3.5 h-3.5 shrink-0" style="color:#8E9E9E;"></i>
+              <p class="ht font-semibold text-[12px]" style="color:#8E9E9E;text-decoration:line-through;">Google Drive</p>
+            </div>
+            <div class="flex items-center gap-2.5 p-3 rounded-xl" style="background:#EEF2F2;opacity:0.7;">
+              <i data-lucide="receipt" class="w-3.5 h-3.5 shrink-0" style="color:#8E9E9E;"></i>
+              <p class="ht font-semibold text-[12px]" style="color:#8E9E9E;text-decoration:line-through;">Invoicing app</p>
+            </div>
+            <div class="flex items-center gap-2.5 p-3 rounded-xl" style="background:#EEF2F2;opacity:0.7;">
+              <i data-lucide="check-square" class="w-3.5 h-3.5 shrink-0" style="color:#8E9E9E;"></i>
+              <p class="ht font-semibold text-[12px]" style="color:#8E9E9E;text-decoration:line-through;">Task tools</p>
+            </div>
+            <div class="flex items-center gap-2.5 p-3 rounded-xl" style="background:#EEF2F2;opacity:0.7;">
+              <i data-lucide="folder" class="w-3.5 h-3.5 shrink-0" style="color:#8E9E9E;"></i>
+              <p class="ht font-semibold text-[12px]" style="color:#8E9E9E;text-decoration:line-through;">Scattered folders</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl p-4 flex items-start gap-3" style="background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.08);">
+          <i data-lucide="alert-triangle" class="w-4 h-4 mt-0.5 shrink-0" style="color:#C84A2E;opacity:0.8;"></i>
+          <div>
+            <p class="text-[13px] leading-relaxed" style="color:#903020;">So approvals get delayed. Files disappear. Clients repeat themselves. Teams lose context. Retainers become messy.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AFTER -->
+      <div class="rv rv-d1 rounded-[32px] p-10 md:p-12 relative overflow-clip" style="background:#0B4F52;">
+        <div class="orb" style="width:440px;height:360px;top:-60px;right:-60px;background:radial-gradient(ellipse,rgba(31,138,112,0.22) 0%,transparent 65%);filter:blur(90px);z-index:0;"></div>
+
+        <div class="relative z-10">
+          <div class="flex items-center justify-between mb-8">
+            <p class="ht font-bold text-[10px] uppercase tracking-[0.14em]" style="color:#4A6A67;">With Vereli</p>
+            <span class="ht font-bold text-[9px] uppercase tracking-[0.1em] px-2.5 py-1 rounded-full" style="background:rgba(31,138,112,0.2);color:#7BE0C5;">One connected workspace</span>
+          </div>
+
+          <p class="text-[14px] leading-relaxed mb-6" style="color:rgba(255,255,255,0.55);">Vereli fixes this by keeping everything connected to the client relationship itself.</p>
+
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">
+              <div class="w-7 h-7 rounded-xl flex items-center justify-center shrink-0" style="background:#C8E8E0;"><i data-lucide="folder" class="w-3.5 h-3.5" style="color:#17A39B;"></i></div>
+              <p class="ht font-semibold text-[13px] text-white">Contracts and files, always findable</p>
+            </div>
+            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">
+              <div class="w-7 h-7 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;"><i data-lucide="list-checks" class="w-3.5 h-3.5" style="color:#0B4F52;"></i></div>
+              <p class="ht font-semibold text-[13px] text-white">Delivery and tasks connected to the client</p>
+            </div>
+            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">
+              <div class="w-7 h-7 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(31,138,112,0.2);"><i data-lucide="stamp" class="w-3.5 h-3.5" style="color:#7BE0C5;"></i></div>
+              <p class="ht font-semibold text-[13px] text-white">Feedback and approvals on the deliverable</p>
+            </div>
+            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">
+              <div class="w-7 h-7 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(255,255,255,0.07);"><i data-lucide="credit-card" class="w-3.5 h-3.5" style="color:rgba(255,255,255,0.55);"></i></div>
+              <p class="ht font-semibold text-[13px] text-white">Invoices and payments built in</p>
+            </div>
+            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">
+              <div class="w-7 h-7 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(255,255,255,0.07);"><i data-lucide="layout-dashboard" class="w-3.5 h-3.5" style="color:rgba(255,255,255,0.55);"></i></div>
+              <p class="ht font-semibold text-[13px] text-white">A branded portal for every client</p>
+            </div>
+          </div>
+
+          <p class="text-[12px] mt-6 pt-5" style="border-top:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.28);">Everything stays connected to the client relationship itself.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ ONE CLIENT. ONE WORKSPACE. ═══════════════════════ -->
+<section class="relative overflow-clip" style="background:#E4F2F0;padding:128px 0 144px;">
+  <div class="orb" style="width:700px;height:500px;top:50%;right:-180px;transform:translateY(-50%);background:radial-gradient(ellipse,rgba(11,61,58,0.07) 0%,transparent 65%);filter:blur(100px);"></div>
+
+  <div class="max-w-[1200px] mx-auto px-6 md:px-12 relative z-10">
+
+    <div class="rv text-center mb-16 md:mb-20 max-w-[600px] mx-auto">
+      <div class="kicker kicker-teal mb-5 mx-auto" style="display:inline-flex;">One workspace per client</div>
+      <h2 class="ht font-black tracking-[-0.042em] leading-[0.97] mb-5"
+          style="font-size:clamp(38px,5vw,62px);color:#0B4F52;">
+        One client.<br>One workspace.
+      </h2>
+      <p class="text-[16px] leading-[1.76]" style="color:#4A6468;">Every client inside Vereli gets a dedicated workspace where your team and your client can work together — without confusion.</p>
+    </div>
+
+    <!-- Feature grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div class="rv surf p-6 flex gap-4 items-start">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+          <i data-lucide="file-text" class="w-4 h-4" style="color:#0B4F52;"></i>
+        </div>
+        <div>
+          <h3 class="ht font-bold text-[15px] tracking-[-0.02em] mb-1.5" style="color:#0B4F52;">Contracts &amp; signatures</h3>
+          <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Send agreements and collect signatures inside Vereli.</p>
+        </div>
+      </div>
+      <div class="rv rv-d1 surf p-6 flex gap-4 items-start">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+          <i data-lucide="receipt" class="w-4 h-4" style="color:#0B4F52;"></i>
+        </div>
+        <div>
+          <h3 class="ht font-bold text-[15px] tracking-[-0.02em] mb-1.5" style="color:#0B4F52;">Invoices &amp; payments</h3>
+          <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Send invoices and collect payments through Stripe, Paystack, Flutterwave, or bank transfer.</p>
+        </div>
+      </div>
+      <div class="rv rv-d2 surf p-6 flex gap-4 items-start">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+          <i data-lucide="list-checks" class="w-4 h-4" style="color:#0B4F52;"></i>
+        </div>
+        <div>
+          <h3 class="ht font-bold text-[15px] tracking-[-0.02em] mb-1.5" style="color:#0B4F52;">Delivery &amp; tasks</h3>
+          <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Track internal work without bloated project management tools.</p>
+        </div>
+      </div>
+      <div class="rv surf p-6 flex gap-4 items-start">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+          <i data-lucide="message-circle" class="w-4 h-4" style="color:#0B4F52;"></i>
+        </div>
+        <div>
+          <h3 class="ht font-bold text-[15px] tracking-[-0.02em] mb-1.5" style="color:#0B4F52;">Feedback &amp; approvals</h3>
+          <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Clients review and approve directly on the deliverable — no email chains.</p>
+        </div>
+      </div>
+      <div class="rv rv-d1 surf p-6 flex gap-4 items-start">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+          <i data-lucide="layout-dashboard" class="w-4 h-4" style="color:#0B4F52;"></i>
+        </div>
+        <div>
+          <h3 class="ht font-bold text-[15px] tracking-[-0.02em] mb-1.5" style="color:#0B4F52;">Client portal</h3>
+          <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Clients review, approve, comment, and pay from their own branded portal.</p>
+        </div>
+      </div>
+      <div class="rv rv-d2 surf p-6 flex gap-4 items-start">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+          <i data-lucide="refresh-cw" class="w-4 h-4" style="color:#0B4F52;"></i>
+        </div>
+        <div>
+          <h3 class="ht font-bold text-[15px] tracking-[-0.02em] mb-1.5" style="color:#0B4F52;">Retainers &amp; ongoing work</h3>
+          <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Continue client relationships without starting over each time.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="rv text-center text-[14px]" style="color:#6B7C7D;">Everything stays connected to the client and the work — from signed agreement to ongoing retainer.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ CLIENT PORTAL ═══════════════════════ -->
+<section class="relative overflow-clip" style="background:#fff;padding:128px 0 144px;">
+  <div class="orb" style="width:900px;height:640px;top:-60px;right:-260px;background:radial-gradient(ellipse,rgba(31,138,112,0.09) 0%,transparent 62%);filter:blur(120px);"></div>
+
+  <div class="max-w-[1200px] mx-auto px-6 md:px-12 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-12 lg:gap-20 items-center">
+
+      <!-- Left: copy -->
+      <div class="rv">
+        <div class="kicker kicker-teal mb-6">Client Portal</div>
+        <h2 class="ht font-black tracking-[-0.042em] leading-[0.97] mb-7"
+            style="font-size:clamp(36px,4.5vw,56px);color:#0B4F52;">
+          Your clients get<br>their own portal.
+        </h2>
+        <p class="text-[16px] leading-[1.78] mb-10" style="max-width:360px;color:#4A6468;">
+          Every client logs in to a branded space built around your business. They stay close to the work, without the email back-and-forth.
+        </p>
+
+        <div class="space-y-5">
+          <div class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+              <i data-lucide="eye" class="w-3.5 h-3.5" style="color:#0B4F52;"></i>
+            </div>
+            <p class="ht font-semibold text-[14px]" style="color:#0B4F52;">Review work and deliverables</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+              <i data-lucide="stamp" class="w-3.5 h-3.5" style="color:#0B4F52;"></i>
+            </div>
+            <p class="ht font-semibold text-[14px]" style="color:#0B4F52;">Approve deliverables formally</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+              <i data-lucide="file-signature" class="w-3.5 h-3.5" style="color:#0B4F52;"></i>
+            </div>
+            <p class="ht font-semibold text-[14px]" style="color:#0B4F52;">Sign agreements and contracts</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+              <i data-lucide="credit-card" class="w-3.5 h-3.5" style="color:#0B4F52;"></i>
+            </div>
+            <p class="ht font-semibold text-[14px]" style="color:#0B4F52;">Pay invoices from the portal</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+              <i data-lucide="message-circle" class="w-3.5 h-3.5" style="color:#0B4F52;"></i>
+            </div>
+            <p class="ht font-semibold text-[14px]" style="color:#0B4F52;">Leave feedback in context</p>
+          </div>
+        </div>
+
+
+      </div>
+
+      <!-- Right: portal mockup -->
+      <div class="rv rv-d1">
+        <div class="rounded-[28px] overflow-hidden" style="box-shadow:0 36px 90px rgba(0,0,0,0.12),inset 0 0 0 1px rgba(0,0,0,0.06);">
+
+          <!-- Portal header -->
+          <div class="flex items-center justify-between px-5 py-3.5" style="background:#0B4F52;">
+            <div class="flex items-center gap-2.5">
+              <div class="w-6 h-6 rounded-lg flex items-center justify-center" style="background:rgba(255,255,255,0.12);">
+                <i data-lucide="layout-grid" class="w-3 h-3" style="color:rgba(255,255,255,0.9);"></i>
+              </div>
+              <span class="ht font-bold text-[12px] text-white">Meridian Advisory</span>
+              <span class="text-[9px] ht font-bold px-2 py-0.5 rounded-full" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.45);">CLIENT PORTAL</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-full flex items-center justify-center ht font-black text-[9px]" style="background:#17A39B;color:#fff;">LB</div>
+              <span class="text-[11px] text-white ht font-medium hidden sm:block">Lumina Brand</span>
+            </div>
+          </div>
+
+          <!-- Nav tabs -->
+          <div class="flex items-center gap-1 px-4 py-2.5" style="background:#fff;border-bottom:1px solid #F0F0EE;">
+            <div class="p-tab active"><i data-lucide="layout-grid" class="w-3 h-3"></i>Overview</div>
+            <div class="p-tab"><i data-lucide="folder" class="w-3 h-3"></i>Files</div>
+            <div class="p-tab"><i data-lucide="check-circle" class="w-3 h-3"></i>Approvals</div>
+            <div class="p-tab hidden sm:flex"><i data-lucide="credit-card" class="w-3 h-3"></i>Payments</div>
+          </div>
+
+          <!-- Body -->
+          <div class="p-5 space-y-4" style="background:#F6F9F8;">
+            <div class="surf p-4" style="border-radius:16px;">
+              <p class="ht font-bold text-[9.5px] uppercase tracking-[0.12em] mb-3" style="color:#7A9E99;">Needs your attention</p>
+              <div class="space-y-2.5">
+                <div class="flex items-center gap-3">
+                  <span class="text-[9.5px] ht font-bold px-2 py-0.5 rounded-full shrink-0" style="background:#FFF0E8;color:#B04000;">Approval</span>
+                  <p class="ht font-semibold text-[12px] flex-1" style="color:#0B4F52;">Q2 Campaign Deliverables</p>
+                  <button class="text-[10px] ht font-bold px-3 py-1 rounded-lg shrink-0" style="background:#0B4F52;color:#fff;">Review</button>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="text-[9.5px] ht font-bold px-2 py-0.5 rounded-full shrink-0" style="background:#EEF3FF;color:#3558CC;">Sign</span>
+                  <p class="ht font-semibold text-[12px] flex-1" style="color:#0B4F52;">Retainer Agreement — Oct 2025</p>
+                  <button class="text-[10px] ht font-bold px-3 py-1 rounded-lg shrink-0" style="background:#0B4F52;color:#fff;">Sign</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="surf p-4" style="border-radius:16px;">
+              <p class="ht font-bold text-[9.5px] uppercase tracking-[0.12em] mb-3" style="color:#7A9E99;">Shared files</p>
+              <div class="space-y-2">
+                <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-mist transition-colors cursor-pointer">
+                  <div class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style="background:#C8E8E0;">
+                    <i data-lucide="file-text" class="w-3 h-3" style="color:#17A39B;"></i>
+                  </div>
+                  <p class="text-[11px] flex-1" style="color:#0B4F52;">Brand Strategy v2.pdf</p>
+                  <span class="text-[9px] ht font-bold px-2 py-0.5 rounded-full shrink-0" style="background:#C8E8E0;color:#17A39B;">Approved</span>
+                </div>
+                <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-mist transition-colors cursor-pointer">
+                  <div class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style="background:#FBFBFA;">
+                    <i data-lucide="image" class="w-3 h-3" style="color:#7A9E99;"></i>
+                  </div>
+                  <p class="text-[11px] flex-1" style="color:#0B4F52;">Campaign Assets — Draft 3.zip</p>
+                  <span class="text-[9px] ht font-bold px-2 py-0.5 rounded-full shrink-0" style="background:#FFF0E8;color:#B04000;">Reviewing</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ HOW IT WORKS ═══════════════════════ -->
+<section class="relative overflow-clip" style="background:#E4F2F0;padding:128px 0 144px;">
+  <div class="orb" style="width:640px;height:480px;top:50%;right:-160px;transform:translateY(-50%);background:radial-gradient(ellipse,rgba(11,61,58,0.07) 0%,transparent 65%);filter:blur(100px);"></div>
+
+  <div class="max-w-[1200px] mx-auto px-6 md:px-12 relative z-10">
+
+    <div class="rv text-center mb-16 md:mb-20">
+      <div class="kicker kicker-teal mb-5 mx-auto" style="display:inline-flex;">How it works</div>
+      <h2 class="ht font-black tracking-[-0.042em] leading-[0.97]"
+          style="font-size:clamp(38px,5vw,62px);color:#0B4F52;">
+        Manage the full<br>client lifecycle.
+      </h2>
+      <p class="text-[16px] leading-[1.76] mt-5 max-w-[480px] mx-auto" style="color:#4A6468;">From signed agreement → to delivery → to ongoing retainer. Inside one system. No restarting.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+      <div class="rv surf p-8 flex gap-6 items-start">
+        <span class="w-10 h-10 rounded-2xl flex items-center justify-center ht font-black text-[15px] shrink-0" style="background:#0B4F52;color:#fff;">1</span>
+        <div>
+          <h3 class="ht font-black text-[19px] tracking-[-0.025em] mb-2.5" style="color:#0B4F52;">Add a client</h3>
+          <p class="text-[14px] leading-relaxed" style="color:#6B7C7D;">Vereli creates a dedicated workspace. Contracts, files, tasks, and everything related to that client lives in one place from day one.</p>
+        </div>
+      </div>
+
+      <div class="rv rv-d1 surf p-8 flex gap-6 items-start">
+        <span class="w-10 h-10 rounded-2xl flex items-center justify-center ht font-black text-[15px] shrink-0" style="background:#0B4F52;color:#fff;">2</span>
+        <div>
+          <h3 class="ht font-black text-[19px] tracking-[-0.025em] mb-2.5" style="color:#0B4F52;">Run the work inside their space</h3>
+          <p class="text-[14px] leading-relaxed" style="color:#6B7C7D;">Send contracts, assign tasks, manage deliverables, send invoices — all inside the client's workspace, connected.</p>
+        </div>
+      </div>
+
+      <div class="rv rv-d2 surf p-8 flex gap-6 items-start">
+        <span class="w-10 h-10 rounded-2xl flex items-center justify-center ht font-black text-[15px] shrink-0" style="background:#0B4F52;color:#fff;">3</span>
+        <div>
+          <h3 class="ht font-black text-[19px] tracking-[-0.025em] mb-2.5" style="color:#0B4F52;">Invite them to their portal</h3>
+          <p class="text-[14px] leading-relaxed" style="color:#6B7C7D;">Each client gets a branded portal. They see what you share — and nothing else.</p>
+        </div>
+      </div>
+
+      <div class="rv rv-d3 surf p-8 flex gap-6 items-start">
+        <span class="w-10 h-10 rounded-2xl flex items-center justify-center ht font-black text-[15px] shrink-0" style="background:#0B4F52;color:#fff;">4</span>
+        <div>
+          <h3 class="ht font-black text-[19px] tracking-[-0.025em] mb-2.5" style="color:#0B4F52;">They respond — you see it immediately</h3>
+          <p class="text-[14px] leading-relaxed" style="color:#6B7C7D;">Approvals, signatures, feedback, and payments come through in Vereli. No chasing, no rebuilding context.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="rv mt-10 text-center text-[14px]" style="color:#6B7C7D;">No disconnected tools. No rebuilding workflows. One system from start to ongoing.</p>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ WHO IT'S FOR ═══════════════════════ -->
+<section class="relative" style="background:#fff;padding:128px 0 144px;">
+  <div class="max-w-[1200px] mx-auto px-6 md:px-12">
+
+    <div class="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-12 lg:gap-24 items-start">
+
+      <div class="rv">
+        <div class="kicker kicker-teal mb-6">Built for</div>
+        <h2 class="ht font-black tracking-[-0.042em] leading-[0.97] mb-6"
+            style="font-size:clamp(34px,4.2vw,54px);color:#0B4F52;">
+          Built for real service workflows.
+        </h2>
+        <p class="text-[15px] leading-[1.78] mb-6" style="color:#4A6E6B;">Whether your work starts with strategy, advisory, media, editorial, communications, retainers, or ongoing partnerships — Vereli adapts to how your business actually works. Not the other way around.</p>
+        <p class="text-[13px]" style="color:#7A9E99;">Businesses where client relationships continue over time.</p>
+      </div>
+
+      <div class="rv rv-d1" style="border-top:1px solid #DCE5E6;">
+        <div style="display:flex;align-items:center;gap:16px;padding:20px 0;border-bottom:1px solid #DCE5E6;">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+            <i data-lucide="building-2" class="w-5 h-5" style="color:#0B4F52;"></i>
+          </div>
+          <div class="flex-1">
+            <p class="ht font-black text-[22px] tracking-[-0.03em] leading-tight" style="color:#0B4F52;">Agencies</p>
+            <p class="text-[13px] mt-0.5" style="color:#6B7C7D;">Multi-client teams running creative, strategy, and media work</p>
+          </div>
+          <i data-lucide="arrow-right" class="w-4 h-4 shrink-0" style="color:#A8D4CC;"></i>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:20px 0;border-bottom:1px solid #DCE5E6;">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+            <i data-lucide="briefcase" class="w-5 h-5" style="color:#0B4F52;"></i>
+          </div>
+          <div class="flex-1">
+            <p class="ht font-black text-[22px] tracking-[-0.03em] leading-tight" style="color:#0B4F52;">Consultancies</p>
+            <p class="text-[13px] mt-0.5" style="color:#6B7C7D;">Independent practitioners, advisory firms, and specialist practices</p>
+          </div>
+          <i data-lucide="arrow-right" class="w-4 h-4 shrink-0" style="color:#A8D4CC;"></i>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:20px 0;border-bottom:1px solid #DCE5E6;">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+            <i data-lucide="pencil-ruler" class="w-5 h-5" style="color:#0B4F52;"></i>
+          </div>
+          <div class="flex-1">
+            <p class="ht font-black text-[22px] tracking-[-0.03em] leading-tight" style="color:#0B4F52;">Studios</p>
+            <p class="text-[13px] mt-0.5" style="color:#6B7C7D;">Design, production, and creative delivery teams</p>
+          </div>
+          <i data-lucide="arrow-right" class="w-4 h-4 shrink-0" style="color:#A8D4CC;"></i>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:20px 0;border-bottom:1px solid #DCE5E6;">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+            <i data-lucide="radio" class="w-5 h-5" style="color:#0B4F52;"></i>
+          </div>
+          <div class="flex-1">
+            <p class="ht font-black text-[22px] tracking-[-0.03em] leading-tight" style="color:#0B4F52;">Media companies</p>
+            <p class="text-[13px] mt-0.5" style="color:#6B7C7D;">Editorial, publishing, and communications businesses</p>
+          </div>
+          <i data-lucide="arrow-right" class="w-4 h-4 shrink-0" style="color:#A8D4CC;"></i>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:20px 0;">
+          <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #A8D4CC;">
+            <i data-lucide="users" class="w-5 h-5" style="color:#0B4F52;"></i>
+          </div>
+          <div class="flex-1">
+            <p class="ht font-black text-[22px] tracking-[-0.03em] leading-tight" style="color:#0B4F52;">Service businesses</p>
+            <p class="text-[13px] mt-0.5" style="color:#6B7C7D;">Any team where client relationships continue over time</p>
+          </div>
+          <i data-lucide="arrow-right" class="w-4 h-4 shrink-0" style="color:#A8D4CC;"></i>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ WHAT IT REPLACES ═══════════════════════ -->
+<section class="dark-section relative overflow-clip" style="padding:128px 0 144px;">
+  <div class="orb" style="width:800px;height:560px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(31,138,112,0.10) 0%,transparent 65%);filter:blur(120px);"></div>
+
+  <div class="max-w-[1200px] mx-auto px-6 md:px-12 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-16 lg:gap-24 items-start">
+
+      <div class="rv lg:sticky lg:top-28">
+        <div class="kicker kicker-dark mb-6">What it replaces</div>
+        <h2 class="ht font-black tracking-[-0.042em] leading-[0.97] mb-6"
+            style="font-size:clamp(36px,4.5vw,56px);color:#fff;">
+          Stop managing one client across five tools.
+        </h2>
+        <p class="text-[15px] leading-[1.78] mb-10" style="color:rgba(255,255,255,0.44);">Run your client operations inside Vereli. One system, every client, all the context.</p>
+        <a href="/signup/" class="cta-primary" style="height:50px;padding:0 32px;font-size:14px;border-radius:12px;">Start Free Trial</a>
+      </div>
+
+      <div class="rv rv-d1">
+        <div style="border-top:1px solid rgba(255,255,255,0.07);">
+          <div style="display:flex;align-items:flex-start;gap:16px;padding:22px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(255,255,255,0.05);"><i data-lucide="mail" class="w-4 h-4" style="color:rgba(255,255,255,0.35);"></i></div>
+            <div><p class="ht font-bold text-[15px] text-white mb-1">Email for approvals and updates</p><p class="text-[13px] leading-relaxed" style="color:rgba(255,255,255,0.38);">Approvals happen in the client portal, attached to the deliverable they belong to.</p></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:16px;padding:22px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(255,255,255,0.05);"><i data-lucide="message-square" class="w-4 h-4" style="color:rgba(255,255,255,0.35);"></i></div>
+            <div><p class="ht font-bold text-[15px] text-white mb-1">WhatsApp for client feedback</p><p class="text-[13px] leading-relaxed" style="color:rgba(255,255,255,0.38);">Feedback lives on the file, in context, where it can actually be acted on.</p></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:16px;padding:22px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(255,255,255,0.05);"><i data-lucide="hard-drive" class="w-4 h-4" style="color:rgba(255,255,255,0.35);"></i></div>
+            <div><p class="ht font-bold text-[15px] text-white mb-1">Google Drive for file management</p><p class="text-[13px] leading-relaxed" style="color:rgba(255,255,255,0.38);">Every file is organised inside the client workspace — not buried in a shared folder.</p></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:16px;padding:22px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(255,255,255,0.05);"><i data-lucide="check-square" class="w-4 h-4" style="color:rgba(255,255,255,0.35);"></i></div>
+            <div><p class="ht font-bold text-[15px] text-white mb-1">Separate task tools</p><p class="text-[13px] leading-relaxed" style="color:rgba(255,255,255,0.38);">Tasks live inside the client workspace, connected to the work they're part of.</p></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:16px;padding:22px 0;">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(255,255,255,0.05);"><i data-lucide="receipt" class="w-4 h-4" style="color:rgba(255,255,255,0.35);"></i></div>
+            <div><p class="ht font-bold text-[15px] text-white mb-1">A separate invoicing app</p><p class="text-[13px] leading-relaxed" style="color:rgba(255,255,255,0.38);">Invoices are created, sent, and collected — all from inside Vereli.</p></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ FINAL CTA ═══════════════════════ -->
+<section class="dark-section relative overflow-clip">
+  <div class="orb" style="width:860px;height:480px;top:50%;left:50%;transform:translate(-50%,-55%);background:radial-gradient(ellipse,rgba(31,138,112,0.12) 0%,transparent 62%);filter:blur(90px);"></div>
+
+  <div class="max-w-[680px] mx-auto px-6 md:px-12 relative z-10 text-center rv" style="padding-top:144px;padding-bottom:64px;">
+    <h2 class="ht font-black leading-[0.92] tracking-[-0.05em] mb-8"
+        style="color:#fff;font-size:clamp(46px,8vw,96px);">
+      Client operations,<br>finally<br>in one place.
+    </h2>
+    <p class="text-[17px] leading-[1.72] mb-12 max-w-[420px] mx-auto" style="color:rgba(255,255,255,0.46);">
+      Contracts, payments, delivery, approvals, and a client portal — all connected in one workspace.
+    </p>
+    <div class="flex items-center justify-center mb-8">
+      <a href="/signup/" class="cta-primary" style="height:56px;padding:0 48px;font-size:16px;border-radius:14px;">Start Free Trial</a>
+    </div>
+    <p class="text-[12.5px]" style="color:rgba(255,255,255,0.22);">No credit card required · Cancel any time</p>
+  </div>
+
+  <div class="relative z-0 overflow-clip">
+    <p class="watermark text-center w-full" style="font-size:clamp(80px,14vw,200px);padding:0 20px;">Vereli</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer style="background:#062B2D;color:#fff;">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 pt-16 pb-10">
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-10 mb-14">
+      <div class="col-span-2">
+        <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-9 w-auto mb-5 brightness-0 invert opacity-60">
+        <p class="text-[13px] leading-relaxed max-w-[230px]" style="color:rgba(255,255,255,0.50);">Client operations for service businesses — contracts, payments, delivery, and portals in one place.</p>
+        <p class="text-[12px] mt-4 flex items-center gap-1.5" style="color:rgba(255,255,255,0.30);">
+          <i data-lucide="map-pin" class="w-3 h-3 shrink-0"></i> Lagos, Nigeria
+        </p>
+      </div>
+      <div>
+        <p class="ht font-bold text-[10px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,0.48);">Product</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,0.42);">
+          <li><a href="/features/" class="hover:text-white transition-colors">Features</a></li>
+          <li><a href="/pricing/"  class="hover:text-white transition-colors">Pricing</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Updates</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Roadmap</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[10px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,0.48);">Company</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,0.42);">
+          <li><a href="/about/"  class="hover:text-white transition-colors">About</a></li>
+          <li><a href="/contact/" class="hover:text-white transition-colors">Contact</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Careers</li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[10px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,0.48);">Resources</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,0.42);">
+          <li><a href="/resources/#guides"      class="hover:text-white transition-colors">Guides</a></li>
+          <li><a href="/resources/#templates"   class="hover:text-white transition-colors">Templates</a></li>
+          <li><a href="/resources/#help-center" class="hover:text-white transition-colors">Help Center</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[10px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,0.48);">Legal</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,0.42);">
+          <li><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a></li>
+          <li><a href="/terms/"   class="hover:text-white transition-colors">Terms</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Security</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4" style="border-top:1px solid rgba(255,255,255,0.06);">
+      <div class="flex flex-col sm:flex-row items-center gap-3">
+        <p class="text-[12px]" id="footer-copy" style="color:rgba(255,255,255,0.46);">© 2026 Vereli Inc.</p>
+        <span class="hidden sm:inline text-[12px]" style="color:rgba(255,255,255,0.16);">·</span>
+        <p class="text-[12px]" style="color:rgba(255,255,255,0.30);">Designed by Sharon Nkwah.</p>
+      </div>
+      <div class="flex gap-5">
+        <a href="https://twitter.com/vereli" aria-label="Vereli on Twitter" rel="noopener noreferrer" target="_blank" style="color:rgba(255,255,255,0.32);" class="hover:opacity-100 transition-opacity"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+        <a href="https://www.linkedin.com/company/vereli" aria-label="Vereli on LinkedIn" rel="noopener noreferrer" target="_blank" style="color:rgba(255,255,255,0.32);" class="hover:opacity-100 transition-opacity"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+</main>
+
+
+<script id="content" type="application/json">{"company":"content/company.json"}</script>
+<script type="module">
+import { submitContactForm } from '@appsmithorg/template-frontend/utility';
+document.dispatchEvent(new CustomEvent('kite:core-ready', { detail: { submitContactForm } }));
+</script>
+<script id="main_script">
+lucide.createIcons();
+document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' Vereli Inc.';
+
+var nav = document.getElementById('nav');
+window.addEventListener('scroll', function() {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+var drawer = document.getElementById('drawer');
+var overlay = document.getElementById('drawer-overlay');
+function openDrawer()  { drawer.classList.add('open');  overlay.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+function closeDrawer() { drawer.classList.remove('open'); overlay.classList.add('hidden');  document.body.style.overflow = ''; }
+document.getElementById('hamburger').addEventListener('click', openDrawer);
+document.getElementById('close-drawer').addEventListener('click', closeDrawer);
+
+(function() {
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('on'); });
+  }, { threshold: 0.06, rootMargin: '0px 0px -24px 0px' });
+  document.querySelectorAll('.rv').forEach(function(el) { io.observe(el); });
+})();
+</script>
+<script src="https://assets.appsmith.com/kite_script_injector_v020.js"></script>
+</body>
+</html>

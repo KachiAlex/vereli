@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Vereli — Get in touch with our team</title>
+  <meta name="description" content="Have a question about Vereli? Reach out to Sharon Nkwah and the Vereli team. We're happy to help you get started or answer anything about the product.">
+  <meta property="og:title" content="Contact Vereli — Get in touch with our team">
+  <meta property="og:description" content="Have a question about Vereli? Reach out to Sharon Nkwah and the Vereli team.">
+  <meta name="twitter:title" content="Contact Vereli — Get in touch with our team">
+  <meta name="twitter:description" content="Have a question about Vereli? Reach out to Sharon Nkwah and the Vereli team.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { teal:'#0B4F52','teal-light':'#17A39B',mist:'#E4F2F0','mist-dark':'#C0E4DE',graphite:'#0B4F52','warm-gray':'#F5FAF9','mid-gray':'#DCE5E6','text-soft':'#5A6E70','text-muted':'#7A9E99' }, fontFamily: { tight:['"General Sans"','sans-serif'], body:['Inter','sans-serif'] } } }
+    }
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+    body{background:#FFFFFF;color:#0B4F52;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    .ht{font-family:'General Sans',sans-serif}
+    .rv{opacity:0;transform:translateY(22px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+    .rv.on{opacity:1;transform:none}.rv-d1{transition-delay:90ms}.rv-d2{transition-delay:180ms}
+    #nav{transition:background .3s ease,border-color .3s ease,backdrop-filter .3s ease}
+    #nav.scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:#DCE5E6}
+    #drawer{transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.2,1)}
+    #drawer.open{transform:translateX(0)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:999px;background:#E4F2F0;color:#0B4F52;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid #C0E4DE}
+    .cta-primary{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 32px;border-radius:12px;background:#17A39B;color:#fff;font-family:'General Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.01em;box-shadow:0 6px 28px rgba(23,163,155,.3);transition:transform .18s ease,box-shadow .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-primary:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(23,163,155,.4)}
+    .cta-ghost{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:52px;padding:0 28px;border-radius:12px;background:transparent;color:#0B4F52;font-family:'General Sans',sans-serif;font-size:15px;font-weight:600;border:1.5px solid #DCE5E6;transition:border-color .18s ease,background .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-ghost:hover{border-color:#0B4F52;background:rgba(11,61,58,.03)}
+    .nav-link{font-family:'General Sans',sans-serif;font-size:13px;font-weight:500;color:#5A6E70;text-decoration:none;transition:color .15s ease}
+    .nav-link:hover,.nav-link.active{color:#0B4F52}
+    .card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:16px;box-shadow:0 2px 20px rgba(11,61,58,.06),inset 0 0 0 1px rgba(11,61,58,.04)}
+    .orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+
+    /* Form field styles */
+    .field{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid #DCE5E6;background:#fff;font-size:14px;font-family:'Inter',sans-serif;color:#0B4F52;outline:none;transition:border-color .15s,box-shadow .15s;resize:none}
+    .field:focus{border-color:#17A39B;box-shadow:0 0 0 3px rgba(23,163,155,.10)}
+    .field::placeholder{color:#AACCC8}
+    .flbl{font-size:11.5px;font-family:'General Sans',sans-serif;font-weight:700;color:#5A7A74;display:block;margin-bottom:7px;letter-spacing:.02em;text-transform:uppercase}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:640px){.form-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════ NAV ═══════════════════════ -->
+<nav id="nav" class="fixed top-0 left-0 right-0 z-50 border-b border-transparent">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-[66px] flex items-center justify-between">
+    <a href="/"><img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto"></a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="/features/"  class="nav-link">Features</a>
+      <a href="/pricing/"   class="nav-link">Pricing</a>
+      <a href="/resources/" class="nav-link">Resources</a>
+      <a href="/about/"     class="nav-link">About</a>
+    </div>
+    <div class="hidden md:flex items-center gap-3">
+      <a href="/login/"  class="nav-link px-2">Log in</a>
+      <a href="/signup/" class="cta-primary" style="height:38px;padding:0 20px;font-size:13px;border-radius:9px;box-shadow:0 4px 16px rgba(23,163,155,.28);">Start Free Trial</a>
+    </div>
+    <button id="hamburger" aria-label="Open menu" class="md:hidden p-2 -mr-1"><i data-lucide="menu" class="w-5 h-5"></i></button>
+  </div>
+</nav>
+
+<div id="drawer-overlay" class="fixed inset-0 z-[40] bg-black/25 hidden" onclick="closeDrawer()"></div>
+<div id="drawer" class="fixed top-0 right-0 bottom-0 z-[60] w-[300px] flex flex-col shadow-2xl" style="background:#FFFFFF;">
+  <div class="h-[66px] flex items-center justify-between px-5 border-b" style="border-color:#DCE5E6;">
+    <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto">
+    <button id="close-drawer" aria-label="Close menu" class="p-2 -mr-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+  </div>
+  <nav class="flex-1 flex flex-col gap-1 p-4">
+    <a href="/features/"  class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Features</a>
+    <a href="/pricing/"   class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Pricing</a>
+    <a href="/resources/" class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Resources</a>
+    <a href="/about/"     class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">About</a>
+  </nav>
+  <div class="p-4 border-t flex flex-col gap-2.5" style="border-color:#DCE5E6;">
+    <a href="/signup/" class="cta-primary w-full justify-center" style="border-radius:10px;">Start Free Trial</a>
+    <a href="/login/"  class="cta-ghost  w-full justify-center" style="border-radius:10px;">Log in</a>
+  </div>
+</div>
+
+<main>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section class="relative overflow-clip" style="background:#FFFFFF;padding-top:140px;padding-bottom:80px;">
+
+  <!-- Ambient glow -->
+  <div class="orb" style="width:800px;height:600px;top:-100px;right:-200px;background:radial-gradient(ellipse,rgba(31,138,112,.10) 0%,transparent 60%);filter:blur(90px);"></div>
+  <div class="orb" style="width:500px;height:400px;bottom:-60px;left:-100px;background:radial-gradient(ellipse,rgba(31,138,112,.06) 0%,transparent 65%);filter:blur(80px);"></div>
+
+  <div class="max-w-[1100px] mx-auto px-6 md:px-12 relative z-10">
+
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_520px] gap-14 xl:gap-20 items-start">
+
+      <!-- LEFT: heading + founder card + quick links -->
+      <div class="rv">
+        <span class="badge mb-8 inline-flex">Contact</span>
+        <h1 class="ht font-black leading-[0.93] tracking-[-0.045em] text-graphite mb-7"
+            style="font-size:clamp(46px,6vw,76px);">
+          Let's talk<br>about your<br>work.
+        </h1>
+        <p class="text-[17px] leading-[1.76] mb-10 max-w-[420px]" style="color:#4A6468;">
+          Whether you have a question about the product, want to explore a plan, or just want to say hello — we're here.
+        </p>
+
+        <!-- Founder card -->
+        <div class="card rounded-[20px] p-6 mb-8 max-w-[420px]" style="background:#F8FAF9;">
+          <div class="flex items-center gap-4 mb-5">
+            <div class="shrink-0 w-[52px] h-[52px] rounded-full overflow-hidden" style="border:2px solid rgba(31,138,112,0.3);box-shadow:0 4px 16px rgba(0,0,0,.10);">
+              <img src="https://static.kite.ai/image/upload/f_auto,q_auto,w_104,h_104,c_fill,g_face/v1779817149/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/obhisrp9tei79pzbtubq.png"
+                   alt="Sharon Nkwah — Founder, Vereli"
+                   class="w-full h-full object-cover">
+            </div>
+            <div>
+              <p class="ht font-bold text-[14px] text-graphite">Sharon Nkwah</p>
+              <p class="text-[13px] text-text-muted mt-0.5">Founder, Vereli</p>
+            </div>
+          </div>
+          <p class="text-[14px] leading-[1.72]" style="color:#5A6E70;">
+            I personally read every message that comes in. If you have a question or feedback, I want to hear it.
+          </p>
+        </div>
+
+        <!-- Quick contact details -->
+        <div class="flex flex-col gap-3 max-w-[420px]">
+          <a href="mailto:hello@vereli.team" class="flex items-center gap-3 text-[14px] font-medium text-graphite hover:opacity-70 transition-opacity group">
+            <span class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+              <i data-lucide="mail" class="w-4 h-4" style="color:#17A39B;"></i>
+            </span>
+            <span>Email us directly</span>
+          </a>
+          <div class="flex items-center gap-3 text-[14px]" style="color:#7A9E99;">
+            <span class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+              <i data-lucide="map-pin" class="w-4 h-4" style="color:#17A39B;"></i>
+            </span>
+            <span>Lagos, Nigeria · Remote-first</span>
+          </div>
+          <div class="flex items-center gap-3 text-[14px]" style="color:#7A9E99;">
+            <span class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+              <i data-lucide="clock" class="w-4 h-4" style="color:#17A39B;"></i>
+            </span>
+            <span>Usually responds within 24 hours</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: contact form -->
+      <div class="rv rv-d1">
+        <div class="card rounded-[24px] p-8 md:p-10" style="background:#fff;">
+          <div class="mb-7">
+            <p class="ht font-bold text-[18px] text-graphite tracking-[-0.02em] mb-1.5">Send a message</p>
+            <p class="text-[13.5px]" style="color:#7A9E99;">Fill in the form and we'll get back to you shortly.</p>
+          </div>
+
+          <form id="contact-form" novalidate>
+            <div class="flex flex-col gap-5">
+              <div class="form-row">
+                <div>
+                  <label class="flbl" for="cf-name">Your name <span style="color:#E87070">*</span></label>
+                  <input id="cf-name" name="name" type="text" class="field" placeholder="Jane Smith" required>
+                </div>
+                <div>
+                  <label class="flbl" for="cf-email">Email address <span style="color:#E87070">*</span></label>
+                  <input id="cf-email" name="email" type="email" class="field" placeholder="jane@yourcompany.co" required>
+                </div>
+              </div>
+              <div>
+                <label class="flbl" for="cf-subject">What's this about?</label>
+                <select id="cf-subject" name="subject" class="field" style="appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236B6B68%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22/></svg>');background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer;">
+                  <option value="">Select a topic…</option>
+                  <option value="General question">General question</option>
+                  <option value="Product demo">I'd like a product demo</option>
+                  <option value="Pricing inquiry">Pricing &amp; plans</option>
+                  <option value="Trial support">Help with my trial</option>
+                  <option value="Feedback">Feedback or suggestion</option>
+                  <option value="Partnership">Partnership or media</option>
+                  <option value="Other">Something else</option>
+                </select>
+              </div>
+              <div>
+                <label class="flbl" for="cf-message">Message <span style="color:#E87070">*</span></label>
+                <textarea id="cf-message" name="message" class="field" rows="5" placeholder="Tell us what's on your mind…" required></textarea>
+              </div>
+
+              <!-- Submission feedback -->
+              <div id="cf-success" style="display:none;padding:14px 16px;border-radius:12px;background:#E8F8F0;border:1px solid #B0DEC8;">
+                <p class="ht font-bold text-[13px]" style="color:#1A6B4A;">Message sent — thanks!</p>
+                <p class="text-[12.5px] mt-1" style="color:#2D8A60;">We'll reply to your email within 24 hours.</p>
+              </div>
+              <div id="cf-error" style="display:none;padding:14px 16px;border-radius:12px;background:#FEF2F0;border:1px solid #F0C8C0;">
+                <p class="ht font-bold text-[13px]" style="color:#A81A1A;">Something went wrong.</p>
+                <p class="text-[12.5px] mt-1" style="color:#C0241A;">Please try again or use the email link above.</p>
+              </div>
+
+              <button id="cf-submit" type="submit" class="cta-primary w-full justify-center" style="border-radius:12px;font-size:15px;">
+                Send message
+              </button>
+              <p class="text-[12px] text-center" style="color:#A0B4B0;">We won't share your details with anyone.</p>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ FAQ STRIP ═══════════════════════ -->
+<section class="py-16 md:py-20" style="background:#F8FAF9;">
+  <div class="max-w-[760px] mx-auto px-6 md:px-12">
+    <div class="rv text-center mb-10">
+      <p class="ht font-bold text-[11px] uppercase tracking-[0.14em] mb-4" style="color:#7A9E99;">Common questions</p>
+      <h2 class="ht font-black tracking-[-0.035em] text-graphite" style="font-size:clamp(30px,4vw,46px);">Quick answers</h2>
+    </div>
+    <div class="flex flex-col gap-0" id="faq-list">
+      <!-- FAQs rendered by script -->
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer style="background:#062B2D;color:#fff;">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 pt-16 pb-10">
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-10 mb-14">
+      <div class="col-span-2">
+        <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-9 w-auto mb-5 brightness-0 invert opacity-60">
+        <p class="text-[13px] leading-relaxed max-w-[230px]" style="color:rgba(255,255,255,0.50);">Client operations for service businesses — contracts, payments, delivery, and portals in one place.</p>
+        <p class="text-[12px] mt-4 flex items-center gap-1.5" style="color:rgba(255,255,255,0.30);">
+          <i data-lucide="map-pin" class="w-3 h-3 shrink-0"></i> Lagos, Nigeria
+        </p>
+      </div>
+      <div>
+        <p class="ht font-bold text-[10px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,0.48);">Product</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,0.42);">
+          <li><a href="/features/" class="hover:text-white transition-colors">Features</a></li>
+          <li><a href="/pricing/"  class="hover:text-white transition-colors">Pricing</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Updates</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Roadmap</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[10px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,0.48);">Company</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,0.42);">
+          <li><a href="/about/"   class="hover:text-white transition-colors">About</a></li>
+          <li><a href="/contact/" class="hover:text-white transition-colors">Contact</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Careers</li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[10px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,0.48);">Resources</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,0.42);">
+          <li><a href="/resources/#guides"      class="hover:text-white transition-colors">Guides</a></li>
+          <li><a href="/resources/#templates"   class="hover:text-white transition-colors">Templates</a></li>
+          <li><a href="/resources/#help-center" class="hover:text-white transition-colors">Help Center</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[10px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,0.48);">Legal</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,0.42);">
+          <li><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a></li>
+          <li><a href="/terms/"   class="hover:text-white transition-colors">Terms</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Security</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4" style="border-top:1px solid rgba(255,255,255,0.06);">
+      <div class="flex flex-col sm:flex-row items-center gap-3">
+        <p class="text-[12px]" id="footer-copy" style="color:rgba(255,255,255,0.46);">© 2026 Vereli Inc.</p>
+        <span class="hidden sm:inline text-[12px]" style="color:rgba(255,255,255,0.16);">·</span>
+        <p class="text-[12px]" style="color:rgba(255,255,255,0.30);">Designed by Sharon Nkwah.</p>
+      </div>
+      <div class="flex gap-5">
+        <a href="#" aria-label="Twitter" style="color:rgba(255,255,255,0.32);" class="hover:opacity-100 transition-opacity"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+        <a href="#" aria-label="LinkedIn" style="color:rgba(255,255,255,0.32);" class="hover:opacity-100 transition-opacity"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+</main>
+
+<script id="content" type="application/json">{}</script>
+<script type="module">
+import { submitContactForm } from '@appsmithorg/template-frontend/utility';
+document.dispatchEvent(new CustomEvent('kite:core-ready', { detail: { submitContactForm } }));
+</script>
+<script id="main_script">
+let submitContactForm = null;
+document.addEventListener('kite:core-ready', (e) => {
+  submitContactForm = e.detail.submitContactForm;
+});
+
+lucide.createIcons();
+document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' Vereli Inc.';
+
+/* NAV SCROLL */
+var nav = document.getElementById('nav');
+window.addEventListener('scroll', function() { nav.classList.toggle('scrolled', window.scrollY > 40); }, { passive: true });
+
+/* DRAWER */
+var drawer = document.getElementById('drawer'), overlay = document.getElementById('drawer-overlay');
+function openDrawer()  { drawer.classList.add('open');  overlay.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+function closeDrawer() { drawer.classList.remove('open'); overlay.classList.add('hidden');  document.body.style.overflow = ''; }
+document.getElementById('hamburger').addEventListener('click', openDrawer);
+document.getElementById('close-drawer').addEventListener('click', closeDrawer);
+
+/* FAQ */
+var FAQS = [
+  { q: 'How quickly do you respond to messages?', a: 'We aim to respond within one business day. For urgent questions, use the email link on this page.' },
+  { q: 'Can I request a product demo?', a: 'Absolutely. Select "I\'d like a product demo" in the form above and we\'ll set up a time to walk you through Vereli.' },
+  { q: 'Do you offer support for teams already using Vereli?', a: 'Yes — if you\'re already a Vereli user and need help, use the in-app support channel for the fastest response.' },
+  { q: 'I have a partnership or press inquiry. Who do I contact?', a: 'Use the form above and select "Partnership or media". Sharon reviews all partnership enquiries personally.' },
+];
+
+var faqEl = document.getElementById('faq-list');
+faqEl.innerHTML = FAQS.map(function(f) {
+  return '<div style="border-bottom:1px solid #E4EDEA;padding:20px 0;">'
+    + '<button onclick="toggleFaq(this)" class="w-full flex items-center justify-between gap-4 text-left" style="background:none;border:none;cursor:pointer;">'
+    + '<span class="ht font-semibold text-[15px] text-graphite tracking-[-0.01em]">' + f.q + '</span>'
+    + '<i data-lucide="plus" class="w-4 h-4 shrink-0 faq-icon" style="color:#7A9E99;transition:transform .2s"></i>'
+    + '</button>'
+    + '<div class="faq-body" style="display:none;padding-top:12px;">'
+    + '<p class="text-[14.5px] leading-[1.72]" style="color:#5A6E70;">' + f.a + '</p>'
+    + '</div></div>';
+}).join('');
+lucide.createIcons();
+
+/* SCROLL REVEALS — must run after FAQ content is injected */
+(function() {
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('on'); });
+  }, { threshold: 0.06, rootMargin: '0px 0px -24px 0px' });
+  document.querySelectorAll('.rv').forEach(function(el) { io.observe(el); });
+})();
+
+function toggleFaq(btn) {
+  var body = btn.nextElementSibling;
+  var icon = btn.querySelector('.faq-icon');
+  var isOpen = body.style.display === 'block';
+  body.style.display = isOpen ? 'none' : 'block';
+  icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(45deg)';
+}
+
+/* CONTACT FORM */
+document.getElementById('contact-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var form = e.target;
+  var btn  = document.getElementById('cf-submit');
+  var ok   = document.getElementById('cf-success');
+  var err  = document.getElementById('cf-error');
+
+  /* Validate required fields */
+  var name  = form.querySelector('#cf-name').value.trim();
+  var email = form.querySelector('#cf-email').value.trim();
+  var msg   = form.querySelector('#cf-message').value.trim();
+  if (!name || !email || !msg) {
+    err.style.display = 'block';
+    err.querySelector('p').textContent = 'Please fill in all required fields.';
+    return;
+  }
+
+  btn.textContent = 'Sending…';
+  btn.style.opacity = '0.65';
+  btn.disabled = true;
+  ok.style.display = 'none';
+  err.style.display = 'none';
+
+  try {
+    if (typeof submitContactForm === 'function') {
+      await submitContactForm(form);
+    } else {
+      await new Promise(function(r) { setTimeout(r, 1400); });
+    }
+    ok.style.display = 'block';
+    form.reset();
+  } catch(ex) {
+    err.style.display = 'block';
+  } finally {
+    btn.textContent = 'Send message';
+    btn.style.opacity = '1';
+    btn.disabled = false;
+  }
+});
+</script>
+<script src="https://assets.appsmith.com/kite_script_injector_v020.js"></script>
+</body>
+</html>

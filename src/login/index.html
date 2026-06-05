@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log in to Vereli — Your client work workspace</title>
+  <meta name="description" content="Log in to your Vereli workspace to manage client work, files, tasks, feedback, and approvals.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            teal: '#0B4F52', 'teal-light': '#17A39B', mist: '#E4F2F0', orange: '#17A39B', graphite: '#0B4F52', cream: '#FFFFFF',
+            'warm-gray': '#F5FAF9', 'mid-gray': '#DCE5E6', 'text-soft': '#5A6E70',
+          },
+          fontFamily: { tight: ['"General Sans"', 'sans-serif'], body: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: #FFFFFF; color: #0B4F52; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+    .ht { font-family: 'General Sans', sans-serif; }
+
+    /* Form field base */
+    .field {
+      width: 100%; height: 50px; padding: 0 14px;
+      border-radius: 10px; border: 1.5px solid #DCE5E6;
+      background: #fff; color: #0B4F52;
+      font-family: 'Inter', sans-serif; font-size: 15px;
+      outline: none; transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .field:focus { border-color: #17A39B; box-shadow: 0 0 0 3px rgba(31,138,112,0.15); }
+    .field::placeholder { color: #8E9E9E; }
+    .field-error { border-color: #E87070; }
+    .field-error:focus { border-color: #E87070; box-shadow: 0 0 0 3px rgba(232,112,112,0.12); }
+
+    /* Buttons */
+    .btn-primary {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; height: 50px; border-radius: 12px;
+      background: #17A39B; color: #fff;
+      font-family: 'General Sans', sans-serif; font-size: 15px; font-weight: 700;
+      letter-spacing: -0.01em; border: none; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(23,163,155,0.3);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(23,163,155,0.4); }
+    .btn-primary:active { transform: none; }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    /* Link */
+    .link { color: #0B4F52; font-weight: 600; text-decoration: none; border-bottom: 1px solid #DCE5E6; transition: border-color 0.15s ease; }
+    .link:hover { border-color: #0B4F52; }
+    .link-teal { color: #17A39B; font-weight: 600; text-decoration: none; }
+    .link-teal:hover { text-decoration: underline; }
+
+    /* Orb */
+    .orb { position: absolute; border-radius: 50%; pointer-events: none; z-index: 0; }
+
+    /* Divider */
+    .divider { display: flex; align-items: center; gap: 12px; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #DCE5E6; }
+
+    /* Tab switcher */
+    .auth-tab { padding: 7px 18px; border-radius: 8px; font-family: 'General Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: #6B7C7D; transition: background 0.15s ease, color 0.15s ease; }
+    .auth-tab.active { background: #fff; color: #0B4F52; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+    /* Card */
+    .auth-card { background: #fff; border-radius: 20px; box-shadow: 0 4px 40px rgba(0,0,0,0.07), inset 0 0 0 1px rgba(0,0,0,0.055); }
+
+    /* Loading spinner */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.15); border-top-color: #0B4F52; border-radius: 50%; animation: spin 0.7s linear infinite; }
+
+    /* Password toggle */
+    .pw-wrapper { position: relative; }
+    .pw-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #8E9E9E; padding: 0; display: flex; align-items: center; }
+    .pw-toggle:hover { color: #6B7C7D; }
+  </style>
+</head>
+<body>
+
+<!-- Background ambient glow -->
+<div class="orb" style="width:700px;height:500px;top:-100px;left:50%;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(31,138,112,0.1) 0%,transparent 60%);filter:blur(80px);pointer-events:none;position:fixed;z-index:0;"></div>
+
+<!-- Minimal nav -->
+<nav class="relative z-10 flex items-center justify-between px-6 md:px-12 h-[66px] max-w-[1200px] mx-auto">
+  <a href="/" aria-label="Vereli home">
+    <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png"
+         alt="Vereli" class="h-9 w-auto">
+  </a>
+  <p class="text-[13px] text-text-soft">
+    New to Vereli? <a href="/signup/" class="link-teal">Start free trial</a>
+  </p>
+</nav>
+
+<!-- Auth content -->
+<main class="relative z-10 flex items-center justify-center min-h-[calc(100vh-66px)] px-6 py-12">
+  <div class="w-full max-w-[420px]">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="ht font-black text-[30px] tracking-[-0.035em] text-graphite mb-2">Welcome back</h1>
+      <p class="text-[15px] text-text-soft">Log in to your Vereli workspace</p>
+    </div>
+
+    <!-- Card -->
+    <div class="auth-card p-8">
+
+      <!-- Login form -->
+      <form id="login-form" novalidate>
+
+        <!-- Email -->
+        <div class="mb-4">
+          <label class="ht font-semibold text-[12px] text-graphite block mb-1.5" for="email">Work email</label>
+          <input
+            id="email" name="email" type="email" autocomplete="email"
+            placeholder="you@company.com"
+            class="field" required>
+          <p id="email-error" class="text-[11px] mt-1.5 hidden" style="color:#C0392B;"></p>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="ht font-semibold text-[12px] text-graphite" for="password">Password</label>
+            <a href="/forgot-password/" class="text-[12px] text-text-soft hover:text-graphite transition-colors">Forgot password?</a>
+          </div>
+          <div class="pw-wrapper">
+            <input
+              id="password" name="password" type="password" autocomplete="current-password"
+              placeholder="Enter your password"
+              class="field" required>
+            <button type="button" class="pw-toggle" id="pw-toggle" aria-label="Show password">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p id="password-error" class="text-[11px] mt-1.5 hidden" style="color:#C0392B;"></p>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" id="submit-btn" class="btn-primary mb-5">
+          <span id="btn-text">Log in</span>
+          <span id="btn-spinner" class="spinner hidden"></span>
+        </button>
+
+        <!-- Global error -->
+        <div id="global-error" class="hidden text-center mb-4 py-3 px-4 rounded-xl text-[13px]" style="background:#FEF2F2;color:#C0392B;border:1px solid #FECACA;">
+          Invalid email or password. Please try again.
+        </div>
+
+      </form>
+
+      <!-- Divider -->
+      <div class="divider text-[12px] text-text-soft mb-5">or</div>
+
+      <!-- SSO placeholder -->
+      <button type="button" class="w-full h-[46px] rounded-xl border flex items-center justify-center gap-2.5 text-[14px] font-semibold ht text-graphite transition-colors hover:bg-warm-gray" style="border-color:#DCE5E6;background:#FBFBFA;" onclick="alert('SSO coming soon')">
+        <i data-lucide="building-2" class="w-4 h-4 text-text-soft"></i>
+        Continue with SSO
+      </button>
+
+    </div>
+
+    <!-- Sign up link -->
+    <p class="text-center text-[13px] text-text-soft mt-6">
+      Don't have an account? <a href="/signup/" class="link">Start a free trial</a>
+    </p>
+
+    <!-- Client portal note -->
+    <div class="mt-8 rounded-[14px] p-4 flex items-start gap-3" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+      <i data-lucide="user-circle" class="w-4 h-4 text-text-soft shrink-0 mt-0.5"></i>
+      <p class="text-[12px] text-text-soft leading-relaxed">
+        <span class="font-semibold text-graphite">Accessing a client portal?</span> Use the unique portal link your service provider sent you — not this login page.
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<!-- Minimal footer note -->
+<footer class="relative z-10 text-center pb-8">
+  <p class="text-[12px]" style="color:#8E9E9E;">
+    <a href="/privacy/" class="hover:text-graphite transition-colors">Privacy</a> · <a href="/terms/" class="hover:text-graphite transition-colors">Terms</a> · © <span id="yr"></span> Vereli Inc.
+  </p>
+</footer>
+
+<script id="content" type="application/json">{"company":"content/company.json"}</script>
+<script type="module">
+import { submitContactForm } from '@appsmithorg/template-frontend/utility';
+document.dispatchEvent(new CustomEvent('kite:core-ready', { detail: { submitContactForm } }));
+</script>
+<script>
+lucide.createIcons();
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Password visibility toggle
+var pwToggle = document.getElementById('pw-toggle');
+var pwField  = document.getElementById('password');
+var pwShown  = false;
+pwToggle.addEventListener('click', function() {
+  pwShown = !pwShown;
+  pwField.type = pwShown ? 'text' : 'password';
+  pwToggle.innerHTML = pwShown
+    ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
+    : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+});
+
+// Form validation + submission stub
+var form      = document.getElementById('login-form');
+var submitBtn = document.getElementById('submit-btn');
+var btnText   = document.getElementById('btn-text');
+var btnSpinner= document.getElementById('btn-spinner');
+var globalErr = document.getElementById('global-error');
+
+function showFieldError(id, msg) {
+  var el = document.getElementById(id + '-error');
+  var field = document.getElementById(id);
+  el.textContent = msg; el.classList.remove('hidden');
+  field.classList.add('field-error');
+}
+function clearErrors() {
+  ['email','password'].forEach(function(id) {
+    document.getElementById(id + '-error').classList.add('hidden');
+    document.getElementById(id).classList.remove('field-error');
+  });
+  globalErr.classList.add('hidden');
+}
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  clearErrors();
+
+  var email    = document.getElementById('email').value.trim();
+  var password = document.getElementById('password').value;
+  var valid    = true;
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showFieldError('email', 'Please enter a valid email address.'); valid = false;
+  }
+  if (!password || password.length < 6) {
+    showFieldError('password', 'Password must be at least 6 characters.'); valid = false;
+  }
+  if (!valid) return;
+
+  // Simulate loading state
+  submitBtn.disabled = true;
+  btnText.classList.add('hidden');
+  btnSpinner.classList.remove('hidden');
+
+  setTimeout(function() {
+    submitBtn.disabled = false;
+    btnText.classList.remove('hidden');
+    btnSpinner.classList.add('hidden');
+  }, 1000);
+});
+</script>
+<script src="https://assets.appsmith.com/kite_script_injector_v020.js"></script>
+</body>
+</html>
