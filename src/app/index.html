@@ -619,15 +619,15 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 </div><!-- /shell -->
 <script id="content" type="application/json">{}</script>
 <script type="module">
-  import { submitContactForm } from '@appsmithorg/template-frontend/utility';
-  document.dispatchEvent(new CustomEvent('kite:core-ready', { detail: { submitContactForm } }));
+  const submitContactForm = async () => ({ ok: false, error: "Not configured" });
+  document.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));
 </script>
 <script>
 /* ══ DATA ══ */
 const PCOLS=['#2D6A4F','#3558CC','#121212','#A0621A','#6B3FA0','#B91C1C'];
 const IC={pdf:{bg:'#FEF3E2',tc:'#A0621A',i:'file-text'},fig:{bg:'#EEF3FF',tc:'#3558CC',i:'layers'},zip:{bg:'#EEF2F2',tc:'#6B7C7D',i:'archive'},doc:{bg:'#EAF2EE',tc:'#2D6A4F',i:'file-text'},img:{bg:'#EEF3FF',tc:'#3558CC',i:'image'},vid:{bg:'#F5F0FF',tc:'#6B3FA0',i:'film'},sig:{bg:'#EAF2EE',tc:'#2D6A4F',i:'file-signature'}};
 
-const DATA = {
+let DATA = {
   team:[
     {init:'JA',bg:'#0B4F52',tc:'#fff',name:'Jamie A.',role:'Owner',email:'jamie@meridian.co'},
     {init:'SP',bg:'#EAF2EE',tc:'#2D6A4F',name:'Sam Park',role:'Editor',email:'sam@meridian.co'},
@@ -704,6 +704,52 @@ const ATTN=[
 
 /* ══ STATE ══ */
 let SC=null,STAB='overview',SWA=null,SWATAB='tasks',ncPortalOn=false,ncEng='active';
+
+/* ══ API ══ */
+const API_BASE = '/api';
+const BALS = ['#E4F2F0:#0B4F52','#EEF3FF:#3558CC','#EAF2EE:#17A39B','#F5F0FF:#6B3FA0'];
+
+function apiClientToData(c, idx) {
+  const [bg, tc] = BALS[(idx || 0) % BALS.length].split(':');
+  const inits = c.name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || 'CL';
+  return {
+    id: c.id,
+    name: c.name,
+    init: inits,
+    bg: bg,
+    tc: tc,
+    type: 'Service',
+    eng: c.status || 'active',
+    contact: c.contact || '—',
+    email: c.email || '',
+    portal: {
+      on: c.portal ? c.portal.on : false,
+      url: c.portal && c.portal.url ? c.portal.url : '',
+      primary: tc,
+      secondary: bg
+    },
+    nextAction: '',
+    latestActivity: 'Client record loaded',
+    latestTs: 'now',
+    workAreas: []
+  };
+}
+
+async function initFromApi() {
+  try {
+    const res = await fetch(`${API_BASE}/clients`);
+    if (!res.ok) throw new Error('Failed to fetch clients');
+    const json = await res.json();
+    if (json.data && json.data.length) {
+      DATA.clients = json.data.map((c, i) => apiClientToData(c, i));
+      document.getElementById('cl-bdg').textContent = DATA.clients.length;
+      renderDash();
+      if (document.getElementById('view-clients').classList.contains('active')) renderCG();
+    }
+  } catch (err) {
+    console.warn('API fetch failed, using demo data:', err.message);
+  }
+}
 
 /* ══ NAVIGATION ══ */
 const TITLES={dashboard:'Dashboard',clients:'Clients',deliverables:'Deliverables',contracts:'Contracts',files:'Files',invoices:'Invoices',payments:'Payments',team:'Team',settings:'Settings'};
@@ -1282,18 +1328,31 @@ function openMod(){ncPortalOn=false;ncEng='active';['nc-name','nc-contact','nc-e
 function closeMod(){document.getElementById('mod').classList.remove('open');}
 function toggleNP(){ncPortalOn=!ncPortalOn;document.getElementById('nc-ptog').classList.toggle('on',ncPortalOn);}
 function setEng(v){ncEng=v;['active','prospect','paused'].forEach(s=>{const el=document.getElementById('eng-'+s);if(el){el.style.borderColor=s===v?'#17A39B':'#EEF2F2';el.style.background=s===v?'#EBF5F0':'#fff';}});document.getElementById('nc-eng').value=v;}
-function addClient(){
+async function addClient(){
   const name=document.getElementById('nc-name').value.trim();
   const email=document.getElementById('nc-email').value.trim();
+  const contact=document.getElementById('nc-contact').value.trim()||'—';
   if(!name){toast('Please enter a client name.');return;}
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Please enter a valid email.');return;}
-  const inits=name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'CL';
-  const BALS=['#E4F2F0:#0B4F52','#EEF3FF:#3558CC','#EAF2EE:#17A39B','#F5F0FF:#6B3FA0'];
-  const [bg,tc]=BALS[DATA.clients.length%BALS.length].split(':');
-  const nid=Math.max(...DATA.clients.map(c=>c.id))+1;
-  DATA.clients.push({id:nid,name,init:inits,bg,tc,type:document.getElementById('nc-svc').value||'General',eng:ncEng,contact:document.getElementById('nc-contact').value.trim()||'—',email,portal:{on:ncPortalOn,url:ncPortalOn?`portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}`:'',primary:'#121212',secondary:'#EEF2F2'},nextAction:'Set up first work area',latestActivity:'Client record created',latestTs:'now',workAreas:[]});
-  document.getElementById('cl-bdg').textContent=DATA.clients.length;
-  closeMod();toast(`${name} added.`);openCP(nid);
+  try {
+    const res = await fetch(`${API_BASE}/clients`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, contact, email, status: ncEng })
+    });
+    const json = await res.json();
+    if (!res.ok) { toast(json.error || 'Failed to create client'); return; }
+    const newClient = apiClientToData(json.data, DATA.clients.length);
+    newClient.type = document.getElementById('nc-svc').value || 'General';
+    newClient.portal.on = ncPortalOn;
+    if(ncPortalOn) newClient.portal.url = `portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}`;
+    DATA.clients.push(newClient);
+    document.getElementById('cl-bdg').textContent = DATA.clients.length;
+    closeMod(); toast(`${name} added.`); openCP(newClient.id);
+  } catch (err) {
+    toast('Network error. Please try again.');
+    console.error(err);
+  }
 }
 function editC(cid){
   const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
@@ -1307,15 +1366,28 @@ function editC(cid){
   document.getElementById('mod-foot').innerHTML=`<button onclick="closeMod()" class="tb-btn">Cancel</button><button onclick="saveC(${cid})" class="tb-btn pri">Save changes</button>`;
   document.getElementById('mod').classList.add('open');
 }
-function saveC(cid){
+async function saveC(cid){
   const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
   const name=document.getElementById('nc-name').value.trim();
   const email=document.getElementById('nc-email').value.trim();
+  const contact=document.getElementById('nc-contact').value.trim()||c.contact;
   if(!name||!email)return;
-  c.name=name;c.contact=document.getElementById('nc-contact').value.trim()||c.contact;c.email=email;c.type=document.getElementById('nc-svc').value||c.type;c.eng=document.getElementById('nc-eng').value;c.portal.on=ncPortalOn;
-  if(ncPortalOn&&!c.portal.url)c.portal.url=`portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}`;
-  document.getElementById('mod-foot').innerHTML=`<button onclick="closeMod()" class="tb-btn">Cancel</button><button onclick="addClient()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create client</button>`;
-  closeMod();toast('Client updated.');renderCP();lucide.createIcons();
+  try {
+    const res = await fetch(`${API_BASE}/clients/${cid}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, contact, email, status: document.getElementById('nc-eng').value, portal_on: ncPortalOn })
+    });
+    const json = await res.json();
+    if (!res.ok) { toast(json.error || 'Failed to update client'); return; }
+    c.name=name;c.contact=contact;c.email=email;c.type=document.getElementById('nc-svc').value||c.type;c.eng=document.getElementById('nc-eng').value;c.portal.on=ncPortalOn;
+    if(ncPortalOn&&!c.portal.url)c.portal.url=`portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}`;
+    document.getElementById('mod-foot').innerHTML=`<button onclick="closeMod()" class="tb-btn">Cancel</button><button onclick="addClient()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create client</button>`;
+    closeMod();toast('Client updated.');renderCP();lucide.createIcons();
+  } catch (err) {
+    toast('Network error. Please try again.');
+    console.error(err);
+  }
 }
 
 /* ══ PORTAL HELPERS ══ */
@@ -1338,6 +1410,7 @@ document.addEventListener('DOMContentLoaded',function(){
   renderDash();
   renderCG();
   lucide.createIcons();
+  initFromApi();
 });
 </script>
 </body>

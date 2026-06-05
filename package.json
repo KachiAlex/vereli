@@ -6,6 +6,7 @@
     "build": "node build.js"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.10.4"
+    "@neondatabase/serverless": "^0.10.4",
+    "jose": "^5.9.6"
   }
 }
