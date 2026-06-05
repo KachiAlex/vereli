@@ -1,12 +1,8 @@
 {
-  "name": "template",
+  "name": "vereli",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "kite-client",
-    "build": "kite-client build"
-  },
-  "dependencies": {
-    "@appsmithorg/template-frontend": "^1.1.3"
+    "build": "node build.js"
   }
 }
