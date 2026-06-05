@@ -1,14 +1,17 @@
-import { sendJson, handleCors, badRequest, notFound } from '../lib/utils.js';
+import { sendJson, handleCors, badRequest, notFound, requireAuth } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
   const id = Number(req.query.id);
   if (!id) { badRequest(res, 'id is required'); return; }
 
   if (req.method === 'GET') {
-    const [row] = await sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE id = ${id}`;
+    const [row] = await sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE id = ${id} AND user_id = ${user.userId}`;
     if (!row) { notFound(res); return; }
     sendJson(res, 200, {
       data: {
@@ -37,7 +40,7 @@ export default async function handler(req, res) {
     if (updates.length === 0) { badRequest(res, 'No fields to update'); return; }
 
     const [row] = await sql`
-      UPDATE clients SET ${sql.join(updates, sql`, `)} WHERE id = ${id}
+      UPDATE clients SET ${sql.join(updates, sql`, `)} WHERE id = ${id} AND user_id = ${user.userId}
       RETURNING id, name, contact, email, status, portal_on, portal_url, created_at;
     `;
     if (!row) { notFound(res); return; }
@@ -56,7 +59,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'DELETE') {
-    const [row] = await sql`DELETE FROM clients WHERE id = ${id} RETURNING id`;
+    const [row] = await sql`DELETE FROM clients WHERE id = ${id} AND user_id = ${user.userId} RETURNING id`;
     if (!row) { notFound(res); return; }
     sendJson(res, 200, { message: 'Client deleted' });
     return;

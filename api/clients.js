@@ -1,23 +1,27 @@
-import { sendJson, handleCors, badRequest } from './lib/utils.js';
+import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
   if (req.method === 'GET') {
     const { status, search } = req.query || {};
-    let query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients`;
+    const uid = user.userId;
+    let query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid}`;
 
     if (status) {
-      query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE status = ${status}`;
+      query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid} AND status = ${status}`;
     }
     if (search) {
       const q = `%${search.toLowerCase()}%`;
-      query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE LOWER(name) LIKE ${q} OR LOWER(contact) LIKE ${q} OR LOWER(email) LIKE ${q}`;
+      query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid} AND (LOWER(name) LIKE ${q} OR LOWER(contact) LIKE ${q} OR LOWER(email) LIKE ${q})`;
     }
     if (status && search) {
       const q = `%${search.toLowerCase()}%`;
-      query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE status = ${status} AND (LOWER(name) LIKE ${q} OR LOWER(contact) LIKE ${q} OR LOWER(email) LIKE ${q})`;
+      query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid} AND status = ${status} AND (LOWER(name) LIKE ${q} OR LOWER(contact) LIKE ${q} OR LOWER(email) LIKE ${q})`;
     }
 
     const rows = await query;
@@ -41,8 +45,8 @@ export default async function handler(req, res) {
       return;
     }
     const [row] = await sql`
-      INSERT INTO clients (name, contact, email, status)
-      VALUES (${name}, ${contact}, ${email}, ${status})
+      INSERT INTO clients (user_id, name, contact, email, status)
+      VALUES (${user.userId}, ${name}, ${contact}, ${email}, ${status})
       RETURNING id, name, contact, email, status, portal_on, portal_url, created_at;
     `;
     const client = {

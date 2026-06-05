@@ -12,6 +12,7 @@ export default function handler(req, res) {
       { method: 'POST', path: '/api/auth/register', description: 'Register a new user' },
       { method: 'POST', path: '/api/auth/login',    description: 'Login and get tokens' },
       { method: 'POST', path: '/api/auth/refresh',  description: 'Refresh access token' },
+      { method: 'GET',  path: '/api/me',        description: 'Current user' },
       { method: 'GET',  path: '/api/clients',   description: 'List all clients' },
       { method: 'POST', path: '/api/clients',   description: 'Create a client' },
       { method: 'GET',  path: '/api/clients/:id', description: 'Get/update/delete a client' },

@@ -20,3 +20,22 @@ export function badRequest(res, message = 'Bad request') {
 export function notFound(res, message = 'Not found') {
   sendJson(res, 404, { error: message });
 }
+
+export async function requireAuth(req, res) {
+  const auth = req.headers.authorization || '';
+  const token = auth.replace('Bearer ', '');
+  if (!token) {
+    sendJson(res, 401, { error: 'Unauthorized' });
+    return null;
+  }
+  try {
+    const { jwtVerify } = await import('jose');
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    const { payload } = await jwtVerify(token, secret, { clockTolerance: 60 });
+    req.user = payload;
+    return payload;
+  } catch {
+    sendJson(res, 401, { error: 'Invalid or expired token' });
+    return null;
+  }
+}

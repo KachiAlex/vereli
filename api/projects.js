@@ -1,21 +1,25 @@
-import { sendJson, handleCors, badRequest } from './lib/utils.js';
+import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
   if (req.method === 'GET') {
     const { clientId, status } = req.query || {};
+    const uid = user.userId;
     let rows;
 
     if (clientId && status) {
-      rows = await sql`SELECT id, client_id, name, status, budget, tasks_total, tasks_pending, created_at FROM projects WHERE client_id = ${Number(clientId)} AND status = ${status}`;
+      rows = await sql`SELECT id, client_id, name, status, budget, tasks_total, tasks_pending, created_at FROM projects WHERE user_id = ${uid} AND client_id = ${Number(clientId)} AND status = ${status}`;
     } else if (clientId) {
-      rows = await sql`SELECT id, client_id, name, status, budget, tasks_total, tasks_pending, created_at FROM projects WHERE client_id = ${Number(clientId)}`;
+      rows = await sql`SELECT id, client_id, name, status, budget, tasks_total, tasks_pending, created_at FROM projects WHERE user_id = ${uid} AND client_id = ${Number(clientId)}`;
     } else if (status) {
-      rows = await sql`SELECT id, client_id, name, status, budget, tasks_total, tasks_pending, created_at FROM projects WHERE status = ${status}`;
+      rows = await sql`SELECT id, client_id, name, status, budget, tasks_total, tasks_pending, created_at FROM projects WHERE user_id = ${uid} AND status = ${status}`;
     } else {
-      rows = await sql`SELECT id, client_id, name, status, budget, tasks_total, tasks_pending, created_at FROM projects`;
+      rows = await sql`SELECT id, client_id, name, status, budget, tasks_total, tasks_pending, created_at FROM projects WHERE user_id = ${uid}`;
     }
 
     const data = rows.map(r => ({
@@ -39,8 +43,8 @@ export default async function handler(req, res) {
       return;
     }
     const [row] = await sql`
-      INSERT INTO projects (client_id, name, budget, status)
-      VALUES (${Number(clientId)}, ${name}, ${Number(budget) || 0}, ${status})
+      INSERT INTO projects (user_id, client_id, name, budget, status)
+      VALUES (${user.userId}, ${Number(clientId)}, ${name}, ${Number(budget) || 0}, ${status})
       RETURNING id, client_id, name, status, budget, tasks_total, tasks_pending, created_at;
     `;
     const project = {
