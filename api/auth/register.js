@@ -23,11 +23,21 @@ export default async function handler(req, res) {
       return;
     }
 
-    const [user] = await sql`
-      INSERT INTO users (email, password_hash, name, company, role)
-      VALUES (${email.toLowerCase()}, ${password}, ${name}, ${company || null}, 'owner')
-      RETURNING id, email, name, company, role;
-    `;
+    let user;
+    try {
+      [user] = await sql`
+        INSERT INTO users (email, password_hash, name, company, role)
+        VALUES (${email.toLowerCase()}, ${password}, ${name}, ${company || null}, 'owner')
+        RETURNING id, email, name, company, role;
+      `;
+    } catch (colErr) {
+      // company column may not exist yet in old databases
+      [user] = await sql`
+        INSERT INTO users (email, password_hash, name, role)
+        VALUES (${email.toLowerCase()}, ${password}, ${name}, 'owner')
+        RETURNING id, email, name, role;
+      `;
+    }
 
     const { accessToken, refreshToken } = await createTokens({
       userId: user.id,

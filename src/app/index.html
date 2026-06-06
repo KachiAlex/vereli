@@ -318,6 +318,32 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
   </div>
 </div>
 
+<!-- COMPANY SETUP MODAL (temporary for existing users) -->
+<div id="comp-mod" style="display:none;position:fixed;inset:0;background:rgba(6,24,26,.46);z-index:200;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)">
+  <div class="modal">
+    <div class="mh">
+      <div style="width:36px;height:36px;border-radius:10px;background:#DDE8E0;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#17A39B" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div style="flex:1">
+        <div class="ht" style="font-size:15px;font-weight:800;color:#121212">Set your workspace name</div>
+        <div style="font-size:12px;color:#8E9E9E;margin-top:1px">This appears across your dashboard and client portals</div>
+      </div>
+    </div>
+    <div class="mb">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div>
+          <label class="flbl">Company / workspace name <span style="color:#E87070">*</span></label>
+          <input type="text" class="field" placeholder="e.g. Kreatix Technologies" id="comp-name">
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button onclick="saveCompany()" class="tb-btn pri">Save workspace name</button>
+    </div>
+  </div>
+</div>
+
 <div id="auth-overlay" style="display:none;position:fixed;inset:0;background:#F6F9F8;z-index:9999;align-items:center;justify-content:center;padding:24px;overflow-y:auto">
   <div style="width:100%;max-width:380px">
     <div style="text-align:center;margin-bottom:32px">
@@ -1013,6 +1039,22 @@ function updateUserUI(user) {
   if (greetEl) greetEl.textContent = getGreeting() + ', ' + firstName;
 }
 
+function showCompMod(){document.getElementById('comp-mod').style.display='flex';}
+function hideCompMod(){document.getElementById('comp-mod').style.display='none';}
+async function saveCompany(){
+  const name=document.getElementById('comp-name').value.trim();
+  if(!name){toast('Please enter a workspace name');return;}
+  try{
+    const res=await apiFetch('/me',{method:'PATCH',body:JSON.stringify({company:name})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Failed to save');return;}
+    updateUserUI(json.data);
+    hideCompMod();
+    toast('Workspace name saved');
+    initFromApi();
+  }catch(err){toast('Failed to save');}
+}
+
 async function checkAuth() {
   const token = getToken();
   if (!token) { showAuth(); return; }
@@ -1022,6 +1064,11 @@ async function checkAuth() {
     const json = await res.json();
     updateUserUI(json.data);
     hideAuth();
+    // Temporary flow: prompt existing users without a company to set one
+    if(!json.data || !json.data.company){
+      showCompMod();
+      return; // defer initFromApi until company is saved
+    }
     initFromApi();
   } catch { showAuth(); }
 }

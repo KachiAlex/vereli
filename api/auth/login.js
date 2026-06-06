@@ -17,7 +17,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const [user] = await sql`SELECT id, email, name, company, role, password_hash FROM users WHERE email = ${email.toLowerCase()}`;
+    let user;
+    try {
+      [user] = await sql`SELECT id, email, name, company, role, password_hash FROM users WHERE email = ${email.toLowerCase()}`;
+    } catch (colErr) {
+      // company column may not exist yet in old databases
+      [user] = await sql`SELECT id, email, name, role, password_hash FROM users WHERE email = ${email.toLowerCase()}`;
+    }
     if (!user || user.password_hash !== password) {
       sendJson(res, 401, { error: 'Invalid credentials' });
       return;
