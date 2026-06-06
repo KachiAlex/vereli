@@ -434,12 +434,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
         <div class="ht" style="font-size:28px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:6px;line-height:1.15">Good morning, Jamie</div>
         <div style="font-size:14px;color:#7A9E99;font-weight:400;line-height:1.5">Here's what's happening with your clients today.</div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px" id="dash-kpi-row">
-        <div class="dash-kpi" style="color:#0B4F52"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#E2EDE9;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B4F52" stroke-width="1.75" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="st teal" style="font-size:10px">Active</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#0A2E2F;line-height:1">3</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Active clients</div></div>
-        <div class="dash-kpi" style="color:#8E5510"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#FDF1E1;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8E5510" stroke-width="1.75" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><span class="st amber" style="font-size:10px">Needs action</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#8E5510;line-height:1">4</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Awaiting approval</div></div>
-        <div class="dash-kpi" style="color:#5E3B9E"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#F0EDFD;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5E3B9E" stroke-width="1.75" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><span class="st purple" style="font-size:10px">Follow up</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#5E3B9E;line-height:1">2</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Unpaid invoices</div></div>
-        <div class="dash-kpi" style="color:#22C55E"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#E0F2EC;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="1.75" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span class="st green" style="font-size:10px">This month</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#22C55E;line-height:1">$9.1k</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Revenue collected</div></div>
-      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px" id="dash-kpi-row"></div>
       <div style="display:grid;grid-template-columns:5fr 4fr;gap:22px;margin-bottom:28px" id="dash-main-grid">
         <div style="display:flex;flex-direction:column;gap:22px">
           <div>
@@ -657,64 +652,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 const PCOLS=['#2D6A4F','#3558CC','#121212','#A0621A','#6B3FA0','#B91C1C'];
 const IC={pdf:{bg:'#FEF3E2',tc:'#A0621A',i:'file-text'},fig:{bg:'#EEF3FF',tc:'#3558CC',i:'layers'},zip:{bg:'#EEF2F2',tc:'#6B7C7D',i:'archive'},doc:{bg:'#EAF2EE',tc:'#2D6A4F',i:'file-text'},img:{bg:'#EEF3FF',tc:'#3558CC',i:'image'},vid:{bg:'#F5F0FF',tc:'#6B3FA0',i:'film'},sig:{bg:'#EAF2EE',tc:'#2D6A4F',i:'file-signature'}};
 
-let DATA = {
-  team:[
-    {init:'JA',bg:'#0B4F52',tc:'#fff',name:'Jamie A.',role:'Owner',email:'jamie@meridian.co'},
-    {init:'SP',bg:'#EAF2EE',tc:'#2D6A4F',name:'Sam Park',role:'Editor',email:'sam@meridian.co'},
-    {init:'RO',bg:'#EEF3FF',tc:'#3558CC',name:'Remi Osei',role:'Manager',email:'remi@meridian.co'},
-  ],
-  clients:[
-    {id:1,name:'Lumina Brand',init:'LB',bg:'#E4F2F0',tc:'#0B4F52',type:'Brand & Marketing',eng:'active',
-     contact:'Sara K.',email:'sara@luminabrand.co',
-     portal:{on:true,url:'portal.vereli.app/lumina',primary:'#2D6A4F',secondary:'#EAF2EE'},
-     nextAction:'Approve banner designs v2',latestActivity:'Client approved brand guidelines',latestTs:'22m',
-     workAreas:[
-       {id:'wa1',name:'Q2 Campaign',type:'Campaign',icon:'megaphone',ibg:'#EEF3FF',itc:'#3558CC',status:'active',progress:60,
-        tasks:[{t:'Finalise brief',done:true,a:'Jamie A.',status:'completed',p:'medium'},{t:'Review asset pack',done:false,a:'Sara K.',status:'review',p:'high'},{t:'Approve banner designs',done:false,a:'Sara K.',status:'todo',p:'high'}],
-         files:[{n:'Q2_Brief.pdf',type:'pdf',sz:'340 KB',vis:'shared',uploader:'Jamie A.',date:'May 20'},{n:'Banner_v2.fig',type:'fig',sz:'1.2 MB',vis:'shared',uploader:'Sam Park',date:'May 23'},{n:'Campaign_Assets.zip',type:'zip',sz:'4.8 MB',vis:'internal',uploader:'Sam Park',date:'May 24'},{n:'Service_Agreement.pdf',type:'sig',sz:'180 KB',vis:'shared',uploader:'Jamie A.',date:'May 19',signing:'signed'}],
-        feedback:[{from:'Sara K.',init:'LB',bg:'#E4F2F0',tc:'#0B4F52',txt:'Love the direction on slide 3 — can we use this style throughout?',time:'1h ago',ref:'Q2_Brief.pdf'}],
-        approvals:[{item:'Banner designs v2',status:'waiting'},{item:'Campaign brief',status:'approved'}],
-        invoices:[{id:'INV-008',desc:'Q2 Campaign Phase 1',amt:'$4,200',status:'paid',date:'Apr 12'}]
-       },
-       {id:'wa2',name:'Brand Guidelines',type:'Deliverable',icon:'book-open',ibg:'#EAF2EE',itc:'#2D6A4F',status:'complete',progress:100,
-        tasks:[{t:'Final copy review',done:true,a:'Jamie A.',status:'completed',p:'low'},{t:'Client sign-off',done:true,a:'Sara K.',status:'completed',p:'low'}],
-        files:[{n:'Brand_Guidelines_v3.pdf',type:'pdf',sz:'2.1 MB',vis:'shared',uploader:'Jamie A.',date:'May 10'}],
-        feedback:[{from:'Sara K.',init:'LB',bg:'#E4F2F0',tc:'#0B4F52',txt:'Colours adjusted — perfect now.',time:'Yesterday',ref:'Brand_Guidelines_v3.pdf'}],
-        approvals:[{item:'Brand Guidelines v3',status:'approved'}],
-        invoices:[{id:'INV-009',desc:'Brand Guidelines final',amt:'$1,800',status:'paid',date:'May 3'}]
-       },
-     ],
-    },
-    {id:2,name:'Vantage Group',init:'VG',bg:'#EEF3FF',tc:'#3558CC',type:'Advisory',eng:'active',
-     contact:'Dan M.',email:'dan@vantagegroup.io',
-     portal:{on:true,url:'portal.vereli.app/vantage',primary:'#3558CC',secondary:'#EEF3FF'},
-     nextAction:'Send revised SOW to Dan',latestActivity:'Client left feedback on Advisory SOW',latestTs:'3h',
-     workAreas:[
-       {id:'wa3',name:'Advisory Engagement',type:'Advisory',icon:'briefcase',ibg:'#E4F2F0',itc:'#0B4F52',status:'active',progress:40,
-        tasks:[{t:'Send revised SOW',done:false,a:'Jamie A.',status:'in-progress',p:'high'},{t:'Schedule strategy session',done:false,a:'Dan M.',status:'todo',p:'medium'}],
-         files:[{n:'Advisory_SOW_v2.pdf',type:'pdf',sz:'280 KB',vis:'shared',uploader:'Jamie A.',date:'May 18',signing:'awaiting-signature'},{n:'Scope_Notes.docx',type:'doc',sz:'90 KB',vis:'internal',uploader:'Jamie A.',date:'May 16'},{n:'Retainer_Agreement.pdf',type:'sig',sz:'210 KB',vis:'shared',uploader:'Jamie A.',date:'May 14',signing:'signed'}],
-        feedback:[{from:'Dan M.',init:'VG',bg:'#EEF3FF',tc:'#3558CC',txt:'Please include the Q3 projections in the SOW.',time:'3h ago',ref:'Advisory_SOW_v2.pdf'}],
-        approvals:[{item:'Vantage Advisory SOW',status:'waiting'}],
-        invoices:[{id:'INV-010',desc:'Advisory retainer — May',amt:'$3,500',status:'unpaid',date:'May 1'}]
-       },
-     ],
-    },
-    {id:3,name:'Archer Studio',init:'AS',bg:'#EEF2F2',tc:'#6B7C7D',type:'Design Project',eng:'active',
-     contact:'Mia T.',email:'mia@archerstudio.co',
-     portal:{on:false,url:'',primary:'#121212',secondary:'#EEF2F2'},
-     nextAction:'Get feedback on Homepage v2',latestActivity:'Mia left feedback on Homepage v2',latestTs:'2h',
-     workAreas:[
-       {id:'wa4',name:'Website Redesign',type:'Project',icon:'layout',ibg:'#EEF2F2',itc:'#6B7C7D',status:'active',progress:55,
-        tasks:[{t:'Wireframe review',done:false,a:'Mia T.',status:'review',p:'medium'},{t:'Homepage v2 feedback',done:false,a:'Mia T.',status:'in-progress',p:'high'},{t:'Asset upload',done:true,a:'Jamie A.',status:'completed',p:'low'}],
-        files:[{n:'Wireframes_v1.fig',type:'fig',sz:'3.4 MB',vis:'shared',uploader:'Sam Park',date:'May 22'},{n:'Homepage_v2.fig',type:'fig',sz:'2.8 MB',vis:'shared',uploader:'Sam Park',date:'May 25'}],
-        feedback:[{from:'Mia T.',init:'AS',bg:'#EEF2F2',tc:'#6B7C7D',txt:"The navigation feels cluttered on mobile. Let's simplify.",time:'2h ago',ref:'Homepage_v2.fig'}],
-        approvals:[{item:'Homepage v2',status:'waiting'}],
-        invoices:[{id:'INV-011',desc:'Redesign milestone 1',amt:'$2,600',status:'unpaid',date:'May 15'}]
-       },
-     ],
-    },
-  ]
-};
+let DATA = { team:[], clients:[] };
 
 /* ══ STATE ══ */
 let SC=null,STAB='overview',SWA=null,SWATAB='tasks',ncPortalOn=false,ncEng='active';
@@ -1067,8 +1005,38 @@ function goView(name,el){
   closeSB();
 }
 
+function computeRevenue(win){
+  const now=new Date();
+  const invs=INVOICES.length?INVOICES:[];
+  let collected=0,pending=0,overdue=0;
+  invs.forEach(inv=>{
+    const d=new Date(inv.dueDate);
+    const inWin=win==='month'?d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear():win==='year'?d.getFullYear()===now.getFullYear():true;
+    if(!inWin)return;
+    if(inv.status==='paid') collected+=Number(inv.amount)||0;
+    else if(inv.status==='sent'||inv.status==='pending'){
+      if(d<now) overdue+=Number(inv.amount)||0;
+      else pending+=Number(inv.amount)||0;
+    }
+  });
+  return {collected,pending,overdue};
+}
+
 /* ══ DASHBOARD ══ */
 function renderDash(){
+  // KPI cards — computed dynamically from real data
+  const kpiRow=document.getElementById('dash-kpi-row');
+  if(kpiRow){
+    const activeClients=DATA.clients.length;
+    const awaitingApproval=DATA.clients.reduce((sum,c)=>sum+(c.workAreas||[]).reduce((s,wa)=>s+wa.approvals.filter(a=>a.status==='waiting').length,0),0);
+    const unpaidInvoices=DATA.clients.reduce((sum,c)=>sum+(c.invoices||[]).filter(inv=>inv.status==='sent'||inv.status==='pending').length,0);
+    const revMonth=computeRevenue('month').collected;
+    const revStr=revMonth>=1000?(revMonth/1000).toFixed(1)+'k':revMonth.toString();
+    kpiRow.innerHTML=`<div class="dash-kpi" style="color:#0B4F52"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#E2EDE9;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B4F52" stroke-width="1.75" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="st teal" style="font-size:10px">Active</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#0A2E2F;line-height:1">${activeClients}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Active clients</div></div>
+      <div class="dash-kpi" style="color:#8E5510"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#FDF1E1;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8E5510" stroke-width="1.75" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><span class="st amber" style="font-size:10px">Needs action</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#8E5510;line-height:1">${awaitingApproval}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Awaiting approval</div></div>
+      <div class="dash-kpi" style="color:#5E3B9E"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#F0EDFD;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5E3B9E" stroke-width="1.75" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><span class="st purple" style="font-size:10px">Follow up</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#5E3B9E;line-height:1">${unpaidInvoices}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Unpaid invoices</div></div>
+      <div class="dash-kpi" style="color:#22C55E"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#E0F2EC;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="1.75" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span class="st green" style="font-size:10px">This month</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#22C55E;line-height:1">$${revStr}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Revenue collected</div></div>`;
+  }
   // Attention items — computed dynamically from real data
   const da=document.getElementById('dash-attn');
   const attnItems=[];
@@ -1128,22 +1096,6 @@ function renderDash(){
   </div>`).join('');
   // Revenue snapshot
   const rv=document.getElementById('dash-rev');
-  function computeRevenue(win){
-    const now=new Date();
-    const invs=INVOICES.length?INVOICES:[];
-    let collected=0,pending=0,overdue=0;
-    invs.forEach(inv=>{
-      const d=new Date(inv.dueDate);
-      const inWin=win==='month'?d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear():win==='year'?d.getFullYear()===now.getFullYear():true;
-      if(!inWin)return;
-      if(inv.status==='paid') collected+=Number(inv.amount)||0;
-      else if(inv.status==='sent'||inv.status==='pending'){
-        if(d<now) overdue+=Number(inv.amount)||0;
-        else pending+=Number(inv.amount)||0;
-      }
-    });
-    return {collected,pending,overdue};
-  }
   function renderRevSnapshot(win){
     const d=computeRevenue(win);
     rv.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><span class="slbl" style="margin-bottom:0">Revenue</span><div style="display:flex;gap:1px;background:#EEF3F0;border-radius:8px;padding:3px">${['month','year','all'].map(w=>`<button onclick="renderRevSnapshot('${w}')" style="padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:700;transition:all .12s;background:${win===w?'#fff':'transparent'};color:${win===w?'#0B4F52':'#8AADA8'};box-shadow:${win===w?'0 1px 3px rgba(15,61,62,.08)':'none'}">${w==='month'?'Month':w==='year'?'Year':'All'}</button>`).join('')}</div></div>
