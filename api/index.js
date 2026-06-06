@@ -31,6 +31,12 @@ export default function handler(req, res) {
       { method: 'GET',  path: '/api/files', description: 'List files' },
       { method: 'POST', path: '/api/files', description: 'Create a file record' },
       { method: 'GET',  path: '/api/files/:id', description: 'Get/update/delete a file' },
+      { method: 'GET',  path: '/api/comments', description: 'List comments' },
+      { method: 'POST', path: '/api/comments', description: 'Create a comment' },
+      { method: 'GET',  path: '/api/comments/:id', description: 'Get/update/delete a comment' },
+      { method: 'GET',  path: '/api/approvals', description: 'List approvals' },
+      { method: 'POST', path: '/api/approvals', description: 'Create an approval' },
+      { method: 'GET',  path: '/api/approvals/:id', description: 'Get/update/delete an approval' },
     ],
   });
 }

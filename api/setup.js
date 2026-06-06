@@ -102,6 +102,32 @@ export default async function handler(req, res) {
       );
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS comments (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        work_area_id INTEGER NOT NULL REFERENCES work_areas(id) ON DELETE CASCADE,
+        author_name TEXT NOT NULL,
+        author_initials TEXT,
+        author_bg TEXT,
+        author_tc TEXT,
+        text TEXT NOT NULL,
+        reference TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS approvals (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        work_area_id INTEGER NOT NULL REFERENCES work_areas(id) ON DELETE CASCADE,
+        item TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'waiting',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
+
     // Seed demo data if tables are empty and at least one user exists
     const [clientCount] = await sql`SELECT COUNT(*)::int AS count FROM clients`;
     const [firstUser] = await sql`SELECT id FROM users ORDER BY id LIMIT 1`;
@@ -170,6 +196,17 @@ export default async function handler(req, res) {
         INSERT INTO files (user_id, work_area_id, name, type, size, visibility, uploader_name) VALUES
         (${uid}, ${wa1.id}, 'Creative-brief-v2.pdf', 'PDF', '1.2 MB', 'shared', 'You'),
         (${uid}, ${wa2.id}, 'Logo-explorations.fig', 'Figma', '4.5 MB', 'internal', 'You');
+      `;
+      await sql`
+        INSERT INTO comments (user_id, work_area_id, author_name, author_initials, author_bg, author_tc, text, reference) VALUES
+        (${uid}, ${wa1.id}, 'Sarah Okafor', 'SO', '#E4F2F0', '#0B4F52', 'Love the direction — can we use this style throughout?', 'Creative-brief-v2.pdf'),
+        (${uid}, ${wa2.id}, 'Sarah Okafor', 'SO', '#E4F2F0', '#0B4F52', 'Colours adjusted — perfect now.', 'Logo-explorations.fig');
+      `;
+      await sql`
+        INSERT INTO approvals (user_id, work_area_id, item, status) VALUES
+        (${uid}, ${wa1.id}, 'Banner designs v2', 'waiting'),
+        (${uid}, ${wa1.id}, 'Campaign brief', 'approved'),
+        (${uid}, ${wa2.id}, 'Brand Guidelines v3', 'approved');
       `;
     }
 
