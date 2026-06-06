@@ -450,7 +450,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
     <div style="width:1px;height:20px;background:#E2EBE9;margin:0 4px"></div>
     <div style="display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:8px;background:#E8F0EE;border:1px solid #DCE9E5">
       <div style="width:6px;height:6px;border-radius:50%;background:#17A39B;flex-shrink:0"></div>
-      <span class="ht" style="font-size:11.5px;font-weight:700;color:#0B4F52;letter-spacing:-.01em">Meridian Agency</span>
+      <span class="ht" id="top-ws-name" style="font-size:11.5px;font-weight:700;color:#0B4F52;letter-spacing:-.01em">Workspace</span>
     </div>
   </div>
   <div id="cb">
@@ -626,7 +626,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
       <div style="max-width:600px">
         <div style="margin-bottom:32px">
           <div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Team</div>
-          <div style="font-size:13.5px;color:#7A9E99">Members of your Meridian Agency workspace</div>
+          <div style="font-size:13.5px;color:#7A9E99" id="team-sub">Members of your workspace</div>
         </div>
         <div class="card" style="overflow:hidden;margin-bottom:14px">
           <div style="padding:18px 24px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between">
@@ -1035,8 +1035,12 @@ function updateUserUI(user) {
   document.getElementById('sb-av').textContent = inits || 'U';
   const wsEl = document.getElementById('sb-ws-name');
   if (wsEl) wsEl.textContent = user.company || firstName + ' workspace';
+  const topWsEl = document.getElementById('top-ws-name');
+  if (topWsEl) topWsEl.textContent = user.company || firstName + ' workspace';
   const greetEl = document.getElementById('dash-greeting');
   if (greetEl) greetEl.textContent = getGreeting() + ', ' + firstName;
+  const teamSubEl = document.getElementById('team-sub');
+  if (teamSubEl) teamSubEl.textContent = 'Members of your ' + (user.company || firstName + ' workspace');
 }
 
 function showCompMod(){document.getElementById('comp-mod').style.display='flex';}
