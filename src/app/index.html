@@ -395,10 +395,10 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
   </nav>
   <div class="sb-foot">
     <div class="sb-user" id="sb-user">
-      <div class="av" id="sb-av" style="background:#DDE8E5;color:#0B4F52">JA</div>
+      <div class="av" id="sb-av" style="background:#DDE8E5;color:#0B4F52"></div>
       <div style="min-width:0;flex:1">
-        <div class="ht" id="sb-name" style="font-size:12px;font-weight:700;color:#0B4F52;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Jamie A.</div>
-        <div style="font-size:10.5px;color:#8AADA8;margin-top:1px" id="sb-role">Owner</div>
+        <div class="ht" id="sb-name" style="font-size:12px;font-weight:700;color:#0B4F52;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div style="font-size:10.5px;color:#8AADA8;margin-top:1px" id="sb-role"></div>
       </div>
       <button onclick="doLogout()" style="background:none;border:none;cursor:pointer;color:#8AADA8;padding:4px;display:flex" title="Log out">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -431,7 +431,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
     <!-- ════ DASHBOARD ════ -->
     <div class="view active" id="view-dashboard">
       <div style="margin-bottom:36px">
-        <div class="ht" style="font-size:28px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:6px;line-height:1.15">Good morning, Jamie</div>
+        <div class="ht" style="font-size:28px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:6px;line-height:1.15" id="dash-greeting">Good morning</div>
         <div style="font-size:14px;color:#7A9E99;font-weight:400;line-height:1.5">Here's what's happening with your clients today.</div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px" id="dash-kpi-row"></div>
@@ -956,12 +956,22 @@ function doLogout() {
   showAuth();
 }
 
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
 function updateUserUI(user) {
   if (!user) return;
   const inits = user.name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
+  const firstName = user.name.split(' ')[0] || user.name;
   document.getElementById('sb-name').textContent = user.name;
   document.getElementById('sb-role').textContent = user.role || 'Owner';
   document.getElementById('sb-av').textContent = inits || 'U';
+  const greetEl = document.getElementById('dash-greeting');
+  if (greetEl) greetEl.textContent = getGreeting() + ', ' + firstName;
 }
 
 async function checkAuth() {
