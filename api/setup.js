@@ -37,6 +37,16 @@ export default async function handler(req, res) {
     await sql`UPDATE clients SET type = 'Service' WHERE type IS NULL OR type = ''`;
 
     await sql`
+      CREATE TABLE IF NOT EXISTS early_access (
+        id SERIAL PRIMARY KEY,
+        email TEXT NOT NULL UNIQUE,
+        name TEXT,
+        company TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
+
+    await sql`
       CREATE TABLE IF NOT EXISTS projects (
         id SERIAL PRIMARY KEY,
         user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
