@@ -61,6 +61,47 @@ export default async function handler(req, res) {
       );
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS work_areas (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        client_id INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        type TEXT NOT NULL DEFAULT 'general',
+        status TEXT NOT NULL DEFAULT 'active',
+        progress INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS tasks (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        work_area_id INTEGER NOT NULL REFERENCES work_areas(id) ON DELETE CASCADE,
+        text TEXT NOT NULL,
+        done BOOLEAN NOT NULL DEFAULT false,
+        assignee TEXT,
+        status TEXT NOT NULL DEFAULT 'todo',
+        priority TEXT NOT NULL DEFAULT 'medium',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS files (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        work_area_id INTEGER NOT NULL REFERENCES work_areas(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        type TEXT NOT NULL DEFAULT 'document',
+        size TEXT,
+        visibility TEXT NOT NULL DEFAULT 'internal',
+        uploader_name TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
+
     // Seed demo data if tables are empty and at least one user exists
     const [clientCount] = await sql`SELECT COUNT(*)::int AS count FROM clients`;
     const [firstUser] = await sql`SELECT id FROM users ORDER BY id LIMIT 1`;
@@ -105,6 +146,30 @@ export default async function handler(req, res) {
       await sql`
         INSERT INTO invoices (user_id, client_id, project_id, amount, currency, status, due_date)
         VALUES (${uid}, ${c2.id}, ${p2.id}, 900000, 'NGN', 'pending', '2025-06-15T00:00:00Z');
+      `;
+
+      // Seed work areas, tasks, files for c1 (Meridian)
+      const [wa1] = await sql`
+        INSERT INTO work_areas (user_id, client_id, name, type, status, progress)
+        VALUES (${uid}, ${c1.id}, 'Q3 Campaign', 'marketing', 'active', 65)
+        RETURNING id;
+      `;
+      const [wa2] = await sql`
+        INSERT INTO work_areas (user_id, client_id, name, type, status, progress)
+        VALUES (${uid}, ${c1.id}, 'Brand Guidelines', 'design', 'active', 30)
+        RETURNING id;
+      `;
+      await sql`
+        INSERT INTO tasks (user_id, work_area_id, text, done, assignee, status, priority) VALUES
+        (${uid}, ${wa1.id}, 'Write creative brief', true, 'You', 'completed', 'high'),
+        (${uid}, ${wa1.id}, 'Design banner ads', false, 'You', 'in-progress', 'high'),
+        (${uid}, ${wa1.id}, 'Review with client', false, null, 'todo', 'medium'),
+        (${uid}, ${wa2.id}, 'Compile logo variants', false, 'You', 'in-progress', 'medium');
+      `;
+      await sql`
+        INSERT INTO files (user_id, work_area_id, name, type, size, visibility, uploader_name) VALUES
+        (${uid}, ${wa1.id}, 'Creative-brief-v2.pdf', 'PDF', '1.2 MB', 'shared', 'You'),
+        (${uid}, ${wa2.id}, 'Logo-explorations.fig', 'Figma', '4.5 MB', 'internal', 'You');
       `;
     }
 

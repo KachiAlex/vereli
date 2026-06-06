@@ -22,6 +22,15 @@ export default function handler(req, res) {
       { method: 'GET',  path: '/api/invoices',  description: 'List all invoices' },
       { method: 'POST', path: '/api/invoices',  description: 'Create an invoice' },
       { method: 'GET',  path: '/api/invoices/:id', description: 'Get/update/delete an invoice' },
+      { method: 'GET',  path: '/api/work-areas', description: 'List work areas' },
+      { method: 'POST', path: '/api/work-areas', description: 'Create a work area' },
+      { method: 'GET',  path: '/api/work-areas/:id', description: 'Get/update/delete a work area' },
+      { method: 'GET',  path: '/api/tasks', description: 'List tasks' },
+      { method: 'POST', path: '/api/tasks', description: 'Create a task' },
+      { method: 'GET',  path: '/api/tasks/:id', description: 'Get/update/delete a task' },
+      { method: 'GET',  path: '/api/files', description: 'List files' },
+      { method: 'POST', path: '/api/files', description: 'Create a file record' },
+      { method: 'GET',  path: '/api/files/:id', description: 'Get/update/delete a file' },
     ],
   });
 }
