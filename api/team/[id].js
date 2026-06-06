@@ -19,16 +19,16 @@ export default async function handler(req, res) {
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
     const { name, role, status } = req.body || {};
-    const updates = [];
-    if (name !== undefined) updates.push(sql`name = ${name}`);
-    if (role !== undefined) updates.push(sql`role = ${role}`);
-    if (status !== undefined) updates.push(sql`status = ${status}`);
-    if (updates.length === 0) { badRequest(res, 'No fields to update'); return; }
+    const fields = [];
+    const values = [];
+    if (name !== undefined) { fields.push('name = $' + (fields.length + 1)); values.push(name); }
+    if (role !== undefined) { fields.push('role = $' + (fields.length + 1)); values.push(role); }
+    if (status !== undefined) { fields.push('status = $' + (fields.length + 1)); values.push(status); }
+    if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }
 
-    const [row] = await sql`
-      UPDATE team_members SET ${sql.join(updates, sql`, `)} WHERE id = ${id} AND user_id = ${user.userId}
-      RETURNING id, email, name, role, status, created_at;
-    `;
+    const query = `UPDATE team_members SET ${fields.join(', ')} WHERE id = $${fields.length + 1} AND user_id = $${fields.length + 2} RETURNING id, email, name, role, status, created_at`;
+    values.push(id, user.userId);
+    const [row] = await sql(query, values);
     if (!row) { notFound(res); return; }
     sendJson(res, 200, { data: { id: row.id, email: row.email, name: row.name, role: row.role, status: row.status, createdAt: row.created_at } });
     return;

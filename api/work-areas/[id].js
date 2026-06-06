@@ -19,13 +19,16 @@ export default async function handler(req, res) {
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
     const { name, type, status, progress } = req.body || {};
-    const updates = [];
-    if (name !== undefined) updates.push(sql`name = ${name}`);
-    if (type !== undefined) updates.push(sql`type = ${type}`);
-    if (status !== undefined) updates.push(sql`status = ${status}`);
-    if (progress !== undefined) updates.push(sql`progress = ${Number(progress)}`);
-    if (updates.length === 0) { badRequest(res, 'No fields to update'); return; }
-    const [row] = await sql`UPDATE work_areas SET ${sql.join(updates, sql`, `)} WHERE id = ${id} AND user_id = ${user.userId} RETURNING id, client_id, name, type, status, progress, created_at`;
+    const fields = [];
+    const values = [];
+    if (name !== undefined) { fields.push('name = $' + (fields.length + 1)); values.push(name); }
+    if (type !== undefined) { fields.push('type = $' + (fields.length + 1)); values.push(type); }
+    if (status !== undefined) { fields.push('status = $' + (fields.length + 1)); values.push(status); }
+    if (progress !== undefined) { fields.push('progress = $' + (fields.length + 1)); values.push(Number(progress)); }
+    if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }
+    const query = `UPDATE work_areas SET ${fields.join(', ')} WHERE id = $${fields.length + 1} AND user_id = $${fields.length + 2} RETURNING id, client_id, name, type, status, progress, created_at`;
+    values.push(id, user.userId);
+    const [row] = await sql(query, values);
     if (!row) { notFound(res); return; }
     sendJson(res, 200, { data: { id: row.id, clientId: row.client_id, name: row.name, type: row.type, status: row.status, progress: row.progress, createdAt: row.created_at } });
     return;

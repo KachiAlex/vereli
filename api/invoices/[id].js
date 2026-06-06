@@ -19,16 +19,19 @@ export default async function handler(req, res) {
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
     const { amount, currency, status, due_date, lineItems, sentAt, paidAt } = req.body || {};
-    const updates = [];
-    if (amount !== undefined) updates.push(sql`amount = ${Number(amount)}`);
-    if (currency !== undefined) updates.push(sql`currency = ${currency}`);
-    if (status !== undefined) updates.push(sql`status = ${status}`);
-    if (due_date !== undefined) updates.push(sql`due_date = ${due_date}`);
-    if (lineItems !== undefined) updates.push(sql`line_items = ${JSON.stringify(lineItems)}`);
-    if (sentAt !== undefined) updates.push(sql`sent_at = ${sentAt || null}`);
-    if (paidAt !== undefined) updates.push(sql`paid_at = ${paidAt || null}`);
-    if (updates.length === 0) { badRequest(res, 'No fields to update'); return; }
-    const [row] = await sql`UPDATE invoices SET ${sql.join(updates, sql`, `)} WHERE id = ${id} AND user_id = ${user.userId} RETURNING id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at, created_at`;
+    const fields = [];
+    const values = [];
+    if (amount !== undefined) { fields.push('amount = $' + (fields.length + 1)); values.push(Number(amount)); }
+    if (currency !== undefined) { fields.push('currency = $' + (fields.length + 1)); values.push(currency); }
+    if (status !== undefined) { fields.push('status = $' + (fields.length + 1)); values.push(status); }
+    if (due_date !== undefined) { fields.push('due_date = $' + (fields.length + 1)); values.push(due_date); }
+    if (lineItems !== undefined) { fields.push('line_items = $' + (fields.length + 1)); values.push(JSON.stringify(lineItems)); }
+    if (sentAt !== undefined) { fields.push('sent_at = $' + (fields.length + 1)); values.push(sentAt || null); }
+    if (paidAt !== undefined) { fields.push('paid_at = $' + (fields.length + 1)); values.push(paidAt || null); }
+    if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }
+    const query = `UPDATE invoices SET ${fields.join(', ')} WHERE id = $${fields.length + 1} AND user_id = $${fields.length + 2} RETURNING id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at, created_at`;
+    values.push(id, user.userId);
+    const [row] = await sql(query, values);
     if (!row) { notFound(res); return; }
     sendJson(res, 200, { data: { id: row.id, clientId: row.client_id, projectId: row.project_id, amount: row.amount, currency: row.currency, status: row.status, dueDate: row.due_date, lineItems: row.line_items || [], sentAt: row.sent_at, paidAt: row.paid_at, createdAt: row.created_at } });
     return;

@@ -19,14 +19,17 @@ export default async function handler(req, res) {
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
     const { text, done, assignee, status, priority } = req.body || {};
-    const updates = [];
-    if (text !== undefined) updates.push(sql`text = ${text}`);
-    if (done !== undefined) updates.push(sql`done = ${!!done}`);
-    if (assignee !== undefined) updates.push(sql`assignee = ${assignee || null}`);
-    if (status !== undefined) updates.push(sql`status = ${status}`);
-    if (priority !== undefined) updates.push(sql`priority = ${priority}`);
-    if (updates.length === 0) { badRequest(res, 'No fields to update'); return; }
-    const [row] = await sql`UPDATE tasks SET ${sql.join(updates, sql`, `)} WHERE id = ${id} AND user_id = ${user.userId} RETURNING id, work_area_id, text, done, assignee, status, priority, created_at`;
+    const fields = [];
+    const values = [];
+    if (text !== undefined) { fields.push('text = $' + (fields.length + 1)); values.push(text); }
+    if (done !== undefined) { fields.push('done = $' + (fields.length + 1)); values.push(!!done); }
+    if (assignee !== undefined) { fields.push('assignee = $' + (fields.length + 1)); values.push(assignee || null); }
+    if (status !== undefined) { fields.push('status = $' + (fields.length + 1)); values.push(status); }
+    if (priority !== undefined) { fields.push('priority = $' + (fields.length + 1)); values.push(priority); }
+    if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }
+    const query = `UPDATE tasks SET ${fields.join(', ')} WHERE id = $${fields.length + 1} AND user_id = $${fields.length + 2} RETURNING id, work_area_id, text, done, assignee, status, priority, created_at`;
+    values.push(id, user.userId);
+    const [row] = await sql(query, values);
     if (!row) { notFound(res); return; }
     sendJson(res, 200, { data: { id: row.id, workAreaId: row.work_area_id, text: row.text, done: row.done, assignee: row.assignee, status: row.status, priority: row.priority, createdAt: row.created_at } });
     return;

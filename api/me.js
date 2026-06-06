@@ -22,39 +22,32 @@ export default async function handler(req, res) {
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
     const { name, company } = req.body || {};
-    const updates = [];
-    if (name !== undefined) updates.push(sql`name = ${name}`);
-    if (company !== undefined) updates.push(sql`company = ${company}`);
+    const fields = [];
+    const values = [];
+    if (name !== undefined) { fields.push('name = $' + (fields.length + 1)); values.push(name); }
+    if (company !== undefined) { fields.push('company = $' + (fields.length + 1)); values.push(company); }
 
-    if (updates.length === 0) { badRequest(res, 'No fields to update'); return; }
+    if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }
+
+    const query = `UPDATE users SET ${fields.join(', ')} WHERE id = $${fields.length + 1} RETURNING id, email, name, company, role`;
+    values.push(user.userId);
 
     let row;
     try {
-      [row] = await sql`
-        UPDATE users SET ${sql.join(updates, sql`, `)} WHERE id = ${user.userId}
-        RETURNING id, email, name, company, role;
-      `;
+      [row] = await sql(query, values);
     } catch (err) {
       // company column may not exist yet in old databases
       if (company !== undefined) {
         try { await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS company TEXT`; } catch (_) {}
-        // Retry the full update now that column exists
         try {
-          [row] = await sql`
-            UPDATE users SET ${sql.join(updates, sql`, `)} WHERE id = ${user.userId}
-            RETURNING id, email, name, company, role;
-          `;
+          [row] = await sql(query, values);
         } catch (_) {}
       }
-      if (!row) {
-        const safeUpdates = updates.filter(u => !u.sql || !u.sql.includes || !u.sql.includes('company'));
-        if (safeUpdates.length === 0) { badRequest(res, 'No valid fields to update'); return; }
-        [row] = await sql`
-          UPDATE users SET ${sql.join(safeUpdates, sql`, `)} WHERE id = ${user.userId}
-          RETURNING id, email, name, role;
-        `;
+      if (!row && name !== undefined) {
+        [row] = await sql`UPDATE users SET name = ${name} WHERE id = ${user.userId} RETURNING id, email, name, role`;
       }
     }
+    if (!row) { badRequest(res, 'Update failed'); return; }
     sendJson(res, 200, {
       data: {
         id: row.id,

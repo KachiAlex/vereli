@@ -30,21 +30,21 @@ export default async function handler(req, res) {
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
     const { name, contact, email, type, status, portal_on, portal_url } = req.body || {};
-    const updates = [];
-    if (name !== undefined) updates.push(sql`name = ${name}`);
-    if (contact !== undefined) updates.push(sql`contact = ${contact}`);
-    if (email !== undefined) updates.push(sql`email = ${email}`);
-    if (type !== undefined) updates.push(sql`type = ${type}`);
-    if (status !== undefined) updates.push(sql`status = ${status}`);
-    if (portal_on !== undefined) updates.push(sql`portal_on = ${portal_on}`);
-    if (portal_url !== undefined) updates.push(sql`portal_url = ${portal_url}`);
+    const fields = [];
+    const values = [];
+    if (name !== undefined) { fields.push('name = $' + (fields.length + 1)); values.push(name); }
+    if (contact !== undefined) { fields.push('contact = $' + (fields.length + 1)); values.push(contact); }
+    if (email !== undefined) { fields.push('email = $' + (fields.length + 1)); values.push(email); }
+    if (type !== undefined) { fields.push('type = $' + (fields.length + 1)); values.push(type); }
+    if (status !== undefined) { fields.push('status = $' + (fields.length + 1)); values.push(status); }
+    if (portal_on !== undefined) { fields.push('portal_on = $' + (fields.length + 1)); values.push(portal_on); }
+    if (portal_url !== undefined) { fields.push('portal_url = $' + (fields.length + 1)); values.push(portal_url); }
 
-    if (updates.length === 0) { badRequest(res, 'No fields to update'); return; }
+    if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }
 
-    const [row] = await sql`
-      UPDATE clients SET ${sql.join(updates, sql`, `)} WHERE id = ${id} AND user_id = ${user.userId}
-      RETURNING id, name, contact, email, type, status, portal_on, portal_url, created_at;
-    `;
+    const query = `UPDATE clients SET ${fields.join(', ')} WHERE id = $${fields.length + 1} AND user_id = $${fields.length + 2} RETURNING id, name, contact, email, type, status, portal_on, portal_url, created_at`;
+    values.push(id, user.userId);
+    const [row] = await sql(query, values);
     if (!row) { notFound(res); return; }
     sendJson(res, 200, {
       data: {

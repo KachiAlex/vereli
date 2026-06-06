@@ -19,11 +19,14 @@ export default async function handler(req, res) {
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
     const { item, status } = req.body || {};
-    const updates = [];
-    if (item !== undefined) updates.push(sql`item = ${item}`);
-    if (status !== undefined) updates.push(sql`status = ${status}`);
-    if (updates.length === 0) { badRequest(res, 'No fields to update'); return; }
-    const [row] = await sql`UPDATE approvals SET ${sql.join(updates, sql`, `)} WHERE id = ${id} AND user_id = ${user.userId} RETURNING id, work_area_id, item, status, created_at`;
+    const fields = [];
+    const values = [];
+    if (item !== undefined) { fields.push('item = $' + (fields.length + 1)); values.push(item); }
+    if (status !== undefined) { fields.push('status = $' + (fields.length + 1)); values.push(status); }
+    if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }
+    const query = `UPDATE approvals SET ${fields.join(', ')} WHERE id = $${fields.length + 1} AND user_id = $${fields.length + 2} RETURNING id, work_area_id, item, status, created_at`;
+    values.push(id, user.userId);
+    const [row] = await sql(query, values);
     if (!row) { notFound(res); return; }
     sendJson(res, 200, { data: { id: row.id, workAreaId: row.work_area_id, item: row.item, status: row.status, createdAt: row.created_at } });
     return;
