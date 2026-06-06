@@ -446,8 +446,8 @@
 
 <script id="content" type="application/json">{"company":"content/company.json"}</script>
 <script type="module">
-import { submitContactForm } from '@appsmithorg/template-frontend/utility';
-document.dispatchEvent(new CustomEvent('kite:core-ready', { detail: { submitContactForm } }));
+const submitContactForm = async () => ({ ok: false, error: "Not configured" });
+document.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));
 </script>
 <script id="main_script">
 lucide.createIcons();

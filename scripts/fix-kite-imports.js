@@ -16,8 +16,8 @@ for (const file of files) {
 
     // Replace the Kite ES module import with a no-op stub
     content = content.replace(
-      /<script type="module">\s*import\s*\{[^}]*\}\s*from\s*['"]@appsmithorg\/template-frontend\/utility['"];?\s*document\.dispatchEvent\(new CustomEvent\(['"]kite:core-ready['"],\s*\{[^}]*\}\s*\)\);?\s*<\/script>/,
-      '<script type="module">\n// Kite utility removed; stub to keep compatibility\nconst submitContactForm = async () => ({ ok: false, error: "Not configured" });\ndocument.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));\n</script>'
+      /<script type="module">[\s\S]*?import\s*\{[^}]*\}\s*from\s*['"]@appsmithorg\/template-frontend\/utility['"];?[\s\S]*?document\.dispatchEvent\(new CustomEvent\(['"]kite:core-ready['"],\s*\{[\s\S]*?\}\s*\)\);?[\s\S]*?<\/script>/,
+      '<script type="module">\nconst submitContactForm = async () => ({ ok: false, error: "Not configured" });\ndocument.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));\n</script>'
     );
 
     // Remove the Kite script injector
