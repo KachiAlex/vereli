@@ -40,6 +40,9 @@ export default function handler(req, res) {
       { method: 'GET',  path: '/api/payments', description: 'List payments' },
       { method: 'POST', path: '/api/payments', description: 'Create a payment' },
       { method: 'GET',  path: '/api/payments/:id', description: 'Get/delete a payment' },
+      { method: 'GET',  path: '/api/team', description: 'List team members' },
+      { method: 'POST', path: '/api/team', description: 'Invite a team member' },
+      { method: 'GET',  path: '/api/team/:id', description: 'Update/remove a team member' },
     ],
   });
 }

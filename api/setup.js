@@ -12,6 +12,7 @@ export default async function handler(req, res) {
         email TEXT NOT NULL UNIQUE,
         password_hash TEXT NOT NULL,
         name TEXT NOT NULL,
+        company TEXT,
         role TEXT NOT NULL DEFAULT 'owner',
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
@@ -31,6 +32,7 @@ export default async function handler(req, res) {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS company TEXT`;
     await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS type TEXT NOT NULL DEFAULT 'Service'`;
     await sql`UPDATE clients SET type = 'Service' WHERE type IS NULL OR type = ''`;
 
@@ -132,6 +134,18 @@ export default async function handler(req, res) {
         work_area_id INTEGER NOT NULL REFERENCES work_areas(id) ON DELETE CASCADE,
         item TEXT NOT NULL,
         status TEXT NOT NULL DEFAULT 'waiting',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS team_members (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        email TEXT NOT NULL,
+        name TEXT,
+        role TEXT NOT NULL DEFAULT 'member',
+        status TEXT NOT NULL DEFAULT 'invited',
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `;

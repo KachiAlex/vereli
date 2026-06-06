@@ -336,6 +336,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
       </div>
       <div id="auth-register" style="display:none">
         <div style="margin-bottom:14px"><label class="flbl">Full name</label><input type="text" class="field" id="reg-name" placeholder="Jane Smith"></div>
+        <div style="margin-bottom:14px"><label class="flbl">Company / Workspace</label><input type="text" class="field" id="reg-company" placeholder="Kreatix Technologies"></div>
         <div style="margin-bottom:14px"><label class="flbl">Email</label><input type="email" class="field" id="reg-email" placeholder="you@agency.com"></div>
         <div style="margin-bottom:20px"><label class="flbl">Password</label><input type="password" class="field" id="reg-pass" placeholder="••••••••"></div>
         <button onclick="doRegister()" class="tb-btn pri" style="width:100%;justify-content:center;height:44px">Create account</button>
@@ -350,7 +351,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 <aside id="sidebar">
   <div class="sb-logo">
     <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" style="height:24px;width:auto;flex-shrink:0">
-    <span class="sb-ws-name">Meridian Agency</span>
+    <span class="sb-ws-name" id="sb-ws-name">Workspace</span>
   </div>
   <nav class="sb-nav">
     <div class="ni active" id="nav-dashboard" onclick="goView('dashboard',this)">
@@ -493,7 +494,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
             <select style="height:38px;padding:0 12px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;box-shadow:0 1px 2px rgba(15,61,62,.04)">
               <option>All clients</option>${DATA.clients.map(c=>`<option>${c.name}</option>`).join('')}
             </select>
-            <button onclick="toast('Upload deliverable')" class="tb-btn pri">
+            <button onclick="openFileUploadGlobal()" class="tb-btn pri">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button>
           </div>
         </div>
@@ -506,7 +507,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
       <div style="max-width:760px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px">
           <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Contracts</div><div style="font-size:13.5px;color:#7A9E99">Agreements sent, signed, and stored</div></div>
-          <button onclick="toast('New contract')" class="tb-btn pri">
+          <button onclick="document.getElementById('contract-file').click()" class="tb-btn pri">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New contract</button>
         </div>
         <div class="card" style="overflow:hidden" id="contracts-list"></div>
@@ -539,7 +540,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
       <div style="max-width:760px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px">
           <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Invoices</div><div style="font-size:13.5px;color:#7A9E99">Billing across all client engagements</div></div>
-          <button onclick="toast('New invoice')" class="tb-btn pri">
+          <button onclick="openInvModal()" class="tb-btn pri">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New invoice</button>
         </div>
         <div class="inv-stat-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px">
@@ -604,7 +605,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
         <div class="card" style="overflow:hidden;margin-bottom:14px">
           <div style="padding:18px 24px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between">
             <span class="ht" style="font-size:13px;font-weight:700;color:#0B4F52;letter-spacing:-.01em">Members</span>
-            <button onclick="toast('Invite sent')" class="tb-btn">
+            <button onclick="inviteMember()" class="tb-btn">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Invite member</button>
           </div>
           <div style="padding:22px 24px"><div style="display:flex;flex-direction:column;gap:18px" id="team-list"></div></div>
@@ -656,6 +657,9 @@ let DATA = { team:[], clients:[] };
 
 /* ══ STATE ══ */
 let SC=null,STAB='overview',SWA=null,SWATAB='tasks',ncPortalOn=false,ncEng='active';
+let CURRENT_USER=null;
+let SHOW_INV_FORM=false;
+let SHOW_PAY_FORM=false;
 
 /* ══ API ══ */
 const API_BASE = '/api';
@@ -736,6 +740,8 @@ async function initFromApi() {
       if (sub) sub.textContent = `${activeCount} active engagement${activeCount !== 1 ? 's' : ''}`;
       await loadInvoices();
       await loadPayments();
+      await loadProjects();
+      await loadTeam();
       await loadAllWorkspaces();
       renderDash();
       if (document.getElementById('view-clients').classList.contains('active')) renderCG();
@@ -747,6 +753,7 @@ async function initFromApi() {
 
 let INVOICES = [];
 let PAYMENTS = [];
+let PROJECTS = [];
 
 async function loadInvoices() {
   try {
@@ -775,6 +782,31 @@ async function loadPayments() {
     PAYMENTS = json.data || [];
   } catch (err) {
     console.warn('Payment fetch failed:', err.message);
+  }
+}
+
+async function loadProjects() {
+  try {
+    const res = await apiFetch('/projects');
+    if (!res.ok) return;
+    const json = await res.json();
+    PROJECTS = json.data || [];
+  } catch (err) {
+    console.warn('Project fetch failed:', err.message);
+  }
+}
+
+async function loadTeam() {
+  try {
+    const res = await apiFetch('/team');
+    if (!res.ok) return;
+    const json = await res.json();
+    DATA.team = (json.data || []).map(m => {
+      const inits = (m.name || m.email).split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
+      return { ...m, init: inits || '??', bg: '#E4F2F0', tc: '#0B4F52' };
+    });
+  } catch (err) {
+    console.warn('Team fetch failed:', err.message);
   }
 }
 
@@ -936,6 +968,7 @@ async function doLogin() {
 
 async function doRegister() {
   const name = document.getElementById('reg-name').value.trim();
+  const company = document.getElementById('reg-company').value.trim();
   const email = document.getElementById('reg-email').value.trim();
   const password = document.getElementById('reg-pass').value;
   if (!name || !email || !password) { authError('All fields are required'); return; }
@@ -943,7 +976,7 @@ async function doRegister() {
     const res = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify({ name, company, email, password })
     });
     const json = await res.json();
     if (!res.ok) { authError(json.error || 'Registration failed'); return; }
@@ -968,11 +1001,14 @@ function getGreeting() {
 
 function updateUserUI(user) {
   if (!user) return;
+  CURRENT_USER = user;
   const inits = user.name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
   const firstName = user.name.split(' ')[0] || user.name;
   document.getElementById('sb-name').textContent = user.name;
   document.getElementById('sb-role').textContent = user.role || 'Owner';
   document.getElementById('sb-av').textContent = inits || 'U';
+  const wsEl = document.getElementById('sb-ws-name');
+  if (wsEl) wsEl.textContent = user.company || firstName + ' workspace';
   const greetEl = document.getElementById('dash-greeting');
   if (greetEl) greetEl.textContent = getGreeting() + ', ' + firstName;
 }
@@ -1004,13 +1040,13 @@ function goView(name,el){
   document.getElementById('pt-sub').style.display='none';
   const tba=document.getElementById('tba');
   if(name==='clients')tba.innerHTML=`<button onclick="openMod()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add client</button>`;
-  else if(name==='invoices')tba.innerHTML=`<button onclick="toast('New invoice')" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New invoice</button>`;
-  else if(name==='files')tba.innerHTML=`<button onclick="toast('File picker opening…')" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>`;
+  else if(name==='invoices')tba.innerHTML=`<button onclick="openInvModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New invoice</button>`;
+  else if(name==='files')tba.innerHTML=`<button onclick="openFileUploadGlobal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>`;
   else tba.innerHTML='';
   if(name==='clients')showCG();
   if(name==='files')renderFiles();
   if(name==='invoices')renderInv();
-  if(name==='payments'){renderPay();switchPayWin('month',document.querySelector('#pay-win-tabs button'));}
+  if(name==='payments'){renderPay();switchPayWin('month',document.querySelector('#pay-win-tabs button'));document.getElementById('tba').innerHTML=`<button onclick="openPayModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Record payment</button>`;}
   if(name==='deliverables')renderDeliverables();
   if(name==='contracts')renderContracts();
   if(name==='team')renderTeam();
@@ -1193,9 +1229,9 @@ function renderCP(){
   const ptSub=document.getElementById('pt-sub');
   ptSub.textContent='/ '+c.name;ptSub.style.display='';
   document.getElementById('tba').innerHTML=`
-    <button onclick="toast('Share portal link')" class="tb-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share portal</button>
-    <button onclick="toast('Upload file')" class="tb-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>
-    <button onclick="toast('Add task')" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add task</button>`;
+    <button onclick="copyPortalLink(${c.id})" class="tb-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share portal</button>
+    <input type="file" id="cp-file-${c.id}" style="display:none" onchange="handleCPFileUpload(${c.id},this)"><button onclick="document.getElementById('cp-file-'+${c.id}).click()" class="tb-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>
+    <button onclick="quickAddTask(${c.id})" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add task</button>`;
   pv.innerHTML=`
     <div style="margin-bottom:6px">
       <button onclick="showCG()" style="display:inline-flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12px;font-weight:600;color:#7A9E99;padding:0 0 16px;transition:color .1s" onmouseenter="this.style.color='#0B4F52'" onmouseleave="this.style.color='#7A9E99'">
@@ -1272,9 +1308,25 @@ function renderCT(c){
 }
 function renderCTDeliverables(c){
   const all=c.workAreas.flatMap(w=>w.files.filter(f=>f.vis==='shared').map(f=>({...f,wa:w.name})));
-  if(!all.length)return emp('No deliverables','Upload and share files with this client to get started.','package');
+  const empty=emp('No deliverables','Upload and share files with this client to get started.','package');
   const rows=all.map(f=>{const ic=IC[f.type]||IC.doc;const sig=f.signing==='signed'?'<span class="st green" style="font-size:10px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px">Awaiting sig.</span>':'';return `<div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;background:#fff;border:1px solid #E8EFEC;box-shadow:0 1px 4px rgba(15,61,62,.04)"><div style="width:32px;height:32px;border-radius:9px;background:${ic.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ic.i}" style="width:14px;height:14px;color:${ic.tc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:700;color:#0B4F52">${f.n}</div><div style="font-size:11px;color:#7A9E99;margin-top:2px">${f.sz} · ${f.wa} · ${f.date}</div></div>${sig?sig+'&nbsp;':''}<span class="st green" style="font-size:10px">Shared</span><button class="tb-btn" style="font-size:11px;padding:5px 11px;margin-left:8px" onclick="toast('Downloading')">Download</button></div>`;}).join('');
-  return `<div style="max-width:680px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span class="slbl" style="margin-bottom:0">${all.length} shared with client</span><button onclick="toast('Upload file')" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button></div><div style="display:flex;flex-direction:column;gap:8px">${rows}</div></div>`;
+  return `<div style="max-width:680px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span class="slbl" style="margin-bottom:0">${all.length} shared with client</span><input type="file" id="del-file-${c.id}" style="display:none" onchange="handleDelFileUpload(${c.id},this)"><button onclick="document.getElementById('del-file-'+${c.id}).click()" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button></div>${all.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):empty}</div>`;
+}
+async function handleDelFileUpload(cid,input){
+  const file=input.files[0];if(!file)return;
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c||!c.workAreas.length){toast('No work area');return;}
+  const waApiId=c.workAreas[0].apiId;
+  try{
+    const name=file.name;const type=name.split('.').pop().toUpperCase();const size=(file.size/(1024*1024)).toFixed(1)+' MB';
+    const res=await apiFetch('/files',{method:'POST',body:JSON.stringify({workAreaId:waApiId,name,type,size,visibility:'shared',uploaderName:CURRENT_USER?CURRENT_USER.name:'You'})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Upload failed');return;}
+    const f=json.data;
+    c.workAreas[0].files.push({apiId:f.id,n:f.name,type:f.type.toLowerCase(),sz:f.size||'—',vis:'shared',uploader:f.uploaderName||'—',date:'now'});
+    toast('File uploaded');renderCP();lucide.createIcons();
+  }catch(err){toast('Upload failed');}
+  input.value='';
 }
 
 function renderCTOverview(c){
@@ -1298,8 +1350,27 @@ function renderCTOverview(c){
 }
 
 function renderWAList(c){
-  if(!c.workAreas.length)return emp('No work areas','Add a project, campaign, or engagement.','folder');
-  return `<div style="max-width:680px"><div class="card" style="overflow:hidden;margin-bottom:12px">${c.workAreas.map(w=>`<div class="wa-row" onclick="SWA=DATA.clients.find(x=>x.id===${c.id}).workAreas.find(x=>x.id==='${w.id}');SWATAB='tasks';document.getElementById('ct').innerHTML=renderWADrill(SC);lucide.createIcons()"><div class="wa-ico" style="background:${w.ibg}"><i data-lucide="${w.icon}" style="width:14px;height:14px;color:${w.itc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:700;color:#121212">${w.name}</div><div style="font-size:11.5px;color:#8E9E9E;margin-top:2px">${w.type} · ${w.tasks.length} tasks · ${w.files.length} files</div><div class="prog" style="max-width:160px;margin-top:6px"><div class="prog-f" style="width:${w.progress}%"></div></div></div><span class="st ${w.status==='active'?'amber':'green'}" style="font-size:10px">${w.status==='active'?'In progress':'Complete'}</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C8C8C4" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg></div>`).join('')}</div><button onclick="toast('Add work area')" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:1.5px dashed #D8D8D5;border-radius:10px;background:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#8E9E9E;transition:all .12s" onmouseenter="this.style.borderColor='#B0B0AD';this.style.color='#555552'" onmouseleave="this.style.borderColor='#D8D8D5';this.style.color='#8E9E9E'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add work area</button></div>`;
+  const empty=emp('No work areas','Add a project, campaign, or engagement.','folder');
+  const addBtn=`<button onclick="createWorkArea(${c.id})" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:1.5px dashed #D8D8D5;border-radius:10px;background:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#8E9E9E;transition:all .12s;margin-top:12px" onmouseenter="this.style.borderColor='#B0B0AD';this.style.color='#555552'" onmouseleave="this.style.borderColor='#D8D8D5';this.style.color='#8E9E9E'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add work area</button>`;
+  if(!c.workAreas.length)return empty+addBtn;
+  return `<div style="max-width:680px"><div class="card" style="overflow:hidden;margin-bottom:12px">${c.workAreas.map(w=>`<div class="wa-row" onclick="SWA=DATA.clients.find(x=>x.id===${c.id}).workAreas.find(x=>x.id==='${w.id}');SWATAB='tasks';document.getElementById('ct').innerHTML=renderWADrill(SC);lucide.createIcons()"><div class="wa-ico" style="background:${w.ibg}"><i data-lucide="${w.icon}" style="width:14px;height:14px;color:${w.itc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:700;color:#121212">${w.name}</div><div style="font-size:11.5px;color:#8E9E9E;margin-top:2px">${w.type} · ${w.tasks.length} tasks · ${w.files.length} files</div><div class="prog" style="max-width:160px;margin-top:6px"><div class="prog-f" style="width:${w.progress}%"></div></div></div><span class="st ${w.status==='active'?'amber':'green'}" style="font-size:10px">${w.status==='active'?'In progress':'Complete'}</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C8C8C4" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg></div>`).join('')}</div>${addBtn}</div>`;
+}
+async function createWorkArea(cid){
+  const name = prompt('Work area name:');
+  if(!name) return;
+  try {
+    const res = await apiFetch('/work-areas', {method:'POST', body:JSON.stringify({clientId:cid, name, type:'general'})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to create work area');return;}
+    const client = DATA.clients.find(c=>c.id===cid);
+    if(client){
+      const wa = apiWorkAreaToData(json.data, [], [], [], []);
+      client.workAreas.push(wa);
+      document.getElementById('ct').innerHTML=renderWAList(SC);
+      lucide.createIcons();
+    }
+    toast('Work area created');
+  } catch(err){toast('Failed to create work area');}
 }
 
 function renderWADrill(c){
@@ -1349,7 +1420,26 @@ function renderWATasks(wa){
     const idx=wa.tasks.indexOf(t);
     return '<div class="tr" style="cursor:pointer;opacity:.6" onclick="handleTaskClick('+wa.apiId+','+t.apiId+','+idx+',false)"><div class="tck done"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="tt done">'+t.t+'</div><div class="ta">'+t.a+'</div></div>';
   }).join('');
-  return (open.length?'<div class="slbl">Open ('+open.length+')</div><div>'+openH+'</div>':'')+(done.length?'<div class="slbl" style="margin-top:14px">Done ('+done.length+')</div><div>'+doneH+'</div>':'');
+  const addInput = `<div style="display:flex;gap:8px;margin-top:14px"><input id="new-task-${wa.apiId}" type="text" class="field" placeholder="New task…" style="flex:1;font-size:13px;padding:8px 12px;height:auto" onkeydown="if(event.key==='Enter')createTask(${wa.apiId})"><button class="tb-btn pri" style="padding:8px 14px" onclick="createTask(${wa.apiId})">Add</button></div>`;
+  return (open.length?'<div class="slbl">Open ('+open.length+')</div><div>'+openH+'</div>':'')+(done.length?'<div class="slbl" style="margin-top:14px">Done ('+done.length+')</div><div>'+doneH+'</div>':'')+addInput;
+}
+async function createTask(waApiId){
+  const el = document.getElementById('new-task-'+waApiId);
+  if(!el)return;
+  const text = el.value.trim();
+  if(!text)return;
+  try {
+    const res = await apiFetch('/tasks', {method:'POST', body:JSON.stringify({workAreaId:waApiId, text, status:'todo', priority:'medium'})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to add task');return;}
+    const t = json.data;
+    if(SWA){
+      SWA.tasks.push({apiId:t.id, t:t.text, done:t.done, a:t.assignee||'—', status:t.status, p:t.priority});
+      document.getElementById('ct').innerHTML=renderWADrill(SC);
+      lucide.createIcons();
+    }
+    toast('Task added');
+  } catch(err){toast('Failed to add task');}
 }
 async function handleTaskClick(waApiId, taskApiId, taskIdx, markDone){
   const ok = await toggleTask(waApiId, taskApiId, markDone);
@@ -1367,18 +1457,77 @@ function renderWADeliverables(wa){
 
 function renderWAFiles(wa){
   const fileRows=wa.files.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px;margin-left:4px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px;margin-left:4px">Awaiting signature</span>':'';return `<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;background:#fff;border:1px solid #E2EBE9"><div style="width:30px;height:30px;border-radius:7px;background:${ic.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ic.i}" style="width:13px;height:13px;color:${ic.tc}"></i></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:4px"><span class="ht" style="font-size:13px;font-weight:600;color:#121212">${f.n}</span>${sigBadge}</div><div style="font-size:11px;color:#8E9E9E">${f.sz} · Uploaded by ${f.uploader} · ${f.date}</div></div><span class="st ${f.vis==='shared'?'green':'gray'}" style="font-size:10px;margin-right:4px">${f.vis==='shared'?'Shared':'Internal'}</span><button class="tb-btn" style="font-size:11px;padding:4px 9px" onclick="toast('Downloading')">↓</button></div>`;}).join('');
-  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="slbl" style="margin-bottom:0">${wa.files.length} file${wa.files.length!==1?'s':''}</div><button onclick="toast('File picker opening…')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s" onmouseenter="this.style.borderColor='#B8CECC'" onmouseleave="this.style.borderColor='#EEF2F2'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload</button></div>${wa.files.length?('<div style="display:flex;flex-direction:column;gap:8px">'+fileRows+'</div>'):emp('No files','Upload files to this work area.','folder')}`;
+  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="slbl" style="margin-bottom:0">${wa.files.length} file${wa.files.length!==1?'s':''}</div><input type="file" id="wa-file-${wa.apiId}" style="display:none" onchange="handleFileUpload(${wa.apiId},this)"><button onclick="document.getElementById('wa-file-'+${wa.apiId}).click()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s" onmouseenter="this.style.borderColor='#B8CECC'" onmouseleave="this.style.borderColor='#EEF2F2'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload</button></div>${wa.files.length?('<div style="display:flex;flex-direction:column;gap:8px">'+fileRows+'</div>'):emp('No files','Upload files to this work area.','folder')}`;
+}
+async function handleFileUpload(waApiId, input){
+  const file = input.files[0];
+  if(!file)return;
+  try {
+    const name = file.name;
+    const type = name.split('.').pop().toUpperCase();
+    const size = (file.size / (1024*1024)).toFixed(1) + ' MB';
+    const res = await apiFetch('/files', {method:'POST', body:JSON.stringify({workAreaId:waApiId, name, type, size, visibility:'internal', uploaderName:CURRENT_USER ? CURRENT_USER.name : 'You'})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Upload failed');return;}
+    const f = json.data;
+    if(SWA){
+      SWA.files.push({apiId:f.id, n:f.name, type:f.type.toLowerCase(), sz:f.size||'—', vis:f.visibility, uploader:f.uploaderName||'—', date:'now'});
+      document.getElementById('ct').innerHTML=renderWADrill(SC);
+      lucide.createIcons();
+    }
+    toast('File uploaded');
+  } catch(err){toast('Upload failed');}
+  input.value='';
 }
 
 function renderWAFeedback(wa){
-  if(!wa.feedback.length)return emp('No feedback','Client feedback tied to this work will appear here.','message-circle');
-  return `<div style="display:flex;flex-direction:column;gap:10px">${wa.feedback.map(f=>`<div style="display:flex;gap:10px"><div style="width:28px;height:28px;border-radius:8px;flex-shrink:0;background:${f.bg};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:10px;font-weight:800;color:${f.tc}">${f.init}</div><div style="flex:1;background:#F8F7F4;border-radius:10px;border:1px solid #E2EBE9;padding:11px 13px"><div style="font-size:10.5px;color:#8E9E9E;margin-bottom:4px">On: ${f.ref}</div><p style="font-size:13px;color:#121212">${f.txt}</p><p style="font-size:10.5px;color:#8E9E9E;margin-top:5px">${f.from} · ${f.time}</p></div></div>`).join('')}</div>`;
+  const existing = wa.feedback.length ? `<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">${wa.feedback.map(f=>`<div style="display:flex;gap:10px"><div style="width:28px;height:28px;border-radius:8px;flex-shrink:0;background:${f.bg};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:10px;font-weight:800;color:${f.tc}">${f.init}</div><div style="flex:1;background:#F8F7F4;border-radius:10px;border:1px solid #E2EBE9;padding:11px 13px"><div style="font-size:10.5px;color:#8E9E9E;margin-bottom:4px">On: ${f.ref}</div><p style="font-size:13px;color:#121212">${f.txt}</p><p style="font-size:10.5px;color:#8E9E9E;margin-top:5px">${f.from} · ${f.time}</p></div></div>`).join('')}</div>` : '';
+  const addBox = `<div style="display:flex;gap:8px"><input id="new-comment-${wa.apiId}" type="text" class="field" placeholder="Add a comment…" style="flex:1;font-size:13px;padding:8px 12px;height:auto" onkeydown="if(event.key==='Enter')createComment(${wa.apiId})"><button class="tb-btn pri" style="padding:8px 14px" onclick="createComment(${wa.apiId})">Post</button></div>`;
+  return existing || addBox ? existing + addBox : emp('No feedback','Client feedback tied to this work will appear here.','message-circle');
+}
+async function createComment(waApiId){
+  const el = document.getElementById('new-comment-'+waApiId);
+  if(!el)return;
+  const text = el.value.trim();
+  if(!text)return;
+  try {
+    const initials = CURRENT_USER ? CURRENT_USER.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() : 'U';
+    const res = await apiFetch('/comments', {method:'POST', body:JSON.stringify({workAreaId:waApiId, authorName:CURRENT_USER?CURRENT_USER.name:'You', authorInitials:initials, authorBg:'#E4F2F0', authorTc:'#0B4F52', text})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to post comment');return;}
+    const c = json.data;
+    if(SWA){
+      SWA.feedback.push({from:c.authorName, init:c.authorInitials||'??', bg:c.authorBg||'#EEF2F2', tc:c.authorTc||'#0B4F52', txt:c.text, time:'now', ref:c.reference||''});
+      document.getElementById('ct').innerHTML=renderWADrill(SC);
+      lucide.createIcons();
+    }
+    toast('Comment posted');
+  } catch(err){toast('Failed to post comment');}
 }
 
 function renderWAApprovals(wa){
-  if(!wa.approvals.length)return emp('No approvals','Approvals attach to deliverables.','check-square');
   const STATUS={waiting:{cls:'amber',label:'Awaiting approval',icon:'clock',ibg:'#FEF3E2',itc:'#A0621A'},approved:{cls:'green',label:'Approved',icon:'check',ibg:'#EAF2EE',itc:'#2D6A4F'},'revision-requested':{cls:'red',label:'Revision requested',icon:'rotate-ccw',ibg:'#FDECEA',itc:'#B91C1C'},'awaiting-signature':{cls:'amber',label:'Awaiting signature',icon:'pen-line',ibg:'#FEF3E2',itc:'#A0621A'},signed:{cls:'green',label:'Signed',icon:'file-check',ibg:'#EAF2EE',itc:'#2D6A4F'}};
-  return `<div class="card" style="padding:0 16px">${wa.approvals.map((a,idx)=>{const s=STATUS[a.status]||STATUS.waiting;const btn=a.status==='waiting'?`<button class="tb-btn" style="font-size:11px;padding:4px 10px" onclick="updateApproval(${a.apiId},'approved',${idx})">Approve</button><button class="tb-btn" style="font-size:11px;padding:4px 10px;margin-left:4px" onclick="updateApproval(${a.apiId},'revision-requested',${idx})">Request revision</button>`:'';return `<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #F5F5F3"><div style="width:28px;height:28px;border-radius:7px;background:${s.ibg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${s.icon}" style="width:12px;height:12px;color:${s.itc}"></i></div><span class="ht" style="flex:1;font-size:13px;font-weight:600;color:#121212">${a.item}</span><span class="st ${s.cls}" style="font-size:10px;margin-right:6px">${s.label}</span>${btn}</div>`;}).join('')}</div>`;
+  const list = wa.approvals.length ? `<div class="card" style="padding:0 16px;margin-bottom:14px">${wa.approvals.map((a,idx)=>{const s=STATUS[a.status]||STATUS.waiting;const btn=a.status==='waiting'?`<button class="tb-btn" style="font-size:11px;padding:4px 10px" onclick="updateApproval(${a.apiId},'approved',${idx})">Approve</button><button class="tb-btn" style="font-size:11px;padding:4px 10px;margin-left:4px" onclick="updateApproval(${a.apiId},'revision-requested',${idx})">Request revision</button>`:'';return `<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #F5F5F3"><div style="width:28px;height:28px;border-radius:7px;background:${s.ibg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${s.icon}" style="width:12px;height:12px;color:${s.itc}"></i></div><span class="ht" style="flex:1;font-size:13px;font-weight:600;color:#121212">${a.item}</span><span class="st ${s.cls}" style="font-size:10px;margin-right:6px">${s.label}</span>${btn}</div>`;}).join('')}</div>` : '';
+  const addBox = `<div style="display:flex;gap:8px"><input id="new-approval-${wa.apiId}" type="text" class="field" placeholder="Request approval for…" style="flex:1;font-size:13px;padding:8px 12px;height:auto" onkeydown="if(event.key==='Enter')createApproval(${wa.apiId})"><button class="tb-btn pri" style="padding:8px 14px" onclick="createApproval(${wa.apiId})">Request</button></div>`;
+  return list + addBox;
+}
+async function createApproval(waApiId){
+  const el = document.getElementById('new-approval-'+waApiId);
+  if(!el)return;
+  const item = el.value.trim();
+  if(!item)return;
+  try {
+    const res = await apiFetch('/approvals', {method:'POST', body:JSON.stringify({workAreaId:waApiId, item, status:'waiting'})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to request approval');return;}
+    const a = json.data;
+    if(SWA){
+      SWA.approvals.push({apiId:a.id, item:a.item, status:a.status});
+      document.getElementById('ct').innerHTML=renderWADrill(SC);
+      lucide.createIcons();
+    }
+    toast('Approval requested');
+  } catch(err){toast('Failed to request approval');}
 }
 async function updateApproval(apiId, status, idx){
   try {
@@ -1576,11 +1725,27 @@ function renderDeliverables(){
 function renderContracts(){
   const contracts=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.files.filter(f=>f.type==='sig').map(f=>({...f,cname:c.name,wa:w.name,cid:c.id}))));
   const el=document.getElementById('contracts-list');if(!el)return;
-  if(!contracts.length){el.innerHTML='<div class="emp"><div class="emp-ico"><i data-lucide="file-text" style="width:20px;height:20px;color:#B0B0AD"></i></div><div class="emp-t">No contracts yet</div><div class="emp-b">Uploaded contracts and signed agreements appear here.</div></div>';lucide.createIcons();return;}
-  const hdr='<div style="padding:12px 18px 10px;border-bottom:1px solid #EAF0EC"><span class="ht" style="font-size:13px;font-weight:700;color:#0B4F52">'+contracts.length+' agreements</span></div>';
+  const empty='<div class="emp"><div class="emp-ico"><i data-lucide="file-text" style="width:20px;height:20px;color:#B0B0AD"></i></div><div class="emp-t">No contracts yet</div><div class="emp-b">Uploaded contracts and signed agreements appear here.</div></div>';
+  if(!contracts.length){el.innerHTML=empty;lucide.createIcons();return;}
+  const hdr='<div style="padding:12px 18px 10px;border-bottom:1px solid #EAF0EC;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#0B4F52">'+contracts.length+' agreements</span><input type="file" id="contract-file" style="display:none" onchange="handleContractUpload(this)"><button onclick="document.getElementById(\'contract-file\').click()" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> New contract</button></div>';
   const rows=contracts.map(f=>{const signed=f.signing==='signed';const awaiting=f.signing==='awaiting-signature';return '<div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EAF0EC;cursor:pointer" onclick="openCP('+f.cid+')"><div style="width:30px;height:30px;border-radius:8px;background:'+(signed?'#E4F3EC':awaiting?'#FFF3E6':'#F0F0EE')+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+(signed?'file-check':awaiting?'pen-line':'file-text')+'" style="width:13px;height:13px;color:'+(signed?'#17A39B':awaiting?'#CC6B1A':'#7A9E99')+'"></i></div><div style="flex:1;min-width:0;margin-left:8px"><div class="ht" style="font-size:13px;font-weight:600;color:#0B4F52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+f.n+'</div><div style="font-size:11px;color:#7A9E99;margin-top:1px">'+f.cname+' · '+f.wa+'</div></div><span style="font-size:11px;color:#8E9E9E;margin-right:10px">'+f.date+'</span><span class="st '+(signed?'green':awaiting?'amber':'gray')+'" style="font-size:10px">'+(signed?'Signed':awaiting?'Awaiting sig.':'Draft')+'</span></div>';}).join('');
   el.innerHTML=hdr+'<div>'+rows+'</div>';
   lucide.createIcons();
+}
+async function handleContractUpload(input){
+  const file=input.files[0];if(!file)return;
+  if(!DATA.clients.length||!DATA.clients[0].workAreas.length){toast('No work area available');return;}
+  const waApiId=DATA.clients[0].workAreas[0].apiId;
+  try{
+    const name=file.name;const size=(file.size/(1024*1024)).toFixed(1)+' MB';
+    const res=await apiFetch('/files',{method:'POST',body:JSON.stringify({workAreaId:waApiId,name,type:'SIG',size,visibility:'shared',uploaderName:CURRENT_USER?CURRENT_USER.name:'You'})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Upload failed');return;}
+    const f=json.data;
+    DATA.clients[0].workAreas[0].files.push({apiId:f.id,n:f.name,type:'sig',sz:f.size||'—',vis:'shared',uploader:f.uploaderName||'—',date:'now'});
+    toast('Contract uploaded');renderContracts();lucide.createIcons();
+  }catch(err){toast('Upload failed');}
+  input.value='';
 }
 
 /* ══ GLOBAL VIEWS ══ */
@@ -1611,12 +1776,39 @@ function renderFiles(){
   lucide.createIcons();
 }
 
+function openInvModal(){SHOW_INV_FORM=true;renderInv();}
+function closeInvForm(){SHOW_INV_FORM=false;renderInv();}
+async function saveInvoice(){
+  const clientId = Number(document.getElementById('inv-client').value);
+  const projectId = Number(document.getElementById('inv-project').value);
+  const amount = Number(document.getElementById('inv-amount').value);
+  const dueDate = document.getElementById('inv-due').value;
+  const desc = document.getElementById('inv-desc').value.trim();
+  if(!clientId||!projectId||!amount||!dueDate){toast('Please fill all required fields');return;}
+  try {
+    const lineItems = desc ? [{desc, qty:1, rate:amount}] : [];
+    const res = await apiFetch('/invoices', {method:'POST', body:JSON.stringify({clientId, projectId, amount, currency:'NGN', dueDate, status:'pending', lineItems})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to create invoice');return;}
+    INVOICES.push(json.data);
+    SHOW_INV_FORM=false;
+    renderInv();
+    toast('Invoice created');
+  } catch(err){toast('Failed to create invoice');}
+}
 function renderInv(){
+  const el=document.getElementById('inv-list');if(!el)return;
+  if(SHOW_INV_FORM){
+    const clientOpts = DATA.clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+    const projectOpts = PROJECTS.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+    el.innerHTML=`<div class="card" style="padding:22px 24px;margin-bottom:14px"><div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52;margin-bottom:16px">New invoice</div><div style="display:flex;flex-direction:column;gap:14px"><div><label class="flbl">Client</label><select class="field" id="inv-client">${clientOpts}</select></div><div><label class="flbl">Project</label><select class="field" id="inv-project">${projectOpts}</select></div><div><label class="flbl">Amount (NGN)</label><input type="number" class="field" id="inv-amount" placeholder="500000"></div><div><label class="flbl">Due date</label><input type="date" class="field" id="inv-due"></div><div><label class="flbl">Description</label><input type="text" class="field" id="inv-desc" placeholder="Website design phase 1"></div><div style="display:flex;gap:10px"><button class="tb-btn" onclick="closeInvForm()">Cancel</button><button class="tb-btn pri" onclick="saveInvoice()">Create invoice</button></div></div></div>`;
+    lucide.createIcons();
+    return;
+  }
   const all=INVOICES.length?INVOICES.map(inv=>{
     const client=DATA.clients.find(c=>c.id===inv.clientId);
     return {...apiInvoiceToData(inv),cname:client?client.name:'',cid:inv.clientId};
   }):DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.invoices.map(i=>({...i,cname:c.name,wa:w.name,cid:c.id}))));
-  const el=document.getElementById('inv-list');if(!el)return;
   el.innerHTML=all.map(inv=>`<div class="ir" style="cursor:pointer" onclick="openCP(${inv.cid})"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${inv.status==='paid'?'#EAF2EE':'#F5F0FF'};display:flex;align-items:center;justify-content:center"><i data-lucide="${inv.status==='paid'?'check':'clock'}" style="width:12px;height:12px;color:${inv.status==='paid'?'#2D6A4F':'#6B3FA0'}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id} <span style="font-weight:400;color:#8E9E9E;font-family:'Inter',sans-serif">· ${inv.cname}</span></div><div class="imeta">${inv.desc} · Due ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span><span class="st ${inv.status==='paid'?'green':'purple'}" style="font-size:10px">${inv.status==='paid'?'Paid':'Unpaid'}</span></div>`).join('');
   // Update invoice stats
   const rev=computeRevenue('month');
@@ -1647,8 +1839,32 @@ function switchPayWin(win,btn){
   document.querySelectorAll('.pay-win-btn').forEach(b=>{b.style.background='transparent';b.style.color='rgba(255,255,255,.5)';b.style.boxShadow='none';});
   if(btn){btn.style.background='rgba(255,255,255,.2)';btn.style.color='#fff';btn.style.boxShadow='none';}
 }
+function openPayModal(){SHOW_PAY_FORM=true;renderPay();}
+function closePayForm(){SHOW_PAY_FORM=false;renderPay();}
+async function savePayment(){
+  const invoiceId = Number(document.getElementById('pay-inv').value);
+  const amount = Number(document.getElementById('pay-amt').value);
+  const method = document.getElementById('pay-method').value.trim() || 'Bank transfer';
+  const note = document.getElementById('pay-note').value.trim();
+  if(!invoiceId||!amount){toast('Please fill required fields');return;}
+  try {
+    const res = await apiFetch('/payments', {method:'POST', body:JSON.stringify({invoiceId, amount, currency:'NGN', method, note})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to record payment');return;}
+    PAYMENTS.push(json.data);
+    SHOW_PAY_FORM=false;
+    renderPay();
+    toast('Payment recorded');
+  } catch(err){toast('Failed to record payment');}
+}
 function renderPay(){
   const el=document.getElementById('pay-list');if(!el)return;
+  if(SHOW_PAY_FORM){
+    const invOpts = INVOICES.map(inv=>`<option value="${inv.id}">INV-${String(inv.id).padStart(3,'0')} — ${formatCurrency(inv.amount, inv.currency||'NGN')}</option>`).join('');
+    el.innerHTML=`<div class="card" style="padding:22px 24px;margin-bottom:14px"><div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52;margin-bottom:16px">Record payment</div><div style="display:flex;flex-direction:column;gap:14px"><div><label class="flbl">Invoice</label><select class="field" id="pay-inv">${invOpts}</select></div><div><label class="flbl">Amount paid (NGN)</label><input type="number" class="field" id="pay-amt" placeholder="500000"></div><div><label class="flbl">Method</label><input type="text" class="field" id="pay-method" placeholder="Bank transfer"></div><div><label class="flbl">Note</label><input type="text" class="field" id="pay-note" placeholder="Reference"></div><div style="display:flex;gap:10px"><button class="tb-btn" onclick="closePayForm()">Cancel</button><button class="tb-btn pri" onclick="savePayment()">Record payment</button></div></div></div>`;
+    lucide.createIcons();
+    return;
+  }
   let paid;
   if (PAYMENTS.length && INVOICES.length) {
     paid = PAYMENTS.map(pay => {
@@ -1677,16 +1893,29 @@ function renderActivity(){
   lucide.createIcons();
 }
 
-function renderTeam(){
+async function renderTeam(){
+  await loadTeam();
   const el=document.getElementById('team-list');if(!el)return;
-  el.innerHTML=DATA.team.map(m=>`<div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #EEF2F2"><div style="width:38px;height:38px;border-radius:50%;background:${m.bg};color:${m.tc};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:12px;font-weight:800;flex-shrink:0">${m.init}</div><div style="flex:1"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0A2E2F;letter-spacing:-.01em">${m.name}</div><div style="font-size:12px;color:#7A9E99;margin-top:2px">${m.email}</div></div><span class="st teal" style="font-size:10px">${m.role}</span></div>`).join('');
+  if(!DATA.team.length){el.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No team members yet.</div>`;lucide.createIcons();return;}
+  el.innerHTML=DATA.team.map(m=>`<div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #EEF2F2"><div style="width:38px;height:38px;border-radius:50%;background:${m.bg||'#E4F2F0'};color:${m.tc||'#0B4F52'};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:12px;font-weight:800;flex-shrink:0">${m.init}</div><div style="flex:1"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0A2E2F;letter-spacing:-.01em">${m.name||m.email}</div><div style="font-size:12px;color:#7A9E99;margin-top:2px">${m.email}</div></div><span class="st teal" style="font-size:10px">${m.role}</span></div>`).join('');
   lucide.createIcons();
+}
+async function inviteMember(){
+  const email = prompt('Enter team member email:');
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Please enter a valid email');return;}
+  try {
+    const res = await apiFetch('/team', {method:'POST', body:JSON.stringify({email})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Invite failed');return;}
+    toast('Invite sent');
+    renderTeam();
+  } catch(err){toast('Invite failed');}
 }
 
 function renderSettings(tab){
   const el=document.getElementById('settings-content');if(!el)return;
   const tabs={
-    general:`<div class="card" style="padding:26px;margin-bottom:14px"><div style="display:flex;flex-direction:column;gap:18px"><div><label class="flbl">Workspace name</label><input type="text" class="field" value="Meridian Agency"></div><div><label class="flbl">Plan</label><div style="padding:14px 16px;background:#F7FAF9;border-radius:10px;border:1px solid #E0E8E4;display:flex;align-items:center;justify-content:space-between"><div><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52">Professional</div><div style="font-size:12px;color:#7A9E99;margin-top:3px">$39/month · 5 seats · 30 clients</div></div><a href="/pricing/" class="ht" style="font-size:12px;font-weight:700;color:#17A39B;text-decoration:none">Manage →</a></div></div><button class="tb-btn pri" style="width:fit-content" onclick="toast('Saved')">Save changes</button></div></div><div style="margin-top:12px;text-align:center"><a href="/" class="ht" style="font-size:12px;font-weight:600;color:#7A9E99;text-decoration:none">← Back to marketing site</a></div>`,
+    general:`<div class="card" style="padding:26px;margin-bottom:14px"><div style="display:flex;flex-direction:column;gap:18px"><div><label class="flbl">Workspace name</label><input type="text" class="field" id="set-company" value="${CURRENT_USER && CURRENT_USER.company ? CURRENT_USER.company : ''}"></div><div><label class="flbl">Plan</label><div style="padding:14px 16px;background:#F7FAF9;border-radius:10px;border:1px solid #E0E8E4;display:flex;align-items:center;justify-content:space-between"><div><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52">Professional</div><div style="font-size:12px;color:#7A9E99;margin-top:3px">$39/month · 5 seats · 30 clients</div></div><a href="/pricing/" class="ht" style="font-size:12px;font-weight:700;color:#17A39B;text-decoration:none">Manage →</a></div></div><button class="tb-btn pri" style="width:fit-content" onclick="saveSettings()">Save changes</button></div></div><div style="margin-top:12px;text-align:center"><a href="/" class="ht" style="font-size:12px;font-weight:600;color:#7A9E99;text-decoration:none">← Back to marketing site</a></div>`,
     branding:`<div class="card" style="padding:26px"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-bottom:18px">Workspace branding</div><div style="display:flex;flex-direction:column;gap:18px"><div><label class="flbl">Logo</label><div class="upl" onclick="toast('File picker')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ABDB7" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 9px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div class="ht" style="font-size:12.5px;font-weight:600;color:#6A8E89">Upload logo</div><div style="font-size:11px;color:#9ABDB7;margin-top:3px">PNG or SVG preferred</div></div></div><div><label class="flbl">Primary colour</label><div style="display:flex;gap:8px;flex-wrap:wrap">${PCOLS.map(c=>`<div style="width:28px;height:28px;border-radius:50%;background:${c};cursor:pointer;border:2.5px solid transparent;transition:border-color .12s" onclick="toast('Colour applied')" onmouseenter="this.style.borderColor='#0B4F52'" onmouseleave="this.style.borderColor='transparent'"></div>`).join('')}</div></div><button class="tb-btn pri" style="width:fit-content" onclick="toast('Branding saved')">Save</button></div></div>`,
     payments:`<div class="card" style="padding:26px"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-bottom:18px">Payment integrations</div><div style="display:flex;flex-direction:column;gap:10px">${[['Stripe','Connected','#1A6B55'],['Paystack','Not connected','#7A9E99'],['Flutterwave','Not connected','#7A9E99'],['Manual transfer','Available','#3550C4']].map(([n,s,c])=>`<div style="padding:16px 18px;border-radius:12px;border:1px solid #E8EFEC;background:#F7FAF9;display:flex;align-items:center;justify-content:space-between"><div class="ht" style="font-size:13px;font-weight:700;color:#0B4F52">${n}</div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:${c};font-weight:600">${s}</span><button class="tb-btn" style="font-size:11.5px;padding:6px 12px" onclick="toast('${n} settings')">${s==='Connected'?'Manage':'Connect'}</button></div></div>`).join('')}</div></div>`,
     workflow:`<div class="card" style="padding:26px"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-bottom:18px">Custom workflow</div><div style="display:flex;flex-direction:column;gap:16px"><div><label class="flbl">Service categories</label><div style="display:flex;gap:6px;flex-wrap:wrap">${['Strategy','Communications','Media','Editorial','Advisory','Design','Production','Marketing'].map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer" onclick="toast('Edit category')">${s}</span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="toast('Add category')">+ Add</span></div></div><div><label class="flbl">Workflow stages</label><div style="display:flex;gap:6px;flex-wrap:wrap">${['Todo','In progress','Review','Approved','Completed'].map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer">${s}</span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="toast('Add stage')">+ Add</span></div></div><div><label class="flbl">Work area labels</label><div style="display:flex;gap:6px;flex-wrap:wrap">${['Project','Campaign','Retainer','Advisory','Engagement'].map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer">${s}</span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="toast('Add label')">+ Add</span></div></div></div></div>`
@@ -1697,6 +1926,61 @@ function settingsTab(name,el){
   document.querySelectorAll('#view-settings .tab').forEach(t=>{t.classList.remove('active');t.style.borderBottomColor='transparent';});
   if(el){el.classList.add('active');}
   renderSettings(name);
+}
+
+/* ══ CLIENT PORTAL HELPERS ══ */
+function copyPortalLink(cid){
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c||!c.portal.on){toast('Portal is not active');return;}
+  const url='https://'+c.portal.url;
+  navigator.clipboard.writeText(url).then(()=>toast('Portal link copied')).catch(()=>toast(url));
+}
+async function handleCPFileUpload(cid,input){
+  const file=input.files[0];if(!file)return;
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c||!c.workAreas.length){toast('No work area to upload to');return;}
+  const waApiId=c.workAreas[0].apiId;
+  try{
+    const name=file.name;const type=name.split('.').pop().toUpperCase();const size=(file.size/(1024*1024)).toFixed(1)+' MB';
+    const res=await apiFetch('/files',{method:'POST',body:JSON.stringify({workAreaId:waApiId,name,type,size,visibility:'internal',uploaderName:CURRENT_USER?CURRENT_USER.name:'You'})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Upload failed');return;}
+    const f=json.data;
+    c.workAreas[0].files.push({apiId:f.id,n:f.name,type:f.type.toLowerCase(),sz:f.size||'—',vis:f.visibility,uploader:f.uploaderName||'—',date:'now'});
+    toast('File uploaded');renderCP();lucide.createIcons();
+  }catch(err){toast('Upload failed');}
+  input.value='';
+}
+async function quickAddTask(cid){
+  const text=prompt('Task text:');if(!text)return;
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c||!c.workAreas.length){toast('No work area to add task');return;}
+  const waApiId=c.workAreas[0].apiId;
+  try{
+    const res=await apiFetch('/tasks',{method:'POST',body:JSON.stringify({workAreaId:waApiId,text,status:'todo',priority:'medium'})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Failed to add task');return;}
+    const t=json.data;
+    c.workAreas[0].tasks.push({apiId:t.id,t:t.text,done:t.done,a:t.assignee||'—',status:t.status,p:t.priority});
+    toast('Task added');renderCP();lucide.createIcons();
+  }catch(err){toast('Failed to add task');}
+}
+async function openFileUploadGlobal(){
+  const input=document.createElement('input');input.type='file';input.onchange=async()=>{
+    const file=input.files[0];if(!file)return;
+    if(!DATA.clients.length||!DATA.clients[0].workAreas.length){toast('No work area available');return;}
+    const waApiId=DATA.clients[0].workAreas[0].apiId;
+    try{
+      const name=file.name;const type=name.split('.').pop().toUpperCase();const size=(file.size/(1024*1024)).toFixed(1)+' MB';
+      const res=await apiFetch('/files',{method:'POST',body:JSON.stringify({workAreaId:waApiId,name,type,size,visibility:'internal',uploaderName:CURRENT_USER?CURRENT_USER.name:'You'})});
+      const json=await res.json();
+      if(!res.ok){toast(json.error||'Upload failed');return;}
+      const f=json.data;
+      DATA.clients[0].workAreas[0].files.push({apiId:f.id,n:f.name,type:f.type.toLowerCase(),sz:f.size||'—',vis:f.visibility,uploader:f.uploaderName||'—',date:'now'});
+      toast('File uploaded');renderFiles();lucide.createIcons();
+    }catch(err){toast('Upload failed');}
+  };
+  input.click();
 }
 
 /* ══ ADD / EDIT CLIENT ══ */
@@ -1767,8 +2051,41 @@ async function saveC(cid){
 }
 
 /* ══ PORTAL HELPERS ══ */
-function toggleP(cid){const c=DATA.clients.find(x=>x.id===cid);if(c){c.portal.on=!c.portal.on;if(c.portal.on&&!c.portal.url)c.portal.url=`portal.vereli.app/${c.name.toLowerCase().replace(/\s+/g,'-')}`;renderCP();lucide.createIcons();}}
-function setPC(cid,el,val){const c=DATA.clients.find(x=>x.id===cid);if(c){c.portal.primary=val;renderCP();lucide.createIcons();}}
+async function toggleP(cid){
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c)return;
+  const newOn = !c.portal.on;
+  const newUrl = newOn && !c.portal.url ? `portal.vereli.app/${c.name.toLowerCase().replace(/\s+/g,'-')}` : c.portal.url;
+  try {
+    const res = await apiFetch(`/clients/${cid}`, {method:'PATCH', body:JSON.stringify({portal_on:newOn, portal_url:newUrl})});
+    if(!res.ok) throw new Error('Failed to update portal');
+    c.portal.on = newOn;
+    if(newOn) c.portal.url = newUrl;
+    renderCP();lucide.createIcons();
+  } catch(err){toast('Failed to update portal');}
+}
+async function setPC(cid,el,val){
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c)return;
+  try {
+    const res = await apiFetch(`/clients/${cid}`, {method:'PATCH', body:JSON.stringify({portal_on:c.portal.on, portal_url:c.portal.url})});
+    if(!res.ok) throw new Error('Failed to update branding');
+    c.portal.primary=val;
+    renderCP();lucide.createIcons();
+  } catch(err){toast('Failed to update branding');}
+}
+async function saveSettings(){
+  const company = document.getElementById('set-company').value.trim();
+  if(!company){toast('Workspace name is required');return;}
+  try {
+    const res = await apiFetch('/me', {method:'PATCH', body:JSON.stringify({company})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Save failed');return;}
+    if(CURRENT_USER) CURRENT_USER.company = company;
+    updateUserUI(CURRENT_USER);
+    toast('Saved');
+  } catch(err){toast('Save failed');}
+}
 
 /* ══ HELPERS ══ */
 function emp(t,b,i){return `<div class="emp"><div class="emp-ico"><i data-lucide="${i}" style="width:22px;height:22px;color:#9ABDB7"></i></div><div class="emp-t">${t}</div><div class="emp-b">${b}</div></div>`;}

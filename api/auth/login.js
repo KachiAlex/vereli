@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const [user] = await sql`SELECT id, email, name, role, password_hash FROM users WHERE email = ${email.toLowerCase()}`;
+    const [user] = await sql`SELECT id, email, name, company, role, password_hash FROM users WHERE email = ${email.toLowerCase()}`;
     if (!user || user.password_hash !== password) {
       sendJson(res, 401, { error: 'Invalid credentials' });
       return;
@@ -27,11 +27,12 @@ export default async function handler(req, res) {
       userId: user.id,
       email: user.email,
       name: user.name,
+      company: user.company,
       role: user.role,
     });
 
     sendJson(res, 200, {
-      data: { user: { id: user.id, email: user.email, name: user.name, role: user.role } },
+      data: { user: { id: user.id, email: user.email, name: user.name, company: user.company, role: user.role } },
       accessToken,
       refreshToken,
     });

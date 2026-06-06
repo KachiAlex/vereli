@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { email, password, name } = req.body || {};
+  const { email, password, name, company } = req.body || {};
   if (!email || !password || !name) {
     badRequest(res, 'email, password, and name are required');
     return;
@@ -24,20 +24,21 @@ export default async function handler(req, res) {
     }
 
     const [user] = await sql`
-      INSERT INTO users (email, password_hash, name, role)
-      VALUES (${email.toLowerCase()}, ${password}, ${name}, 'owner')
-      RETURNING id, email, name, role;
+      INSERT INTO users (email, password_hash, name, company, role)
+      VALUES (${email.toLowerCase()}, ${password}, ${name}, ${company || null}, 'owner')
+      RETURNING id, email, name, company, role;
     `;
 
     const { accessToken, refreshToken } = await createTokens({
       userId: user.id,
       email: user.email,
       name: user.name,
+      company: user.company,
       role: user.role,
     });
 
     sendJson(res, 201, {
-      data: { user: { id: user.id, email: user.email, name: user.name, role: user.role } },
+      data: { user: { id: user.id, email: user.email, name: user.name, company: user.company, role: user.role } },
       accessToken,
       refreshToken,
     });
