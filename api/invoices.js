@@ -13,13 +13,13 @@ export default async function handler(req, res) {
     let rows;
 
     if (clientId && status) {
-      rows = await sql`SELECT id, client_id, project_id, amount, currency, status, due_date, created_at FROM invoices WHERE user_id = ${uid} AND client_id = ${Number(clientId)} AND status = ${status}`;
+      rows = await sql`SELECT id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at, created_at FROM invoices WHERE user_id = ${uid} AND client_id = ${Number(clientId)} AND status = ${status}`;
     } else if (clientId) {
-      rows = await sql`SELECT id, client_id, project_id, amount, currency, status, due_date, created_at FROM invoices WHERE user_id = ${uid} AND client_id = ${Number(clientId)}`;
+      rows = await sql`SELECT id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at, created_at FROM invoices WHERE user_id = ${uid} AND client_id = ${Number(clientId)}`;
     } else if (status) {
-      rows = await sql`SELECT id, client_id, project_id, amount, currency, status, due_date, created_at FROM invoices WHERE user_id = ${uid} AND status = ${status}`;
+      rows = await sql`SELECT id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at, created_at FROM invoices WHERE user_id = ${uid} AND status = ${status}`;
     } else {
-      rows = await sql`SELECT id, client_id, project_id, amount, currency, status, due_date, created_at FROM invoices WHERE user_id = ${uid}`;
+      rows = await sql`SELECT id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at, created_at FROM invoices WHERE user_id = ${uid}`;
     }
 
     const data = rows.map(r => ({
@@ -30,6 +30,9 @@ export default async function handler(req, res) {
       currency: r.currency,
       status: r.status,
       dueDate: r.due_date,
+      lineItems: r.line_items || [],
+      sentAt: r.sent_at,
+      paidAt: r.paid_at,
       createdAt: r.created_at,
     }));
     sendJson(res, 200, { data });
@@ -37,15 +40,16 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    const { clientId, projectId, amount, currency = 'NGN', dueDate, status = 'pending' } = req.body || {};
+    const { clientId, projectId, amount, currency = 'NGN', dueDate, status = 'pending', lineItems } = req.body || {};
     if (!clientId || !projectId || !amount || !dueDate) {
       badRequest(res, 'clientId, projectId, amount, and dueDate are required');
       return;
     }
+    const li = lineItems ? JSON.stringify(lineItems) : null;
     const [row] = await sql`
-      INSERT INTO invoices (user_id, client_id, project_id, amount, currency, status, due_date)
-      VALUES (${user.userId}, ${Number(clientId)}, ${Number(projectId)}, ${Number(amount)}, ${currency}, ${status}, ${dueDate})
-      RETURNING id, client_id, project_id, amount, currency, status, due_date, created_at;
+      INSERT INTO invoices (user_id, client_id, project_id, amount, currency, status, due_date, line_items)
+      VALUES (${user.userId}, ${Number(clientId)}, ${Number(projectId)}, ${Number(amount)}, ${currency}, ${status}, ${dueDate}, ${li})
+      RETURNING id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at, created_at;
     `;
     const invoice = {
       id: row.id,
@@ -55,6 +59,9 @@ export default async function handler(req, res) {
       currency: row.currency,
       status: row.status,
       dueDate: row.due_date,
+      lineItems: row.line_items || [],
+      sentAt: row.sent_at,
+      paidAt: row.paid_at,
       createdAt: row.created_at,
     };
     sendJson(res, 201, { data: invoice });

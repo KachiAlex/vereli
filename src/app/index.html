@@ -548,9 +548,9 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New invoice</button>
         </div>
         <div class="inv-stat-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px">
-          <div class="stat"><div class="stat-n" style="font-size:26px;color:#22C55E">$7,800</div><div class="stat-l">Paid this month</div></div>
-          <div class="stat"><div class="stat-n" style="font-size:26px;color:#8E5510">$6,100</div><div class="stat-l">Pending</div></div>
-          <div class="stat"><div class="stat-n" style="font-size:26px;color:#A81A1A">$3,500</div><div class="stat-l">Overdue</div></div>
+          <div class="stat"><div class="stat-n" id="inv-stat-paid" style="font-size:26px;color:#22C55E">—</div><div class="stat-l">Paid this month</div></div>
+          <div class="stat"><div class="stat-n" id="inv-stat-pending" style="font-size:26px;color:#8E5510">—</div><div class="stat-l">Pending</div></div>
+          <div class="stat"><div class="stat-n" id="inv-stat-overdue" style="font-size:26px;color:#A81A1A">—</div><div class="stat-l">Overdue</div></div>
         </div>
         <div class="card" style="overflow:hidden">
           <div style="padding:17px 24px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between">
@@ -809,12 +809,68 @@ async function initFromApi() {
     if (json.data && json.data.length) {
       DATA.clients = json.data.map((c, i) => apiClientToData(c, i));
       document.getElementById('cl-bdg').textContent = DATA.clients.length;
+      await loadInvoices();
+      await loadPayments();
       renderDash();
       if (document.getElementById('view-clients').classList.contains('active')) renderCG();
     }
   } catch (err) {
     console.warn('API fetch failed, using demo data:', err.message);
   }
+}
+
+let INVOICES = [];
+let PAYMENTS = [];
+
+async function loadInvoices() {
+  try {
+    const res = await apiFetch('/invoices');
+    if (!res.ok) return;
+    const json = await res.json();
+    INVOICES = json.data || [];
+    // Attach invoices to client workAreas for backward compat
+    INVOICES.forEach(inv => {
+      const client = DATA.clients.find(c => c.id === inv.clientId);
+      if (client && client.workAreas.length) {
+        // Attach to first work area as default
+        client.workAreas[0].invoices.push(apiInvoiceToData(inv));
+      }
+    });
+  } catch (err) {
+    console.warn('Invoice fetch failed:', err.message);
+  }
+}
+
+async function loadPayments() {
+  try {
+    const res = await apiFetch('/payments');
+    if (!res.ok) return;
+    const json = await res.json();
+    PAYMENTS = json.data || [];
+  } catch (err) {
+    console.warn('Payment fetch failed:', err.message);
+  }
+}
+
+function apiInvoiceToData(inv) {
+  const fmt = new Intl.NumberFormat('en-NG', { style: 'currency', currency: inv.currency || 'NGN', maximumFractionDigits: 0 });
+  const amtStr = fmt.format(inv.amount);
+  return {
+    id: 'INV-' + String(inv.id).padStart(3, '0'),
+    apiId: inv.id,
+    desc: (inv.lineItems && inv.lineItems[0] && inv.lineItems[0].desc) || 'Invoice',
+    amt: amtStr,
+    status: inv.status,
+    date: inv.dueDate ? new Date(inv.dueDate).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' }) : '—',
+    dueDate: inv.dueDate,
+    lineItems: inv.lineItems || [],
+    sentAt: inv.sentAt,
+    paidAt: inv.paidAt,
+  };
+}
+
+function formatCurrency(amount, currency) {
+  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: currency || 'NGN', maximumFractionDigits: 0 }).format(amount);
 }
 
 function apiWorkAreaToData(wa, tasks, files, comments, approvals) {
@@ -1044,16 +1100,32 @@ function renderDash(){
   </div>`).join('');
   // Revenue snapshot
   const rv=document.getElementById('dash-rev');
-  const REV_DATA={month:{collected:7800,pending:6100,overdue:3500},year:{collected:41200,pending:6100,overdue:3500},all:{collected:98600,pending:6100,overdue:3500}};
+  function computeRevenue(win){
+    const now=new Date();
+    const invs=INVOICES.length?INVOICES:[];
+    let collected=0,pending=0,overdue=0;
+    invs.forEach(inv=>{
+      const d=new Date(inv.dueDate);
+      const inWin=win==='month'?d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear():win==='year'?d.getFullYear()===now.getFullYear():true;
+      if(!inWin)return;
+      if(inv.status==='paid') collected+=Number(inv.amount)||0;
+      else if(inv.status==='sent'||inv.status==='pending'){
+        if(d<now) overdue+=Number(inv.amount)||0;
+        else pending+=Number(inv.amount)||0;
+      }
+    });
+    return {collected,pending,overdue};
+  }
   function renderRevSnapshot(win){
-    const d=REV_DATA[win];
+    const d=computeRevenue(win);
     rv.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><span class="slbl" style="margin-bottom:0">Revenue</span><div style="display:flex;gap:1px;background:#EEF3F0;border-radius:8px;padding:3px">${['month','year','all'].map(w=>`<button onclick="renderRevSnapshot('${w}')" style="padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:700;transition:all .12s;background:${win===w?'#fff':'transparent'};color:${win===w?'#0B4F52':'#8AADA8'};box-shadow:${win===w?'0 1px 3px rgba(15,61,62,.08)':'none'}">${w==='month'?'Month':w==='year'?'Year':'All'}</button>`).join('')}</div></div>
     <div style="display:flex;flex-direction:column;gap:9px">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#F2F9F6;border-radius:10px;border:1px solid #E0EFE8"><span style="font-size:12.5px;color:#5A8A80;font-weight:500">Collected</span><span class="ht" style="font-weight:800;color:#22C55E;font-size:15px;letter-spacing:-.02em">$${d.collected.toLocaleString()}</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#FEFAF3;border-radius:10px;border:1px solid #F0E5CE"><span style="font-size:12.5px;color:#5A8A80;font-weight:500">Pending</span><span class="ht" style="font-weight:800;color:#8E5510;font-size:15px;letter-spacing:-.02em">$${d.pending.toLocaleString()}</span></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#FEF6F5;border-radius:10px;border:1px solid #F0DBDA"><span style="font-size:12.5px;color:#5A8A80;font-weight:500">Overdue</span><span class="ht" style="font-weight:800;color:#A81A1A;font-size:15px;letter-spacing:-.02em">$${d.overdue.toLocaleString()}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#F2F9F6;border-radius:10px;border:1px solid #E0EFE8"><span style="font-size:12.5px;color:#5A8A80;font-weight:500">Collected</span><span class="ht" style="font-weight:800;color:#22C55E;font-size:15px;letter-spacing:-.02em">${formatCurrency(d.collected,'NGN')}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#FEFAF3;border-radius:10px;border:1px solid #F0E5CE"><span style="font-size:12.5px;color:#5A8A80;font-weight:500">Pending</span><span class="ht" style="font-weight:800;color:#8E5510;font-size:15px;letter-spacing:-.02em">${formatCurrency(d.pending,'NGN')}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#FEF6F5;border-radius:10px;border:1px solid #F0DBDA"><span style="font-size:12.5px;color:#5A8A80;font-weight:500">Overdue</span><span class="ht" style="font-weight:800;color:#A81A1A;font-size:15px;letter-spacing:-.02em">${formatCurrency(d.overdue,'NGN')}</span></div>
     </div>`;
   }
+  window.renderRevSnapshot=renderRevSnapshot;
   renderRevSnapshot('month');
   lucide.createIcons();
 }
@@ -1547,15 +1619,30 @@ function renderFiles(){
 }
 
 function renderInv(){
-  const all=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.invoices.map(i=>({...i,cname:c.name,wa:w.name,cid:c.id}))));
+  const all=INVOICES.length?INVOICES.map(inv=>{
+    const client=DATA.clients.find(c=>c.id===inv.clientId);
+    return {...apiInvoiceToData(inv),cname:client?client.name:'',cid:inv.clientId};
+  }):DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.invoices.map(i=>({...i,cname:c.name,wa:w.name,cid:c.id}))));
   const el=document.getElementById('inv-list');if(!el)return;
-  el.innerHTML=all.map(inv=>`<div class="ir" style="cursor:pointer" onclick="openCP(${inv.cid})"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${inv.status==='paid'?'#EAF2EE':'#F5F0FF'};display:flex;align-items:center;justify-content:center"><i data-lucide="${inv.status==='paid'?'check':'clock'}" style="width:12px;height:12px;color:${inv.status==='paid'?'#2D6A4F':'#6B3FA0'}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id} <span style="font-weight:400;color:#8E9E9E;font-family:'Inter',sans-serif">· ${inv.cname}</span></div><div class="imeta">${inv.desc} · ${inv.wa} · Due ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span><span class="st ${inv.status==='paid'?'green':'purple'}" style="font-size:10px">${inv.status==='paid'?'Paid':'Unpaid'}</span></div>`).join('');
+  el.innerHTML=all.map(inv=>`<div class="ir" style="cursor:pointer" onclick="openCP(${inv.cid})"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${inv.status==='paid'?'#EAF2EE':'#F5F0FF'};display:flex;align-items:center;justify-content:center"><i data-lucide="${inv.status==='paid'?'check':'clock'}" style="width:12px;height:12px;color:${inv.status==='paid'?'#2D6A4F':'#6B3FA0'}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id} <span style="font-weight:400;color:#8E9E9E;font-family:'Inter',sans-serif">· ${inv.cname}</span></div><div class="imeta">${inv.desc} · Due ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span><span class="st ${inv.status==='paid'?'green':'purple'}" style="font-size:10px">${inv.status==='paid'?'Paid':'Unpaid'}</span></div>`).join('');
+  // Update invoice stats
+  const rev=computeRevenue('month');
+  const sp=document.getElementById('inv-stat-paid');if(sp)sp.textContent=formatCurrency(rev.collected,'NGN');
+  const spp=document.getElementById('inv-stat-pending');if(spp)spp.textContent=formatCurrency(rev.pending,'NGN');
+  const spo=document.getElementById('inv-stat-overdue');if(spo)spo.textContent=formatCurrency(rev.overdue,'NGN');
   lucide.createIcons();
 }
 
-const PAY_WIN_DATA={month:{collected:'$7,800',pending:'$6,100',overdue:'$3,500'},year:{collected:'$41,200',pending:'$6,100',overdue:'$3,500'},all:{collected:'$98,600',pending:'$6,100',overdue:'$3,500'}};
+function computePayStats(win){
+  const rev=computeRevenue(win);
+  return {
+    collected:formatCurrency(rev.collected,'NGN'),
+    pending:formatCurrency(rev.pending,'NGN'),
+    overdue:formatCurrency(rev.overdue,'NGN')
+  };
+}
 function switchPayWin(win,btn){
-  const d=PAY_WIN_DATA[win];
+  const d=computePayStats(win);
   const pc=document.getElementById('pay-collected');
   const pp=document.getElementById('pay-pending');
   const po=document.getElementById('pay-overdue');
@@ -1566,8 +1653,23 @@ function switchPayWin(win,btn){
   if(btn){btn.style.background='rgba(255,255,255,.2)';btn.style.color='#fff';btn.style.boxShadow='none';}
 }
 function renderPay(){
-  const paid=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.invoices.filter(i=>i.status==='paid').map(i=>({...i,cname:c.name}))));
   const el=document.getElementById('pay-list');if(!el)return;
+  let paid;
+  if (PAYMENTS.length && INVOICES.length) {
+    paid = PAYMENTS.map(pay => {
+      const inv = INVOICES.find(i => i.id === pay.invoiceId);
+      const client = inv ? DATA.clients.find(c => c.id === inv.clientId) : null;
+      return {
+        id: inv ? 'INV-' + String(inv.id).padStart(3, '0') : '—',
+        cname: client ? client.name : '',
+        desc: (inv && inv.lineItems && inv.lineItems[0] && inv.lineItems[0].desc) || 'Payment',
+        date: pay.createdAt ? new Date(pay.createdAt).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' }) : '—',
+        amt: formatCurrency(pay.amount, pay.currency),
+      };
+    });
+  } else {
+    paid = DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.invoices.filter(i=>i.status==='paid').map(i=>({...i,cname:c.name}))));
+  }
   el.innerHTML=paid.map(inv=>`<div class="ir"><div style="width:28px;height:28px;border-radius:7px;background:#EAF2EE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="check" style="width:11px;height:11px;color:#2D6A4F"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id} <span style="font-weight:400;color:#8E9E9E;font-family:'Inter',sans-serif">· ${inv.cname}</span></div><div class="imeta">${inv.desc} · ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#2D6A4F">${inv.amt}</span></div>`).join('');
   lucide.createIcons();
 }

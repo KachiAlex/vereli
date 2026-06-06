@@ -48,7 +48,23 @@ export default async function handler(req, res) {
       );
     `;
     await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id) ON DELETE CASCADE`;
+    await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS line_items JSONB`;
+    await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS sent_at TIMESTAMPTZ`;
+    await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ`;
     await sql`UPDATE invoices SET user_id = (SELECT id FROM users ORDER BY id LIMIT 1) WHERE user_id IS NULL`;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS payments (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        invoice_id INTEGER NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
+        amount INTEGER NOT NULL,
+        currency TEXT NOT NULL DEFAULT 'NGN',
+        method TEXT,
+        note TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
 
     await sql`
       CREATE TABLE IF NOT EXISTS users (
@@ -165,13 +181,21 @@ export default async function handler(req, res) {
         RETURNING id;
       `;
 
-      await sql`
-        INSERT INTO invoices (user_id, client_id, project_id, amount, currency, status, due_date)
-        VALUES (${uid}, ${c1.id}, ${p3.id}, 900000, 'NGN', 'paid', '2025-03-15T00:00:00Z');
+      const [inv1] = await sql`
+        INSERT INTO invoices (user_id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at)
+        VALUES (${uid}, ${c1.id}, ${p3.id}, 900000, 'NGN', 'paid', '2025-03-15T00:00:00Z',
+          '[{"desc":"Brand Audit","qty":1,"rate":900000}]'::jsonb, '2025-03-01T00:00:00Z', '2025-03-10T00:00:00Z')
+        RETURNING id;
+      `;
+      const [inv2] = await sql`
+        INSERT INTO invoices (user_id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at)
+        VALUES (${uid}, ${c2.id}, ${p2.id}, 1800000, 'NGN', 'sent', '2025-06-15T00:00:00Z',
+          '[{"desc":"Website Design","qty":1,"rate":1200000},{"desc":"Development","qty":1,"rate":600000}]'::jsonb, '2025-05-20T00:00:00Z')
+        RETURNING id;
       `;
       await sql`
-        INSERT INTO invoices (user_id, client_id, project_id, amount, currency, status, due_date)
-        VALUES (${uid}, ${c2.id}, ${p2.id}, 900000, 'NGN', 'pending', '2025-06-15T00:00:00Z');
+        INSERT INTO payments (user_id, invoice_id, amount, currency, method, note)
+        VALUES (${uid}, ${inv1.id}, 900000, 'NGN', 'Bank transfer', 'Full payment received');
       `;
 
       // Seed work areas, tasks, files for c1 (Meridian)
