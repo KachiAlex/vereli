@@ -716,22 +716,6 @@ let DATA = {
   ]
 };
 
-const ACT_ALL=[
-  {i:'check',bg:'#EAF2EE',tc:'#2D6A4F',t:'<strong>Brand Guidelines v3</strong> approved',sub:'Lumina Brand · Sara K.',ts:'22m'},
-  {i:'message-circle',bg:'#FEF3E2',tc:'#A0621A',t:'Feedback on <strong>Homepage v2</strong>',sub:'Archer Studio · Mia T.',ts:'2h'},
-  {i:'file-text',bg:'#EEF3FF',tc:'#3558CC',t:'<strong>Advisory SOW v2</strong> viewed by client',sub:'Vantage Group · Dan M.',ts:'3h'},
-  {i:'upload',bg:'#EEF2F2',tc:'#6B7C7D',t:'<strong>Homepage_v2.fig</strong> uploaded',sub:'Archer Studio · Sam Park',ts:'Yesterday'},
-  {i:'credit-card',bg:'#F5F0FF',tc:'#6B3FA0',t:'Invoice <strong>INV-008</strong> paid',sub:'Lumina Brand · $4,200',ts:'2 days'},
-  {i:'check-square',bg:'#EAF2EE',tc:'#2D6A4F',t:'<strong>Campaign brief</strong> approved',sub:'Lumina Brand · Sara K.',ts:'3 days'},
-];
-
-const ATTN=[
-  {label:'Approval waiting',txt:'Banner designs v2',sub:'Lumina Brand',cid:1,cls:'amber'},
-  {label:'Approval waiting',txt:'Homepage v2',sub:'Archer Studio',cid:3,cls:'amber'},
-  {label:'Invoice overdue',txt:'Advisory retainer — May',sub:'Vantage Group',cid:2,cls:'red'},
-  {label:'Feedback pending',txt:'Revised SOW to send',sub:'Vantage Group',cid:2,cls:'blue'},
-];
-
 /* ══ STATE ══ */
 let SC=null,STAB='overview',SWA=null,SWATAB='tasks',ncPortalOn=false,ncEng='active';
 
@@ -811,6 +795,7 @@ async function initFromApi() {
       document.getElementById('cl-bdg').textContent = DATA.clients.length;
       await loadInvoices();
       await loadPayments();
+      await loadAllWorkspaces();
       renderDash();
       if (document.getElementById('view-clients').classList.contains('active')) renderCG();
     }
@@ -934,9 +919,26 @@ async function loadClientWorkspace(cid) {
       const waApprovals = allApprovals.filter(a => a.workAreaId === wa.id);
       return apiWorkAreaToData(wa, waTasks, waFiles, waComments, waApprovals);
     });
+    // Update latestActivity after loading workspaces
+    client.latestActivity = computeLatestActivity(client);
   } catch (err) {
     console.warn('Workspace load failed:', err.message);
   }
+}
+
+async function loadAllWorkspaces() {
+  await Promise.all(DATA.clients.map(c => loadClientWorkspace(c.id)));
+}
+
+function computeLatestActivity(client) {
+  let latest = { text: 'Client record loaded', ts: 0 };
+  (client.workAreas || []).forEach(wa => {
+    wa.feedback.forEach(f => { if (f.time) latest = { text: `${f.from} left feedback on ${f.ref || wa.name}`, ts: Date.now() }; });
+    wa.approvals.forEach(a => { if (a.status === 'approved') latest = { text: `Approved: ${a.item}`, ts: Date.now() }; });
+    wa.tasks.filter(t => t.done).forEach(t => { latest = { text: `Completed: ${t.t}`, ts: Date.now() }; });
+    wa.files.forEach(f => { latest = { text: `${f.uploader} uploaded ${f.n}`, ts: Date.now() }; });
+  });
+  return latest.text;
 }
 
 async function toggleTask(waApiId, taskApiId, done) {
@@ -1067,24 +1069,50 @@ function goView(name,el){
 
 /* ══ DASHBOARD ══ */
 function renderDash(){
-  // Attention items
+  // Attention items — computed dynamically from real data
   const da=document.getElementById('dash-attn');
-  da.innerHTML=ATTN.map(w=>`<div class="attn-row" onclick="openCP(${w.cid})">
-    <div style="width:32px;height:32px;border-radius:9px;background:${w.cls==='amber'?'#FEF4E2':w.cls==='red'?'#FDECEA':'#EEF2FF'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${w.cls==='amber'?'#96590F':w.cls==='red'?'#B01C1C':'#3550C4'}" stroke-width="2" stroke-linecap="round">${w.cls==='amber'?'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>':w.cls==='red'?'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>':'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'}</svg>
-    </div>
-    <div style="flex:1;min-width:0">
-      <div class="ht" style="font-size:13px;font-weight:700;color:#0B4F52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px">${w.txt}</div>
-      <div style="font-size:11.5px;color:#7A9E99">${w.sub}</div>
-    </div>
-    <span class="st ${w.cls}" style="font-size:10px;flex-shrink:0">${w.label}</span>
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C0D4D0" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-left:4px"><polyline points="9 18 15 12 9 6"/></svg>
-  </div>`).join('');
-  // Activity
+  const attnItems=[];
+  DATA.clients.forEach(c=>{
+    (c.workAreas||[]).forEach(wa=>{
+      // Waiting approvals
+      wa.approvals.filter(a=>a.status==='waiting').forEach(a=>{
+        attnItems.push({cls:'amber',label:'Approval waiting',txt:a.item,sub:`${c.name} · ${wa.name}`,cid:c.id});
+      });
+      // Overdue invoices
+      if(c.invoices){
+        c.invoices.filter(inv=>inv.status==='sent'&&new Date(inv.dueDate)<new Date()).forEach(inv=>{
+          attnItems.push({cls:'red',label:'Invoice overdue',txt:`${inv.id} — Due ${inv.date}`,sub:c.name,cid:c.id});
+        });
+      }
+      // High-priority incomplete tasks
+      wa.tasks.filter(t=>!t.done&&t.p==='high').forEach(t=>{
+        attnItems.push({cls:'purple',label:'Needs action',txt:t.t,sub:`${c.name} · ${wa.name}`,cid:c.id});
+      });
+    });
+  });
+  if(attnItems.length){
+    da.innerHTML=attnItems.slice(0,4).map(w=>`<div class="attn-row" onclick="openCP(${w.cid})">
+      <div style="width:32px;height:32px;border-radius:9px;background:${w.cls==='amber'?'#FEF4E2':w.cls==='red'?'#FDECEA':'#EEF2FF'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${w.cls==='amber'?'#96590F':w.cls==='red'?'#B01C1C':'#3550C4'}" stroke-width="2" stroke-linecap="round">${w.cls==='amber'?'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>':w.cls==='red'?'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>':'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'}</svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="ht" style="font-size:13px;font-weight:700;color:#0B4F52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px">${w.txt}</div>
+        <div style="font-size:11.5px;color:#7A9E99">${w.sub}</div>
+      </div>
+      <span class="st ${w.cls}" style="font-size:10px;flex-shrink:0">${w.label}</span>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C0D4D0" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-left:4px"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`).join('');
+  } else {
+    da.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No items need attention right now.</div>`;
+  }
+  // Activity — only real data, no static fallback
   const ac=document.getElementById('dash-act');
   const allActs=DATA.clients.flatMap(c=>buildActivity(c)).slice(0,5);
-  const acts=allActs.length?allActs:ACT_ALL.slice(0,5);
-  ac.innerHTML=acts.map(a=>`<div class="act"><div class="adot" style="background:${a.bg}"><i data-lucide="${a.i}" style="width:12px;height:12px;color:${a.tc}"></i></div><div style="flex:1;min-width:0"><div class="atext">${a.t}</div><div style="font-size:11px;color:#7A9E99;margin-top:2px">${a.sub}</div></div><div class="atime">${a.ts}</div></div>`).join('');
+  if(allActs.length){
+    ac.innerHTML=allActs.map(a=>`<div class="act"><div class="adot" style="background:${a.bg}"><i data-lucide="${a.i}" style="width:12px;height:12px;color:${a.tc}"></i></div><div style="flex:1;min-width:0"><div class="atext">${a.t}</div><div style="font-size:11px;color:#7A9E99;margin-top:2px">${a.sub}</div></div><div class="atime">${a.ts}</div></div>`).join('');
+  } else {
+    ac.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No recent activity.</div>`;
+  }
   // Clients  
   const dc=document.getElementById('dash-clients');
   dc.innerHTML=DATA.clients.map(c=>`<div style="background:#fff;border:1px solid #E2EBE9;border-radius:16px;padding:18px 20px;cursor:pointer;transition:all .18s;box-shadow:0 1px 3px rgba(15,61,62,.04),0 3px 12px rgba(15,61,62,.04)" onclick="openCP(${c.id})" onmouseenter="this.style.boxShadow='0 8px 28px rgba(15,61,62,.1)';this.style.borderColor='#BDDAD2';this.style.transform='translateY(-1px)'" onmouseleave="this.style.boxShadow='0 1px 3px rgba(15,61,62,.04),0 3px 12px rgba(15,61,62,.04)';this.style.borderColor='#E2EBE9';this.style.transform=''">
@@ -1418,7 +1446,7 @@ function buildActivity(c){
   return acts.slice(0,6);
 }
 function renderWAActivityTab(wa){
-  const acts=SC?buildActivity(SC).filter(a=>wa.feedback.some(f=>a.t.includes(f.ref))||wa.approvals.some(ap=>a.t.includes(ap.item))||wa.tasks.some(t=>a.t.includes(t.t))||wa.files.some(f=>a.t.includes(f.n))):ACT_ALL.slice(0,4);
+  const acts=SC?buildActivity(SC).filter(a=>wa.feedback.some(f=>a.t.includes(f.ref))||wa.approvals.some(ap=>a.t.includes(ap.item))||wa.tasks.some(t=>a.t.includes(t.t))||wa.files.some(f=>a.t.includes(f.n))):[];
   if(!acts.length)return emp('No activity','Events for this work area appear here.','activity');
   return `<div class="card" style="padding:0 16px">${acts.map(a=>`<div class="act"><div class="adot" style="background:${a.bg}"><i data-lucide="${a.i}" style="width:11px;height:11px;color:${a.tc}"></i></div><div style="flex:1"><div class="atext">${a.t}</div><div style="font-size:11px;color:#8E9E9E;margin-top:1px">${a.sub}</div></div><div class="atime">${a.ts}</div></div>`).join('')}</div>`;
 }
@@ -1677,8 +1705,8 @@ function renderPay(){
 function renderActivity(){
   const el=document.getElementById('act-all');if(!el)return;
   const acts=DATA.clients.flatMap(c=>buildActivity(c));
-  const display=acts.length?acts:ACT_ALL;
-  el.innerHTML=display.map(a=>`<div class="act"><div class="adot" style="background:${a.bg}"><i data-lucide="${a.i}" style="width:12px;height:12px;color:${a.tc}"></i></div><div style="flex:1"><div class="atext">${a.t}</div><div style="font-size:11px;color:#7A9E99;margin-top:2px">${a.sub}</div></div><div class="atime">${a.ts}</div></div>`).join('');
+  if(!acts.length){ el.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No recent activity.</div>`; return; }
+  el.innerHTML=acts.map(a=>`<div class="act"><div class="adot" style="background:${a.bg}"><i data-lucide="${a.i}" style="width:12px;height:12px;color:${a.tc}"></i></div><div style="flex:1"><div class="atext">${a.t}</div><div style="font-size:11px;color:#7A9E99;margin-top:2px">${a.sub}</div></div><div class="atime">${a.ts}</div></div>`).join('');
   lucide.createIcons();
 }
 
