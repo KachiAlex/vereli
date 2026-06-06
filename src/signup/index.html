@@ -314,14 +314,14 @@ function clearErrors() {
   if (globalErr) globalErr.classList.add('hidden');
 }
 
-// Form submission stub
+// Form submission — calls real API, no verification required
 var form      = document.getElementById('signup-form');
 var submitBtn = document.getElementById('submit-btn');
 var btnText   = document.getElementById('btn-text');
 var btnSpinner= document.getElementById('btn-spinner');
 var globalErr = document.getElementById('global-error');
 
-form.addEventListener('submit', function(e) {
+form.addEventListener('submit', async function(e) {
   e.preventDefault();
   clearErrors();
 
@@ -349,9 +349,32 @@ form.addEventListener('submit', function(e) {
   btnText.classList.add('hidden');
   btnSpinner.classList.remove('hidden');
 
-  setTimeout(function() {
-    window.location.href = '/verify-email/';
-  }, 1200);
+  try {
+    var res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password, name: name })
+    });
+    var json = await res.json();
+    if (!res.ok) {
+      if (globalErr) { globalErr.textContent = json.error || 'Registration failed'; globalErr.classList.remove('hidden'); }
+      submitBtn.disabled = false;
+      btnText.classList.remove('hidden');
+      btnSpinner.classList.add('hidden');
+      return;
+    }
+    // Store tokens and redirect to app — no verification step
+    if (json.accessToken && json.refreshToken) {
+      localStorage.setItem('vereli_accessToken', json.accessToken);
+      localStorage.setItem('vereli_refreshToken', json.refreshToken);
+    }
+    window.location.href = '/app/';
+  } catch (err) {
+    if (globalErr) { globalErr.textContent = 'Network error. Please try again.'; globalErr.classList.remove('hidden'); }
+    submitBtn.disabled = false;
+    btnText.classList.remove('hidden');
+    btnSpinner.classList.add('hidden');
+  }
 });
 
 // Pre-fill demo mode from URL param
