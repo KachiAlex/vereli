@@ -5,24 +5,39 @@ export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
   try {
+    // Users must be created first (referenced by other tables)
+    await sql`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        email TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        name TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'owner',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
+
     await sql`
       CREATE TABLE IF NOT EXISTS clients (
         id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         name TEXT NOT NULL,
         contact TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
+        type TEXT NOT NULL DEFAULT 'Service',
         status TEXT NOT NULL DEFAULT 'active',
         portal_on BOOLEAN NOT NULL DEFAULT false,
         portal_url TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `;
-    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id) ON DELETE CASCADE`;
-    await sql`UPDATE clients SET user_id = (SELECT id FROM users ORDER BY id LIMIT 1) WHERE user_id IS NULL`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS type TEXT NOT NULL DEFAULT 'Service'`;
+    await sql`UPDATE clients SET type = 'Service' WHERE type IS NULL OR type = ''`;
 
     await sql`
       CREATE TABLE IF NOT EXISTS projects (
         id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         client_id INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
         name TEXT NOT NULL,
         status TEXT NOT NULL DEFAULT 'pending',
@@ -38,6 +53,7 @@ export default async function handler(req, res) {
     await sql`
       CREATE TABLE IF NOT EXISTS invoices (
         id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         client_id INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
         project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
         amount INTEGER NOT NULL,
@@ -52,30 +68,6 @@ export default async function handler(req, res) {
     await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS sent_at TIMESTAMPTZ`;
     await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ`;
     await sql`UPDATE invoices SET user_id = (SELECT id FROM users ORDER BY id LIMIT 1) WHERE user_id IS NULL`;
-
-    await sql`
-      CREATE TABLE IF NOT EXISTS payments (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        invoice_id INTEGER NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
-        amount INTEGER NOT NULL,
-        currency TEXT NOT NULL DEFAULT 'NGN',
-        method TEXT,
-        note TEXT,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      );
-    `;
-
-    await sql`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        email TEXT NOT NULL UNIQUE,
-        password_hash TEXT NOT NULL,
-        name TEXT NOT NULL,
-        role TEXT NOT NULL DEFAULT 'owner',
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      );
-    `;
 
     await sql`
       CREATE TABLE IF NOT EXISTS work_areas (
@@ -150,18 +142,18 @@ export default async function handler(req, res) {
     if (clientCount.count === 0 && firstUser) {
       const uid = firstUser.id;
       const [c1] = await sql`
-        INSERT INTO clients (user_id, name, contact, email, status, portal_on, portal_url)
-        VALUES (${uid}, 'Meridian Advisory', 'Sarah Okafor', 'sarah@meridian.ng', 'active', true, 'https://vereli.kite.space/portal/meridian')
+        INSERT INTO clients (user_id, name, contact, email, type, status, portal_on, portal_url)
+        VALUES (${uid}, 'Meridian Advisory', 'Sarah Okafor', 'sarah@meridian.ng', 'Advisory', 'active', true, 'https://vereli.kite.space/portal/meridian')
         RETURNING id;
       `;
       const [c2] = await sql`
-        INSERT INTO clients (user_id, name, contact, email, status, portal_on)
-        VALUES (${uid}, 'Nova Digital', 'Chidi Nwosu', 'chidi@novadigital.ng', 'active', false)
+        INSERT INTO clients (user_id, name, contact, email, type, status, portal_on)
+        VALUES (${uid}, 'Nova Digital', 'Chidi Nwosu', 'chidi@novadigital.ng', 'Brand & Marketing', 'active', false)
         RETURNING id;
       `;
       const [c3] = await sql`
-        INSERT INTO clients (user_id, name, contact, email, status, portal_on)
-        VALUES (${uid}, 'Lumina Studio', 'Amara Bello', 'amara@luminastudio.ng', 'inactive', false)
+        INSERT INTO clients (user_id, name, contact, email, type, status, portal_on)
+        VALUES (${uid}, 'Lumina Studio', 'Amara Bello', 'amara@luminastudio.ng', 'Design Project', 'inactive', false)
         RETURNING id;
       `;
 

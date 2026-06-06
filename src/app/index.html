@@ -465,7 +465,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;gap:12px;flex-wrap:wrap">
           <div>
             <div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Clients</div>
-            <div style="font-size:13.5px;color:#7A9E99">3 active engagements</div>
+            <div style="font-size:13.5px;color:#7A9E99" id="cl-subtitle">Loading…</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center">
             <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #DCE5E6;border-radius:10px;padding:7px 13px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
@@ -491,7 +491,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
           <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Deliverables</div><div style="font-size:13.5px;color:#7A9E99">Files shared with clients across all workspaces</div></div>
           <div style="display:flex;gap:8px">
             <select style="height:38px;padding:0 12px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;box-shadow:0 1px 2px rgba(15,61,62,.04)">
-              <option>All clients</option><option>Lumina Brand</option><option>Vantage Group</option><option>Archer Studio</option>
+              <option>All clients</option>${DATA.clients.map(c=>`<option>${c.name}</option>`).join('')}
             </select>
             <button onclick="toast('Upload deliverable')" class="tb-btn pri">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button>
@@ -520,7 +520,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
           <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Files</div><div style="font-size:13.5px;color:#7A9E99">All files across your workspace</div></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <select style="height:36px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex:1;min-width:110px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
-              <option>All clients</option><option>Lumina Brand</option><option>Vantage Group</option><option>Archer Studio</option>
+              <option>All clients</option>${DATA.clients.map(c=>`<option>${c.name}</option>`).join('')}
             </select>
             <select style="height:36px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex:1;min-width:90px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
               <option>All types</option><option>PDF</option><option>Figma</option><option>Image</option><option>Video</option>
@@ -550,7 +550,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
         <div class="card" style="overflow:hidden">
           <div style="padding:17px 24px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between">
             <span class="ht" style="font-size:13px;font-weight:700;color:#0B4F52;letter-spacing:-.01em">All invoices</span>
-            <span class="st purple" style="font-size:10px">2 unpaid</span>
+            <span class="st purple" style="font-size:10px" id="inv-unpaid-badge">Loading…</span>
           </div>
           <div style="padding:0 24px" id="inv-list"></div>
         </div>
@@ -570,7 +570,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
             <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
               <div>
                 <div style="font-size:10.5px;font-family:'General Sans',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.45);margin-bottom:10px">Collected this month</div>
-                <div class="ht" style="font-size:44px;font-weight:900;letter-spacing:-.05em;color:#fff;line-height:1" id="pay-collected">$7,800</div>
+                <div class="ht" style="font-size:44px;font-weight:900;letter-spacing:-.05em;color:#fff;line-height:1" id="pay-collected">—</div>
               </div>
               <div style="display:flex;gap:2px;background:rgba(0,0,0,.2);border-radius:10px;padding:3px" id="pay-win-tabs">
                 <button onclick="switchPayWin('month',this)" class="pay-win-btn" style="padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;background:rgba(255,255,255,.18);color:#fff;letter-spacing:-.01em">This month</button>
@@ -579,8 +579,8 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
               </div>
             </div>
             <div class="pay-stat-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px" id="pay-rev-grid">
-              <div style="padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)"><div class="ht" style="font-size:22px;font-weight:900;color:rgba(255,218,140,1);letter-spacing:-.03em" id="pay-pending">$6,100</div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:5px;font-weight:500">Pending collection</div></div>
-              <div style="padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)"><div class="ht" style="font-size:22px;font-weight:900;color:rgba(255,140,140,1);letter-spacing:-.03em" id="pay-overdue">$3,500</div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:5px;font-weight:500">Overdue</div></div>
+              <div style="padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)"><div class="ht" style="font-size:22px;font-weight:900;color:rgba(255,218,140,1);letter-spacing:-.03em" id="pay-pending">—</div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:5px;font-weight:500">Pending collection</div></div>
+              <div style="padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)"><div class="ht" style="font-size:22px;font-weight:900;color:rgba(255,140,140,1);letter-spacing:-.03em" id="pay-overdue">—</div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:5px;font-weight:500">Overdue</div></div>
             </div>
           </div>
         </div>
@@ -706,7 +706,7 @@ function apiClientToData(c, idx) {
     init: inits,
     bg: bg,
     tc: tc,
-    type: 'Service',
+    type: c.type || 'Service',
     eng: c.status || 'active',
     contact: c.contact || '—',
     email: c.email || '',
@@ -731,6 +731,9 @@ async function initFromApi() {
     if (json.data && json.data.length) {
       DATA.clients = json.data.map((c, i) => apiClientToData(c, i));
       document.getElementById('cl-bdg').textContent = DATA.clients.length;
+      const activeCount = DATA.clients.filter(c => c.eng === 'active').length;
+      const sub = document.getElementById('cl-subtitle');
+      if (sub) sub.textContent = `${activeCount} active engagement${activeCount !== 1 ? 's' : ''}`;
       await loadInvoices();
       await loadPayments();
       await loadAllWorkspaces();
@@ -738,7 +741,7 @@ async function initFromApi() {
       if (document.getElementById('view-clients').classList.contains('active')) renderCG();
     }
   } catch (err) {
-    console.warn('API fetch failed, using demo data:', err.message);
+    console.warn('API fetch failed:', err.message);
   }
 }
 
@@ -1007,7 +1010,7 @@ function goView(name,el){
   if(name==='clients')showCG();
   if(name==='files')renderFiles();
   if(name==='invoices')renderInv();
-  if(name==='payments')renderPay();
+  if(name==='payments'){renderPay();switchPayWin('month',document.querySelector('#pay-win-tabs button'));}
   if(name==='deliverables')renderDeliverables();
   if(name==='contracts')renderContracts();
   if(name==='team')renderTeam();
@@ -1620,6 +1623,8 @@ function renderInv(){
   const sp=document.getElementById('inv-stat-paid');if(sp)sp.textContent=formatCurrency(rev.collected,'NGN');
   const spp=document.getElementById('inv-stat-pending');if(spp)spp.textContent=formatCurrency(rev.pending,'NGN');
   const spo=document.getElementById('inv-stat-overdue');if(spo)spo.textContent=formatCurrency(rev.overdue,'NGN');
+  const ub=document.getElementById('inv-unpaid-badge');
+  if(ub){const uCount=all.filter(i=>i.status!=='paid').length;ub.textContent=uCount?`${uCount} unpaid`:'All paid';ub.className=`st ${uCount?'purple':'green'}`;ub.style.fontSize='10px';}
   lucide.createIcons();
 }
 
@@ -1706,14 +1711,14 @@ async function addClient(){
   if(!name){toast('Please enter a client name.');return;}
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Please enter a valid email.');return;}
   try {
+    const type = document.getElementById('nc-svc').value || 'Service';
     const res = await apiFetch('/clients', {
       method: 'POST',
-      body: JSON.stringify({ name, contact, email, status: ncEng })
+      body: JSON.stringify({ name, contact, email, type, status: ncEng })
     });
     const json = await res.json();
     if (!res.ok) { toast(json.error || 'Failed to create client'); return; }
     const newClient = apiClientToData(json.data, DATA.clients.length);
-    newClient.type = document.getElementById('nc-svc').value || 'General';
     newClient.portal.on = ncPortalOn;
     if(ncPortalOn) newClient.portal.url = `portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}`;
     DATA.clients.push(newClient);
@@ -1743,14 +1748,16 @@ async function saveC(cid){
   const contact=document.getElementById('nc-contact').value.trim()||c.contact;
   if(!name||!email)return;
   try {
+    const type = document.getElementById('nc-svc').value || c.type;
+    const portalUrl = ncPortalOn ? (`portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}`) : (c.portal.url || '');
     const res = await apiFetch(`/clients/${cid}`, {
       method: 'PUT',
-      body: JSON.stringify({ name, contact, email, status: document.getElementById('nc-eng').value, portal_on: ncPortalOn })
+      body: JSON.stringify({ name, contact, email, type, status: document.getElementById('nc-eng').value, portal_on: ncPortalOn, portal_url: portalUrl })
     });
     const json = await res.json();
     if (!res.ok) { toast(json.error || 'Failed to update client'); return; }
-    c.name=name;c.contact=contact;c.email=email;c.type=document.getElementById('nc-svc').value||c.type;c.eng=document.getElementById('nc-eng').value;c.portal.on=ncPortalOn;
-    if(ncPortalOn&&!c.portal.url)c.portal.url=`portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}`;
+    c.name=name;c.contact=contact;c.email=email;c.type=type;c.eng=document.getElementById('nc-eng').value;c.portal.on=ncPortalOn;
+    if(ncPortalOn)c.portal.url=portalUrl;
     document.getElementById('mod-foot').innerHTML=`<button onclick="closeMod()" class="tb-btn">Cancel</button><button onclick="addClient()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create client</button>`;
     closeMod();toast('Client updated.');renderCP();lucide.createIcons();
   } catch (err) {

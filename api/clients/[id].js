@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   if (!id) { badRequest(res, 'id is required'); return; }
 
   if (req.method === 'GET') {
-    const [row] = await sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE id = ${id} AND user_id = ${user.userId}`;
+    const [row] = await sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, created_at FROM clients WHERE id = ${id} AND user_id = ${user.userId}`;
     if (!row) { notFound(res); return; }
     sendJson(res, 200, {
       data: {
@@ -19,6 +19,7 @@ export default async function handler(req, res) {
         name: row.name,
         contact: row.contact,
         email: row.email,
+        type: row.type,
         status: row.status,
         portal: { on: row.portal_on, url: row.portal_url },
         createdAt: row.created_at,
@@ -28,11 +29,12 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
-    const { name, contact, email, status, portal_on, portal_url } = req.body || {};
+    const { name, contact, email, type, status, portal_on, portal_url } = req.body || {};
     const updates = [];
     if (name !== undefined) updates.push(sql`name = ${name}`);
     if (contact !== undefined) updates.push(sql`contact = ${contact}`);
     if (email !== undefined) updates.push(sql`email = ${email}`);
+    if (type !== undefined) updates.push(sql`type = ${type}`);
     if (status !== undefined) updates.push(sql`status = ${status}`);
     if (portal_on !== undefined) updates.push(sql`portal_on = ${portal_on}`);
     if (portal_url !== undefined) updates.push(sql`portal_url = ${portal_url}`);
@@ -41,7 +43,7 @@ export default async function handler(req, res) {
 
     const [row] = await sql`
       UPDATE clients SET ${sql.join(updates, sql`, `)} WHERE id = ${id} AND user_id = ${user.userId}
-      RETURNING id, name, contact, email, status, portal_on, portal_url, created_at;
+      RETURNING id, name, contact, email, type, status, portal_on, portal_url, created_at;
     `;
     if (!row) { notFound(res); return; }
     sendJson(res, 200, {
@@ -50,6 +52,7 @@ export default async function handler(req, res) {
         name: row.name,
         contact: row.contact,
         email: row.email,
+        type: row.type,
         status: row.status,
         portal: { on: row.portal_on, url: row.portal_url },
         createdAt: row.created_at,
