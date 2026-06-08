@@ -2038,7 +2038,13 @@ async function renderEarlyAccess(){
         </table>
       </div>`;
     lucide.createIcons();
-  }catch(e){el.innerHTML='<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">Could not load signups.</div>';}
+  }catch(e){
+    const isAuth=e.message==='Unauthorized';
+    el.innerHTML=`<div style="padding:32px;text-align:center">
+      <div style="font-size:13px;color:${isAuth?'#C0392B':'#8E9E9E'};margin-bottom:${isAuth?'12px':'0'}">${isAuth?'Session expired. Please log in again.':'Could not load signups.'}</div>
+      ${isAuth?'<button class="tb-btn pri" onclick="showAuth()" style="font-size:12px;padding:7px 16px">Log in again</button>':''}
+    </div>`;
+  }
 }
 
 async function downloadEarlyAccessCSV(){
