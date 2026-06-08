@@ -207,6 +207,13 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 .attn-row:last-child{border-bottom:none}
 .attn-row:hover{background:#F8FBFA}
 
+/* ─── DATA TABLE ─── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8AADA8;padding:10px 16px;text-align:left;border-bottom:1px solid #E2EBE9;background:#FBFBFA}
+.tbl td{padding:12px 16px;border-bottom:1px solid #EEF2F2;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#F8FBFA}
+
 /* ─── PAYMENT EXPERIENCE ─── */
 .pay-card{background:linear-gradient(140deg,#062B2D 0%,#0B4F52 60%,#17A39B 100%);border-radius:20px;padding:28px 30px;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 40px rgba(12,52,53,.3)}
 .pay-card::before{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.05)}
@@ -705,7 +712,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 const PCOLS=['#2D6A4F','#3558CC','#121212','#A0621A','#6B3FA0','#B91C1C'];
 const IC={pdf:{bg:'#FEF3E2',tc:'#A0621A',i:'file-text'},fig:{bg:'#EEF3FF',tc:'#3558CC',i:'layers'},zip:{bg:'#EEF2F2',tc:'#6B7C7D',i:'archive'},doc:{bg:'#EAF2EE',tc:'#2D6A4F',i:'file-text'},img:{bg:'#EEF3FF',tc:'#3558CC',i:'image'},vid:{bg:'#F5F0FF',tc:'#6B3FA0',i:'film'},sig:{bg:'#EAF2EE',tc:'#2D6A4F',i:'file-signature'}};
 
-let DATA = { team:[], clients:[] };
+let DATA = { team:[], clients:[], tenants:[] };
 
 /* ══ STATE ══ */
 let SC=null,STAB='overview',SWA=null,SWATAB='tasks',ncPortalOn=false,ncEng='active';
@@ -781,6 +788,11 @@ function apiClientToData(c, idx) {
 
 async function initFromApi() {
   try {
+    // If superadmin, fetch tenants instead of clients
+    if (CURRENT_USER && CURRENT_USER.role === 'superadmin') {
+      await fetchTenants();
+      return;
+    }
     const res = await apiFetch('/clients');
     if (!res.ok) throw new Error('Failed to fetch clients');
     const json = await res.json();
@@ -1061,6 +1073,26 @@ function getGreeting() {
   return 'Good evening';
 }
 
+function updateNavLabels() {
+  if (!CURRENT_USER) return;
+  
+  const clientsLabel = document.getElementById('nav-clients-label');
+  const clientsBadge = document.getElementById('cl-bdg');
+  
+  if (clientsLabel) {
+    if (CURRENT_USER.role === 'superadmin') {
+      clientsLabel.textContent = 'Tenants';
+    } else {
+      clientsLabel.textContent = 'Clients';
+    }
+  }
+  
+  // Hide badge for superadmin (tenants don't have the same count display)
+  if (clientsBadge && CURRENT_USER.role === 'superadmin') {
+    clientsBadge.style.display = 'none';
+  }
+}
+
 function updateUserUI(user) {
   if (!user) return;
   CURRENT_USER = user;
@@ -1295,13 +1327,87 @@ function renderCG(filter){
   g.innerHTML=header+rows+addRow;
 }
 function filterCG(v){renderCG(v);}
+/* ══ TENANT MANAGEMENT (SUPERADMIN) ══ */
+async function fetchTenants() {
+  try {
+    const res = await apiFetch('/admin/tenants');
+    if (!res.ok) throw new Error('Failed to fetch tenants');
+    const json = await res.json();
+    DATA.tenants = json.data || [];
+  } catch (err) {
+    console.error('Error fetching tenants:', err);
+    DATA.tenants = [];
+  }
+}
+
+function apiTenantToData(t, idx) {
+  const [bg, tc] = BALS[(idx || 0) % BALS.length].split(':');
+  const inits = t.name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || 'TN';
+  return {
+    id: t.id,
+    name: t.name,
+    slug: t.slug,
+    init: inits,
+    bg: bg,
+    tc: tc,
+    plan: t.plan || 'free',
+    status: t.status || 'active',
+    ownerEmail: t.owner_email || '—',
+    ownerName: t.owner_name || '—',
+    userCount: t.user_count || 0,
+    createdAt: t.created_at,
+    updatedAt: t.updated_at
+  };
+}
+
+function renderTenants(filter) {
+  const list = filter ? DATA.tenants.filter(t => t.name.toLowerCase().includes(filter.toLowerCase())) : DATA.tenants;
+  const g = document.getElementById('cg');
+  const header = `<div class="cl-header">
+    <div style="width:40px"></div>
+    <div style="flex:1;min-width:140px">Tenant</div>
+    <div style="width:100px">Plan</div>
+    <div style="width:90px">Status</div>
+    <div style="width:100px;text-align:center">Users</div>
+    <div style="width:160px">Owner</div>
+    <div style="width:40px"></div>
+  </div>`;
+  const rows = list.map((t, idx) => {
+    const tData = apiTenantToData(t, idx);
+    const statusColor = tData.status === 'active' ? 'green' : tData.status === 'suspended' ? 'red' : 'amber';
+    const statusLabel = tData.status === 'active' ? 'Active' : tData.status === 'suspended' ? 'Suspended' : 'Pending';
+    return `<div class="cl-row" onclick="openTenantProfile(${tData.id})" role="button" tabindex="0">
+      <div class="cl-av" style="background:${tData.bg};color:${tData.tc}">${tData.init}</div>
+      <div style="flex:1;min-width:140px">
+        <div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52;letter-spacing:-.02em">${tData.name}</div>
+        <div style="font-size:12px;color:#7A9E99">${tData.slug}</div>
+      </div>
+      <div style="width:100px;font-size:12.5px;color:#6A8E89" class="ht">${tData.plan}</div>
+      <div style="width:90px"><span class="st ${statusColor}" style="font-size:10px">${statusLabel}</span></div>
+      <div style="width:100px;text-align:center" class="ht" style="font-size:13px;font-weight:800;color:#0B4F52">${tData.userCount}</div>
+      <div style="width:160px;font-size:12px;color:#7A9E99">${tData.ownerName}<br><span style="font-size:11px;color:#9AB5B0">${tData.ownerEmail}</span></div>
+      <div style="width:40px;display:flex;justify-content:flex-end"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C0D4D0" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </div>`;
+  }).join('');
+  const addRow = `<div class="cl-add-row" onclick="openTenantModal()">
+    <div style="width:40px;height:40px;border-radius:11px;background:#EBF0EE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A9E99" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+    <div class="ht" style="font-size:13.5px;font-weight:700">Add new tenant</div>
+  </div>`;
+  g.innerHTML = header + rows + addRow;
+}
+
 function showCG(){
   document.getElementById('cg-view').style.display='';
   document.getElementById('cp-view').style.display='none';
   SC=null;SWA=null;STAB='overview';
   const url=new URL(window.location.href);
   if(url.searchParams.has('client')){url.searchParams.delete('client');history.pushState({},'',url);}
-  renderCG();
+  // Show tenants for superadmin, clients for others
+  if (CURRENT_USER && CURRENT_USER.role === 'superadmin') {
+    renderTenants();
+  } else {
+    renderCG();
+  }
 }
 
 /* ══ CLIENT PROFILE (WORKSPACE) ══ */
@@ -2014,7 +2120,9 @@ async function renderEarlyAccess(){
     const res=await apiFetch('/early-access/export');
     if(!res.ok)throw new Error('Failed to load');
     const csv=await res.text();
-    const rows=csv.trim().split('\r\n').map(r=>r.split(','));
+    const lines=csv.trim().split('\r\n');
+    const parseCSVRow=row=>{const res=[];let cur='',inQ=false;for(let i=0;i<row.length;i++){const c=row[i];if(c=='"'&&!inQ){inQ=true;}else if(c=='"'&&inQ&&row[i+1]=='"'){cur+='"';i++;}else if(c=='"'&&inQ){inQ=false;}else if(c==','&&!inQ){res.push(cur);cur='';}else cur+=c;}res.push(cur);return res;};
+    const rows=lines.map(parseCSVRow);
     const [header,...data]=rows;
     if(!data.length){el.innerHTML='<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No signups yet.</div>';return;}
     const bdg=document.getElementById('ea-bdg');
@@ -2258,6 +2366,7 @@ async function saveSettings(){
 }
 
 /* ══ HELPERS ══ */
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function emp(t,b,i){return `<div class="emp"><div class="emp-ico"><i data-lucide="${i}" style="width:22px;height:22px;color:#9ABDB7"></i></div><div class="emp-t">${t}</div><div class="emp-b">${b}</div></div>`;}
 function toast(msg){const t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#0B4F52;color:#fff;font-family:"General Sans",sans-serif;font-size:13px;font-weight:600;padding:11px 22px;border-radius:12px;z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(15,61,62,.3)';document.body.appendChild(t);requestAnimationFrame(()=>{t.style.opacity='1';});setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),200);},2600);}
 

@@ -1,5 +1,6 @@
 import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
+import { canManageData } from './lib/auth.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -7,39 +8,65 @@ export default async function handler(req, res) {
   const user = await requireAuth(req, res);
   if (!user) return;
 
+  // Check tenant access - superadmin can access all, regular users only their tenant
+  const tenantId = user.tenantId;
+  if (!tenantId && user.role !== 'superadmin') {
+    sendJson(res, 403, { error: 'No tenant assigned to user' });
+    return;
+  }
+
   if (req.method === 'GET') {
     const { status, search } = req.query || {};
-    const uid = user.userId;
     let rows;
+    
     try {
-      let query = sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid}`;
-      if (status) {
-        query = sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid} AND status = ${status}`;
+      // Build query with tenant filtering
+      let baseQuery = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c`;
+      
+      // Apply tenant filter (superadmin sees all, others see only their tenant)
+      if (user.role === 'superadmin') {
+        if (req.query.tenantId) {
+          baseQuery = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.tenant_id = ${req.query.tenantId}`;
+        } else {
+          baseQuery = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c`;
+        }
+      } else {
+        baseQuery = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.tenant_id = ${tenantId}`;
       }
+      
+      // Apply filters
+      let query = baseQuery;
+      if (status && user.role === 'superadmin' && !req.query.tenantId) {
+        query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.status = ${status}`;
+      } else if (status) {
+        query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.tenant_id = ${tenantId} AND c.status = ${status}`;
+      }
+      
       if (search) {
         const q = `%${search.toLowerCase()}%`;
-        query = sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid} AND (LOWER(name) LIKE ${q} OR LOWER(contact) LIKE ${q} OR LOWER(email) LIKE ${q})`;
+        if (user.role === 'superadmin' && !req.query.tenantId) {
+          query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE (LOWER(c.name) LIKE ${q} OR LOWER(c.contact) LIKE ${q} OR LOWER(c.email) LIKE ${q})`;
+        } else {
+          const tid = user.role === 'superadmin' && req.query.tenantId ? req.query.tenantId : tenantId;
+          query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.tenant_id = ${tid} AND (LOWER(c.name) LIKE ${q} OR LOWER(c.contact) LIKE ${q} OR LOWER(c.email) LIKE ${q})`;
+        }
       }
+      
       if (status && search) {
         const q = `%${search.toLowerCase()}%`;
-        query = sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid} AND status = ${status} AND (LOWER(name) LIKE ${q} OR LOWER(contact) LIKE ${q} OR LOWER(email) LIKE ${q})`;
+        if (user.role === 'superadmin' && !req.query.tenantId) {
+          query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.status = ${status} AND (LOWER(c.name) LIKE ${q} OR LOWER(c.contact) LIKE ${q} OR LOWER(c.email) LIKE ${q})`;
+        } else {
+          const tid = user.role === 'superadmin' && req.query.tenantId ? req.query.tenantId : tenantId;
+          query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.tenant_id = ${tid} AND c.status = ${status} AND (LOWER(c.name) LIKE ${q} OR LOWER(c.contact) LIKE ${q} OR LOWER(c.email) LIKE ${q})`;
+        }
       }
+      
       rows = await query;
     } catch (err) {
-      // type column may not exist yet in old databases
-      let query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid}`;
-      if (status) {
-        query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid} AND status = ${status}`;
-      }
-      if (search) {
-        const q = `%${search.toLowerCase()}%`;
-        query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid} AND (LOWER(name) LIKE ${q} OR LOWER(contact) LIKE ${q} OR LOWER(email) LIKE ${q})`;
-      }
-      if (status && search) {
-        const q = `%${search.toLowerCase()}%`;
-        query = sql`SELECT id, name, contact, email, status, portal_on, portal_url, created_at FROM clients WHERE user_id = ${uid} AND status = ${status} AND (LOWER(name) LIKE ${q} OR LOWER(contact) LIKE ${q} OR LOWER(email) LIKE ${q})`;
-      }
-      rows = await query;
+      console.error('Error fetching clients:', err);
+      sendJson(res, 500, { error: 'Failed to fetch clients' });
+      return;
     }
 
     const data = rows.map(r => ({
@@ -57,26 +84,40 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
+    // Check if user can create data
+    if (!canManageData(user)) {
+      sendJson(res, 403, { error: 'Insufficient permissions to create clients' });
+      return;
+    }
+
     const { name, contact, email, type = 'Service', status = 'active' } = req.body || {};
     if (!name || !contact || !email) {
       badRequest(res, 'name, contact, and email are required');
       return;
     }
+    
+    // Check if client email already exists in this tenant
+    const [existing] = await sql`
+      SELECT id FROM clients WHERE email = ${email.toLowerCase()} AND tenant_id = ${tenantId}
+    `;
+    if (existing) {
+      sendJson(res, 409, { error: 'Client with this email already exists in your workspace' });
+      return;
+    }
+    
     let row;
     try {
       [row] = await sql`
-        INSERT INTO clients (user_id, name, contact, email, type, status)
-        VALUES (${user.userId}, ${name}, ${contact}, ${email}, ${type}, ${status})
+        INSERT INTO clients (tenant_id, user_id, name, contact, email, type, status)
+        VALUES (${tenantId}, ${user.userId}, ${name}, ${contact}, ${email.toLowerCase()}, ${type}, ${status})
         RETURNING id, name, contact, email, type, status, portal_on, portal_url, created_at;
       `;
     } catch (err) {
-      // type column may not exist yet in old databases
-      [row] = await sql`
-        INSERT INTO clients (user_id, name, contact, email, status)
-        VALUES (${user.userId}, ${name}, ${contact}, ${email}, ${status})
-        RETURNING id, name, contact, email, status, portal_on, portal_url, created_at;
-      `;
+      console.error('Error creating client:', err);
+      sendJson(res, 500, { error: 'Failed to create client' });
+      return;
     }
+    
     const client = {
       id: row.id,
       name: row.name,

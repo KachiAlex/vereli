@@ -12,3 +12,6 @@ cpSync(resolve('src'), dist, { recursive: true, dereference: true });
 
 // Copy public files (favicon, robots.txt, sitemap, etc.) over src/
 cpSync(resolve('public'), dist, { recursive: true, dereference: true, force: true });
+
+// Copy API endpoints
+cpSync(resolve('api'), resolve(dist, 'api'), { recursive: true, dereference: true });

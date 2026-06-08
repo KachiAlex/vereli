@@ -17,14 +17,21 @@ export default async function handler(req, res) {
   }
 
   try {
-    let user;
-    try {
-      [user] = await sql`SELECT id, email, name, company, role, password_hash FROM users WHERE email = ${email.toLowerCase()}`;
-    } catch (colErr) {
-      // company column may not exist yet in old databases
-      [user] = await sql`SELECT id, email, name, role, password_hash FROM users WHERE email = ${email.toLowerCase()}`;
-    }
+    // Fetch user with tenant info
+    const [user] = await sql`
+      SELECT u.id, u.email, u.name, u.role, u.tenant_id, u.password_hash, t.name as tenant_name, t.slug as tenant_slug
+      FROM users u
+      LEFT JOIN tenants t ON u.tenant_id = t.id
+      WHERE u.email = ${email.toLowerCase()}
+    `;
+    
     if (!user || user.password_hash !== password) {
+      sendJson(res, 401, { error: 'Invalid credentials' });
+      return;
+    }
+
+    // Superadmin must use different credentials
+    if (user.role === 'superadmin' && email.toLowerCase() !== 'admin@vereli.com') {
       sendJson(res, 401, { error: 'Invalid credentials' });
       return;
     }
@@ -33,12 +40,24 @@ export default async function handler(req, res) {
       userId: user.id,
       email: user.email,
       name: user.name,
-      company: user.company,
       role: user.role,
+      tenantId: user.tenant_id,
+      tenantName: user.tenant_name,
+      tenantSlug: user.tenant_slug,
     });
 
     sendJson(res, 200, {
-      data: { user: { id: user.id, email: user.email, name: user.name, company: user.company, role: user.role } },
+      data: { 
+        user: { 
+          id: user.id, 
+          email: user.email, 
+          name: user.name, 
+          role: user.role,
+          tenantId: user.tenant_id,
+          tenantName: user.tenant_name,
+          tenantSlug: user.tenant_slug,
+        } 
+      },
       accessToken,
       refreshToken,
     });

@@ -7,13 +7,37 @@ export default async function handler(req, res) {
   const user = await requireAuth(req, res);
   if (!user) return;
 
+  // Check tenant access
+  const tenantId = user.tenantId;
+  if (!tenantId && user.role !== 'superadmin') {
+    sendJson(res, 403, { error: 'No tenant assigned to user' });
+    return;
+  }
+
   if (req.method === 'GET') {
     const { workAreaId } = req.query || {};
     let rows;
-    if (workAreaId) {
-      rows = await sql`SELECT id, work_area_id, author_name, author_initials, author_bg, author_tc, text, reference, created_at FROM comments WHERE user_id = ${user.userId} AND work_area_id = ${Number(workAreaId)} ORDER BY created_at DESC`;
-    } else {
-      rows = await sql`SELECT id, work_area_id, author_name, author_initials, author_bg, author_tc, text, reference, created_at FROM comments WHERE user_id = ${user.userId} ORDER BY created_at DESC`;
+    
+    try {
+      const tid = user.role === 'superadmin' && req.query.tenantId ? req.query.tenantId : tenantId;
+      
+      if (workAreaId) {
+        if (user.role === 'superadmin' && !req.query.tenantId) {
+          rows = await sql`SELECT id, work_area_id, author_name, author_initials, author_bg, author_tc, text, reference, created_at FROM comments WHERE work_area_id = ${Number(workAreaId)} ORDER BY created_at DESC`;
+        } else {
+          rows = await sql`SELECT id, work_area_id, author_name, author_initials, author_bg, author_tc, text, reference, created_at FROM comments WHERE tenant_id = ${tid} AND work_area_id = ${Number(workAreaId)} ORDER BY created_at DESC`;
+        }
+      } else {
+        if (user.role === 'superadmin' && !req.query.tenantId) {
+          rows = await sql`SELECT id, work_area_id, author_name, author_initials, author_bg, author_tc, text, reference, created_at FROM comments ORDER BY created_at DESC`;
+        } else {
+          rows = await sql`SELECT id, work_area_id, author_name, author_initials, author_bg, author_tc, text, reference, created_at FROM comments WHERE tenant_id = ${tid} ORDER BY created_at DESC`;
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching comments:', err);
+      sendJson(res, 500, { error: 'Failed to fetch comments' });
+      return;
     }
     const data = rows.map(r => ({
       id: r.id,
@@ -33,9 +57,17 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { workAreaId, authorName, authorInitials, authorBg, authorTc, text, reference } = req.body || {};
     if (!workAreaId || !text) { badRequest(res, 'workAreaId and text are required'); return; }
+    
+    // Verify work area belongs to tenant
+    const [workArea] = await sql`SELECT id FROM work_areas WHERE id = ${Number(workAreaId)} AND tenant_id = ${tenantId}`;
+    if (!workArea) {
+      sendJson(res, 404, { error: 'Work area not found in your workspace' });
+      return;
+    }
+    
     const [row] = await sql`
-      INSERT INTO comments (user_id, work_area_id, author_name, author_initials, author_bg, author_tc, text, reference)
-      VALUES (${user.userId}, ${Number(workAreaId)}, ${authorName || 'Anonymous'}, ${authorInitials || null}, ${authorBg || null}, ${authorTc || null}, ${text}, ${reference || null})
+      INSERT INTO comments (tenant_id, user_id, work_area_id, author_name, author_initials, author_bg, author_tc, text, reference)
+      VALUES (${tenantId}, ${user.userId}, ${Number(workAreaId)}, ${authorName || 'Anonymous'}, ${authorInitials || null}, ${authorBg || null}, ${authorTc || null}, ${text}, ${reference || null})
       RETURNING id, work_area_id, author_name, author_initials, author_bg, author_tc, text, reference, created_at;
     `;
     sendJson(res, 201, { data: { id: row.id, workAreaId: row.work_area_id, authorName: row.author_name, authorInitials: row.author_initials, authorBg: row.author_bg, authorTc: row.author_tc, text: row.text, reference: row.reference, createdAt: row.created_at } });

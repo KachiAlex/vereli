@@ -17,11 +17,31 @@ export default async function handler(req, res) {
 
   try {
     const payload = await verifyRefreshToken(refreshToken);
-    const { userId, email, name, role } = payload;
-    const tokens = await createTokens({ userId, email, name, role });
+    const { userId, email, name, role, tenantId, tenantName, tenantSlug } = payload;
+    
+    // Create new tokens with full tenant context
+    const tokens = await createTokens({ 
+      userId, 
+      email, 
+      name, 
+      role, 
+      tenantId, 
+      tenantName, 
+      tenantSlug 
+    });
 
     sendJson(res, 200, {
-      data: { user: { id: userId, email, name, role } },
+      data: { 
+        user: { 
+          id: userId, 
+          email, 
+          name, 
+          role,
+          tenantId,
+          tenantName,
+          tenantSlug,
+        } 
+      },
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     });
