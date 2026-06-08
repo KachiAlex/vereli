@@ -12,6 +12,12 @@ export default async function handler(req, res) {
   const user = await requireAuth(req, res);
   if (!user) return;
 
+  const isSuperadmin = user.role === 'superadmin' || (user.email || '').toLowerCase() === 'admin@vereli.com';
+  if (!isSuperadmin) {
+    res.status(403).json({ error: 'Forbidden' });
+    return;
+  }
+
   try {
     const rows = await sql`
       SELECT id, email, name, company, created_at
