@@ -1085,6 +1085,7 @@ function updateNavLabels() {
 function updateUserUI(user) {
   if (!user) return;
   CURRENT_USER = user;
+  updateNavLabels();
   const inits = user.name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
   const firstName = user.name.split(' ')[0] || user.name;
   document.getElementById('sb-name').textContent = user.name;
