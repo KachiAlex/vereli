@@ -1,5 +1,6 @@
 import { sendJson, handleCors, badRequest, parseCookie, setCookie } from '../lib/utils.js';
 import { createTokens, verifyRefreshToken } from '../lib/auth.js';
+import { sql } from '../lib/neon.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -18,7 +19,14 @@ export default async function handler(req, res) {
 
   try {
     const payload = await verifyRefreshToken(refreshToken);
-    const { userId, email, name, role, tenantId, tenantName, tenantSlug } = payload;
+    const { userId, email, name, tenantId, tenantName, tenantSlug } = payload;
+
+    // Ensure admin@vereli.com always has superadmin role
+    let role = payload.role;
+    if (email.toLowerCase() === 'admin@vereli.com') {
+      role = 'superadmin';
+      await sql`UPDATE users SET role = 'superadmin', tenant_id = NULL WHERE id = ${userId}`;
+    }
 
     // Create new tokens with full tenant context
     const tokens = await createTokens({
@@ -26,7 +34,7 @@ export default async function handler(req, res) {
       email,
       name,
       role,
-      tenantId,
+      tenantId: role === 'superadmin' ? null : tenantId,
       tenantName,
       tenantSlug
     });
@@ -41,7 +49,7 @@ export default async function handler(req, res) {
           email,
           name,
           role,
-          tenantId,
+          tenantId: role === 'superadmin' ? null : tenantId,
           tenantName,
           tenantSlug,
         }

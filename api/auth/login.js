@@ -30,8 +30,17 @@ export default async function handler(req, res) {
       return;
     }
 
+    // Ensure admin@vereli.com always has superadmin role
+    let role = user.role;
+    if (user.email.toLowerCase() === 'admin@vereli.com') {
+      role = 'superadmin';
+      if (user.role !== 'superadmin') {
+        await sql`UPDATE users SET role = 'superadmin', tenant_id = NULL WHERE id = ${user.id}`;
+      }
+    }
+
     // Superadmin must use different credentials
-    if (user.role === 'superadmin' && email.toLowerCase() !== 'admin@vereli.com') {
+    if (role === 'superadmin' && email.toLowerCase() !== 'admin@vereli.com') {
       sendJson(res, 401, { error: 'Invalid credentials' });
       return;
     }
@@ -40,8 +49,8 @@ export default async function handler(req, res) {
       userId: user.id,
       email: user.email,
       name: user.name,
-      role: user.role,
-      tenantId: user.tenant_id,
+      role,
+      tenantId: role === 'superadmin' ? null : user.tenant_id,
       tenantName: user.tenant_name,
       tenantSlug: user.tenant_slug,
     });
