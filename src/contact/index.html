@@ -293,7 +293,15 @@
 
 <script id="content" type="application/json">{}</script>
 <script type="module">
-const submitContactForm = async () => ({ ok: false, error: "Not configured" });
+const submitContactForm = async (form) => {
+  const data = Object.fromEntries(new FormData(form));
+  const res = await fetch('/api/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error('Failed to send');
+};
 document.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));
 </script>
 <script id="main_script">
