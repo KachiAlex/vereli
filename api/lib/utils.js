@@ -3,7 +3,7 @@ export function sendJson(res, status, data) {
 }
 
 export function handleCors(req, res) {
-  const origin = req.headers.origin || '*';
+  const origin = (req.headers && req.headers.origin) || '*';
   res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');

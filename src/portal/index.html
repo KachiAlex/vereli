@@ -360,11 +360,9 @@ function closeSidebar(){
 <script>
 const API_BASE='/api';
 let PORTAL_DATA={client:null,workAreas:[],tasks:[],files:[],comments:[],approvals:[],invoices:[]};
-function getToken(){return localStorage.getItem('vereli_accessToken');}
 async function apiFetch(path,opts={}){
   const url=path.startsWith('http')?path:API_BASE+path;
-  const token=getToken();
-  const res=await fetch(url,{headers:{'Content-Type':'application/json',...(token?{'Authorization':'Bearer '+token}:{})},...opts});
+  const res=await fetch(url,{...opts,credentials:'include'});
   if(res.status===401&&!path.includes('/auth/'))throw new Error('Unauthorized');
   return res;
 }
@@ -405,9 +403,8 @@ async function loadPortalData(){
     if(client){
       document.getElementById('portal-name').textContent=client.name;
       document.getElementById('portal-av').textContent=getInitials(client.name);
-      const user=JSON.parse(localStorage.getItem('vereli_user')||'{}');
-      document.getElementById('user-name').textContent=user.name||client.contact||'Client';
-      document.getElementById('user-av').textContent=getInitials(user.name||client.contact);
+      document.getElementById('user-name').textContent=client.contact||'Client';
+      document.getElementById('user-av').textContent=getInitials(client.contact);
     }
     updateBadges();renderOverview();renderWork();renderApprovals();renderFiles();renderMessages();renderPayments();if(typeof lucide!=='undefined')lucide.createIcons();
   }catch(err){
