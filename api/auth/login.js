@@ -1,4 +1,4 @@
-import { sendJson, handleCors, badRequest } from '../lib/utils.js';
+import { sendJson, handleCors, badRequest, setCookie } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
 import { createTokens } from '../lib/auth.js';
 
@@ -46,20 +46,21 @@ export default async function handler(req, res) {
       tenantSlug: user.tenant_slug,
     });
 
+    setCookie(res, 'access_token', accessToken, 900);   // 15 min
+    setCookie(res, 'refresh_token', refreshToken, 604800); // 7 days
+
     sendJson(res, 200, {
-      data: { 
-        user: { 
-          id: user.id, 
-          email: user.email, 
-          name: user.name, 
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
           role: user.role,
           tenantId: user.tenant_id,
           tenantName: user.tenant_name,
           tenantSlug: user.tenant_slug,
-        } 
-      },
-      accessToken,
-      refreshToken,
+        }
+      }
     });
   } catch (err) {
     console.error(err);

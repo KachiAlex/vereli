@@ -724,17 +724,11 @@ let SHOW_PAY_FORM=false;
 const API_BASE = '/api';
 const BALS = ['#E4F2F0:#0B4F52','#EEF3FF:#3558CC','#EAF2EE:#17A39B','#F5F0FF:#6B3FA0'];
 
-function getToken() { return localStorage.getItem('vereli_accessToken'); }
-function setTokens(a, r) { localStorage.setItem('vereli_accessToken', a); localStorage.setItem('vereli_refreshToken', r); }
-function clearTokens() { localStorage.removeItem('vereli_accessToken'); localStorage.removeItem('vereli_refreshToken'); }
-
 async function apiFetch(path, opts = {}) {
   const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
-  const token = getToken();
   const headers = { ...opts.headers };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
   if (opts.body && typeof opts.body === 'string') headers['Content-Type'] = 'application/json';
-  const res = await fetch(url, { ...opts, headers });
+  const res = await fetch(url, { ...opts, headers, credentials: 'include' });
   if (res.status === 401) {
     const refreshed = await tryRefresh();
     if (refreshed) return apiFetch(path, opts);
@@ -745,19 +739,14 @@ async function apiFetch(path, opts = {}) {
 }
 
 async function tryRefresh() {
-  const rt = localStorage.getItem('vereli_refreshToken');
-  if (!rt) return false;
   try {
     const res = await fetch(`${API_BASE}/auth/refresh`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken: rt })
+      credentials: 'include'
     });
-    if (!res.ok) { clearTokens(); return false; }
-    const json = await res.json();
-    setTokens(json.accessToken, json.refreshToken);
-    return true;
-  } catch { clearTokens(); return false; }
+    return res.ok;
+  } catch { return false; }
 }
 
 function apiClientToData(c, idx) {
@@ -1029,11 +1018,11 @@ async function doLogin() {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
+      credentials: 'include'
     });
     const json = await res.json();
     if (!res.ok) { authError(json.error || 'Login failed'); return; }
-    setTokens(json.accessToken, json.refreshToken);
     updateUserUI(json.data.user);
     hideAuth();
     initFromApi();
@@ -1050,19 +1039,19 @@ async function doRegister() {
     const res = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, company, email, password })
+      body: JSON.stringify({ name, company, email, password }),
+      credentials: 'include'
     });
     const json = await res.json();
     if (!res.ok) { authError(json.error || 'Registration failed'); return; }
-    setTokens(json.accessToken, json.refreshToken);
     updateUserUI(json.data.user);
     hideAuth();
     initFromApi();
   } catch { authError('Network error. Please try again.'); }
 }
 
-function doLogout() {
-  clearTokens();
+async function doLogout() {
+  try { await fetch(`${API_BASE}/auth/logout`, { method: 'POST', credentials: 'include' }); } catch {}
   showAuth();
 }
 
@@ -1131,8 +1120,6 @@ async function saveCompany(){
 }
 
 async function checkAuth() {
-  const token = getToken();
-  if (!token) { showAuth(); return; }
   try {
     const res = await apiFetch('/me');
     if (!res.ok) { showAuth(); return; }
