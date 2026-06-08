@@ -778,7 +778,7 @@ function apiClientToData(c, idx) {
 async function initFromApi() {
   try {
     // If superadmin, fetch tenants instead of clients
-    if (CURRENT_USER && CURRENT_USER.role === 'superadmin') {
+    if (CURRENT_USER && isSuperadmin()) {
       await fetchTenants();
       return;
     }
@@ -1062,6 +1062,11 @@ function getGreeting() {
   return 'Good evening';
 }
 
+function isSuperadmin() {
+  if (!CURRENT_USER) return false;
+  return CURRENT_USER.role === 'superadmin' || CURRENT_USER.email === 'admin@vereli.com';
+}
+
 function updateNavLabels() {
   if (!CURRENT_USER) return;
   
@@ -1069,7 +1074,7 @@ function updateNavLabels() {
   const clientsBadge = document.getElementById('cl-bdg');
   
   if (clientsLabel) {
-    if (CURRENT_USER.role === 'superadmin') {
+    if (isSuperadmin()) {
       clientsLabel.textContent = 'Tenants';
     } else {
       clientsLabel.textContent = 'Clients';
@@ -1077,7 +1082,7 @@ function updateNavLabels() {
   }
   
   // Hide badge for superadmin (tenants don't have the same count display)
-  if (clientsBadge && CURRENT_USER.role === 'superadmin') {
+  if (clientsBadge && isSuperadmin()) {
     clientsBadge.style.display = 'none';
   }
 }
@@ -1391,7 +1396,7 @@ function showCG(){
   const url=new URL(window.location.href);
   if(url.searchParams.has('client')){url.searchParams.delete('client');history.pushState({},'',url);}
   // Show tenants for superadmin, clients for others
-  if (CURRENT_USER && CURRENT_USER.role === 'superadmin') {
+  if (CURRENT_USER && isSuperadmin()) {
     renderTenants();
   } else {
     renderCG();
@@ -2376,27 +2381,6 @@ window.addEventListener('popstate',function(){
 
 /* ══ MODAL CLOSE ON OVERLAY ══ */
 document.getElementById('mod').addEventListener('click',function(e){if(e.target===this)closeMod();});
-
-/* ══ UPDATE NAV LABEL BASED ON ROLE ══ */
-function updateNavLabels() {
-  if (!CURRENT_USER) return;
-  
-  const clientsLabel = document.getElementById('nav-clients-label');
-  const clientsBadge = document.getElementById('cl-bdg');
-  
-  if (clientsLabel) {
-    if (CURRENT_USER.role === 'superadmin') {
-      clientsLabel.textContent = 'Tenants';
-    } else {
-      clientsLabel.textContent = 'Clients';
-    }
-  }
-  
-  // Hide badge for superadmin (tenants don't have the same count display)
-  if (clientsBadge && CURRENT_USER.role === 'superadmin') {
-    clientsBadge.style.display = 'none';
-  }
-}
 
 /* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded',function(){

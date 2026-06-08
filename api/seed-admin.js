@@ -15,9 +15,23 @@ export default async function handler(req, res) {
     const [existingSuperadmin] = await sql`
       SELECT id FROM users WHERE email = 'admin@vereli.com' AND role = 'superadmin'
     `;
-    
+
     if (existingSuperadmin) {
       sendJson(res, 200, { message: 'Superadmin already exists', data: { id: existingSuperadmin.id, email: 'admin@vereli.com', role: 'superadmin' } });
+      return;
+    }
+
+    // Upgrade existing admin@vereli.com if present
+    const [existingAdmin] = await sql`
+      SELECT id FROM users WHERE email = 'admin@vereli.com'
+    `;
+
+    if (existingAdmin) {
+      const [updated] = await sql`
+        UPDATE users SET role = 'superadmin', tenant_id = NULL WHERE id = ${existingAdmin.id}
+        RETURNING id, email, name, role;
+      `;
+      sendJson(res, 200, { message: 'Existing admin upgraded to superadmin.', data: updated });
       return;
     }
 
