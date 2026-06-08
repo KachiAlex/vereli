@@ -8,13 +8,25 @@ export default async function handler(req, res) {
   if (!user) return;
 
   if (req.method === 'GET') {
+    // Fetch full user data with tenant info
+    const [userData] = await sql`
+      SELECT u.id, u.email, u.name, u.role, u.tenant_id, t.name as tenant_name, t.slug as tenant_slug, t.status as tenant_status
+      FROM users u
+      LEFT JOIN tenants t ON u.tenant_id = t.id
+      WHERE u.id = ${user.userId}
+    `;
+    
     sendJson(res, 200, {
       data: {
-        id: user.userId,
-        email: user.email,
-        name: user.name,
-        company: user.company,
-        role: user.role,
+        id: userData.id,
+        email: userData.email,
+        name: userData.name,
+        role: userData.role,
+        tenantId: userData.tenant_id,
+        tenantName: userData.tenant_name,
+        tenantSlug: userData.tenant_slug,
+        tenantStatus: userData.tenant_status,
+        company: userData.tenant_name || null,
       },
     });
     return;
@@ -25,36 +37,45 @@ export default async function handler(req, res) {
     const fields = [];
     const values = [];
     if (name !== undefined) { fields.push('name = $' + (fields.length + 1)); values.push(name); }
-    if (company !== undefined) { fields.push('company = $' + (fields.length + 1)); values.push(company); }
-
-    if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }
-
-    const query = `UPDATE users SET ${fields.join(', ')} WHERE id = $${fields.length + 1} RETURNING id, email, name, company, role`;
-    values.push(user.userId);
 
     let row;
-    try {
-      [row] = await sql(query, values);
-    } catch (err) {
-      // company column may not exist yet in old databases
-      if (company !== undefined) {
-        try { await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS company TEXT`; } catch (_) {}
-        try {
-          [row] = await sql(query, values);
-        } catch (_) {}
+    if (fields.length > 0) {
+      const query = `UPDATE users SET ${fields.join(', ')} WHERE id = $${fields.length + 1} RETURNING id, email, name, role, tenant_id`;
+      values.push(user.userId);
+      try {
+        [row] = await sql(query, values);
+      } catch (err) {
+        console.error('Error updating user:', err);
+        badRequest(res, 'Update failed');
+        return;
       }
-      if (!row && name !== undefined) {
-        [row] = await sql`UPDATE users SET name = ${name} WHERE id = ${user.userId} RETURNING id, email, name, role`;
-      }
+      if (!row) { badRequest(res, 'Update failed'); return; }
+    } else {
+      const [existing] = await sql`SELECT id, email, name, role, tenant_id FROM users WHERE id = ${user.userId}`;
+      row = existing;
     }
-    if (!row) { badRequest(res, 'Update failed'); return; }
+
+    // Update tenant name if company provided
+    if (company !== undefined && row.tenant_id) {
+      await sql`UPDATE tenants SET name = ${company} WHERE id = ${row.tenant_id}`;
+    }
+
+    if (!name && company === undefined) { badRequest(res, 'No fields to update'); return; }
+
+    // Get tenant info
+    const [tenant] = await sql`SELECT name, slug, status FROM tenants WHERE id = ${row.tenant_id}`;
+    
     sendJson(res, 200, {
       data: {
         id: row.id,
         email: row.email,
         name: row.name,
-        company: row.company || company || null,
         role: row.role,
+        tenantId: row.tenant_id,
+        tenantName: tenant?.name || null,
+        tenantSlug: tenant?.slug || null,
+        tenantStatus: tenant?.status || null,
+        company: tenant?.name || null,
       },
     });
     return;

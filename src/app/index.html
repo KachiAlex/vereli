@@ -402,8 +402,8 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
     </div>
     <div class="ni" id="nav-clients" onclick="goView('clients',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span class="ni-label">Clients</span>
-      <span class="ni-badge-count" id="cl-bdg">3</span>
+      <span class="ni-label" id="nav-clients-label">Clients</span>
+      <span class="ni-badge-count" id="cl-bdg">0</span>
     </div>
     <div class="ni" id="nav-deliverables" onclick="goView('deliverables',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
@@ -1070,13 +1070,16 @@ function updateUserUI(user) {
   document.getElementById('sb-role').textContent = user.role || 'Owner';
   document.getElementById('sb-av').textContent = inits || 'U';
   const wsEl = document.getElementById('sb-ws-name');
-  if (wsEl) wsEl.textContent = user.company || firstName + ' workspace';
+  if (wsEl) wsEl.textContent = user.tenantName || user.company || firstName + ' workspace';
   const topWsEl = document.getElementById('top-ws-name');
-  if (topWsEl) topWsEl.textContent = user.company || firstName + ' workspace';
+  if (topWsEl) topWsEl.textContent = user.tenantName || user.company || firstName + ' workspace';
   const greetEl = document.getElementById('dash-greeting');
   if (greetEl) greetEl.textContent = getGreeting() + ', ' + firstName;
   const teamSubEl = document.getElementById('team-sub');
   if (teamSubEl) teamSubEl.textContent = 'Members of your ' + (user.company || firstName + ' workspace');
+  
+  // Update navigation labels based on user role
+  updateNavLabels();
 }
 
 function showCompMod(){document.getElementById('comp-mod').style.display='flex';}
@@ -1105,7 +1108,7 @@ async function checkAuth() {
     updateUserUI(json.data);
     hideAuth();
     // Temporary flow: prompt existing users without a company to set one
-    if(!json.data || !json.data.company){
+    if(!json.data || (!json.data.company && !json.data.tenantName)){
       showCompMod();
       return; // defer initFromApi until company is saved
     }
@@ -2276,6 +2279,27 @@ window.addEventListener('popstate',function(){
 
 /* ══ MODAL CLOSE ON OVERLAY ══ */
 document.getElementById('mod').addEventListener('click',function(e){if(e.target===this)closeMod();});
+
+/* ══ UPDATE NAV LABEL BASED ON ROLE ══ */
+function updateNavLabels() {
+  if (!CURRENT_USER) return;
+  
+  const clientsLabel = document.getElementById('nav-clients-label');
+  const clientsBadge = document.getElementById('cl-bdg');
+  
+  if (clientsLabel) {
+    if (CURRENT_USER.role === 'superadmin') {
+      clientsLabel.textContent = 'Tenants';
+    } else {
+      clientsLabel.textContent = 'Clients';
+    }
+  }
+  
+  // Hide badge for superadmin (tenants don't have the same count display)
+  if (clientsBadge && CURRENT_USER.role === 'superadmin') {
+    clientsBadge.style.display = 'none';
+  }
+}
 
 /* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded',function(){
