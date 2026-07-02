@@ -1,0 +1,48 @@
+import { sendJson, handleCors } from './lib/utils.js';
+
+export default function handler(req, res) {
+  if (handleCors(req, res)) return;
+
+  sendJson(res, 200, {
+    name: 'Vereli API',
+    version: '0.0.1',
+    endpoints: [
+      { method: 'GET',  path: '/api/health',    description: 'Health check' },
+      { method: 'POST', path: '/api/setup',     description: 'Create schema & seed demo data (run once)' },
+      { method: 'POST', path: '/api/auth/register', description: 'Register a new user' },
+      { method: 'POST', path: '/api/auth/login',    description: 'Login and get tokens' },
+      { method: 'POST', path: '/api/auth/refresh',  description: 'Refresh access token' },
+      { method: 'GET',  path: '/api/me',        description: 'Current user' },
+      { method: 'GET',  path: '/api/clients',   description: 'List all clients' },
+      { method: 'POST', path: '/api/clients',   description: 'Create a client' },
+      { method: 'GET',  path: '/api/clients/:id', description: 'Get/update/delete a client' },
+      { method: 'GET',  path: '/api/projects',  description: 'List all projects' },
+      { method: 'POST', path: '/api/projects',  description: 'Create a project' },
+      { method: 'GET',  path: '/api/projects/:id', description: 'Get/update/delete a project' },
+      { method: 'GET',  path: '/api/invoices',  description: 'List all invoices' },
+      { method: 'POST', path: '/api/invoices',  description: 'Create an invoice' },
+      { method: 'GET',  path: '/api/invoices/:id', description: 'Get/update/delete an invoice' },
+      { method: 'GET',  path: '/api/work-areas', description: 'List work areas' },
+      { method: 'POST', path: '/api/work-areas', description: 'Create a work area' },
+      { method: 'GET',  path: '/api/work-areas/:id', description: 'Get/update/delete a work area' },
+      { method: 'GET',  path: '/api/tasks', description: 'List tasks' },
+      { method: 'POST', path: '/api/tasks', description: 'Create a task' },
+      { method: 'GET',  path: '/api/tasks/:id', description: 'Get/update/delete a task' },
+      { method: 'GET',  path: '/api/files', description: 'List files' },
+      { method: 'POST', path: '/api/files', description: 'Create a file record' },
+      { method: 'GET',  path: '/api/files/:id', description: 'Get/update/delete a file' },
+      { method: 'GET',  path: '/api/comments', description: 'List comments' },
+      { method: 'POST', path: '/api/comments', description: 'Create a comment' },
+      { method: 'GET',  path: '/api/comments/:id', description: 'Get/update/delete a comment' },
+      { method: 'GET',  path: '/api/approvals', description: 'List approvals' },
+      { method: 'POST', path: '/api/approvals', description: 'Create an approval' },
+      { method: 'GET',  path: '/api/approvals/:id', description: 'Get/update/delete an approval' },
+      { method: 'GET',  path: '/api/payments', description: 'List payments' },
+      { method: 'POST', path: '/api/payments', description: 'Create a payment' },
+      { method: 'GET',  path: '/api/payments/:id', description: 'Get/delete a payment' },
+      { method: 'GET',  path: '/api/team', description: 'List team members' },
+      { method: 'POST', path: '/api/team', description: 'Invite a team member' },
+      { method: 'GET',  path: '/api/team/:id', description: 'Update/remove a team member' },
+    ],
+  });
+}

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Vereli — Why we built it</title>
+  <meta name="description" content="Vereli was built because managing client work across different tools became frustrating. One workspace where client work stays connected and teams can manage delivery.">
+  <meta property="og:title" content="About Vereli — Why we built it">
+  <meta property="og:description" content="Vereli was built because managing client work across different tools became frustrating.">
+  <meta name="twitter:title" content="About Vereli — Why we built it">
+  <meta name="twitter:description" content="Vereli was built because managing client work across different tools became frustrating.">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { teal:'#0B4F52','teal-light':'#17A39B',mist:'#E4F2F0','mist-dark':'#C0E4DE',orange:'#17A39B',graphite:'#0B4F52',cream:'#FFFFFF','warm-gray':'#F5FAF9','mid-gray':'#DCE5E6','text-soft':'#5A6E70','text-muted':'#7A9E99' }, fontFamily: { tight:['"General Sans"','sans-serif'], body:['Inter','sans-serif'] } } }
+    }
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+    body{background:#FFFFFF;color:#0B4F52;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    .ht{font-family:'General Sans',sans-serif}
+    .rv{opacity:0;transform:translateY(24px);transition:opacity .95s cubic-bezier(.16,1,.3,1),transform .95s cubic-bezier(.16,1,.3,1)}
+    .rv.on{opacity:1;transform:none}.rv-d1{transition-delay:100ms}.rv-d2{transition-delay:200ms}.rv-d3{transition-delay:300ms}
+    #nav{transition:background .3s ease,border-color .3s ease,backdrop-filter .3s ease}
+    #nav.scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:#EEF2F2}
+    #drawer{transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.2,1)}#drawer.open{transform:translateX(0)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:999px;background:#E4F2F0;color:#0B4F52;border:1px solid #C0E4DE;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    .cta-primary{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 32px;border-radius:12px;background:#17A39B;color:#fff;font-family:'General Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.01em;box-shadow:0 6px 28px rgba(23,163,155,.3);transition:transform .18s ease,box-shadow .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-primary:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(23,163,155,.4)}
+    .cta-ghost{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:52px;padding:0 28px;border-radius:12px;background:transparent;color:#0B4F52;font-family:'General Sans',sans-serif;font-size:15px;font-weight:600;border:1.5px solid #DCE5E6;transition:border-color .18s ease,background .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-ghost:hover{border-color:#0B4F52;background:rgba(11,61,58,.03)}
+    .nav-link{font-family:'General Sans',sans-serif;font-size:13px;font-weight:500;color:#5A6E70;text-decoration:none;transition:color .15s ease}
+    .nav-link:hover,.nav-link.active{color:#0B4F52}
+    .card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:16px;box-shadow:0 2px 20px rgba(11,61,58,.06),inset 0 0 0 1px rgba(11,61,58,.04)}
+    .dark-bg{background:#062B2D}
+    .orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+    @keyframes floatUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    @keyframes floatUpB{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+    .float-a{animation:floatUp 7s ease-in-out infinite}
+    .float-b{animation:floatUpB 9s ease-in-out 2s infinite}
+    /* Portrait image — no blur, crisp rendering */
+    .portrait-img{image-rendering:auto;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+  </style>
+</head>
+<body>
+
+<nav id="nav" class="fixed top-0 left-0 right-0 z-50 border-b border-transparent">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-[66px] flex items-center justify-between">
+    <a href="/"><img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto"></a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="/features/"  class="nav-link">Features</a>
+      <a href="/pricing/"   class="nav-link">Pricing</a>
+      <a href="/resources/" class="nav-link">Resources</a>
+      <a href="/about/"     class="nav-link active">About</a>
+    </div>
+    <div class="hidden md:flex items-center gap-3">
+      <a href="/login/"  class="nav-link px-2">Log in</a>
+      <a href="/signup/" class="cta-primary" style="height:38px;padding:0 20px;font-size:13px;border-radius:9px;box-shadow:0 4px 16px rgba(23,163,155,.28);">Start Free Trial</a>
+    </div>
+    <button id="hamburger" aria-label="Open menu" class="md:hidden p-2 -mr-1"><i data-lucide="menu" class="w-5 h-5"></i></button>
+  </div>
+</nav>
+
+<div id="drawer-overlay" class="fixed inset-0 z-[40] bg-black/25 hidden" onclick="closeDrawer()"></div>
+<div id="drawer" class="fixed top-0 right-0 bottom-0 z-[60] w-[300px] flex flex-col shadow-2xl" style="background:#FFFFFF;">
+  <div class="h-[66px] flex items-center justify-between px-5 border-b" style="border-color:#DCE5E6;">
+    <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto">
+    <button id="close-drawer" aria-label="Close menu" class="p-2 -mr-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+  </div>
+  <nav class="flex-1 flex flex-col gap-1 p-4">
+    <a href="/features/"  class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Features</a>
+    <a href="/pricing/"   class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Pricing</a>
+    <a href="/resources/" class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Resources</a>
+    <a href="/about/"     class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">About</a>
+  </nav>
+  <div class="p-4 border-t flex flex-col gap-2.5" style="border-color:#DCE5E6;">
+    <a href="/signup/" class="cta-primary w-full justify-center" style="border-radius:10px;">Start Free Trial</a>
+    <a href="/login/"  class="cta-ghost  w-full justify-center" style="border-radius:10px;">Log in</a>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════════════════════════════
+     ABOUT HERO — full editorial founder portrait
+══════════════════════════════════ -->
+<section class="relative overflow-clip" style="background:#FFFFFF;">
+
+  <!-- Ambient background glow -->
+  <div class="orb w-[900px] h-[600px]" style="top:-60px;left:-200px;background:radial-gradient(ellipse,rgba(31,138,112,.1) 0%,transparent 60%);filter:blur(80px);"></div>
+  <div class="orb w-[500px] h-[500px]" style="top:30%;right:-100px;background:radial-gradient(ellipse,rgba(31,138,112,.07) 0%,transparent 65%);filter:blur(100px);"></div>
+
+  <!-- Hero — centered editorial layout, no portrait -->
+  <div class="max-w-[860px] mx-auto px-6 md:px-12 pt-[140px] pb-[100px] relative z-10 rv">
+
+    <div class="mb-8">
+      <span class="badge">About Vereli</span>
+    </div>
+
+    <h1 class="ht font-black leading-[0.93] tracking-[-0.048em] text-graphite mb-8"
+        style="font-size:clamp(52px,7vw,88px);">
+      Built to make<br>client work<br>feel organized.
+    </h1>
+
+    <!-- Anchor lead sentence — full width, heavier weight -->
+    <p class="text-[19px] text-text-soft leading-[1.72] mb-5" style="max-width:600px;font-weight:400;">
+      I started Vereli because managing client work across different tools became frustrating.
+    </p>
+
+    <!-- Supporting detail — slightly smaller, constrained -->
+    <p class="text-[15px] leading-[1.8] mb-14" style="max-width:520px;color:#7A9E99;">
+      Files here, feedback there, approvals buried in chats. Tasks in another app. Everything disconnected.
+    </p>
+
+    <!-- Inline quote + founder byline -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-8 rv rv-d1">
+
+      <!-- Quote block -->
+      <div class="flex-1 rounded-[18px] px-7 py-6" style="background:rgba(228,242,240,0.5);border:1px solid #C0E4DE;">
+        <p class="text-[15px] leading-[1.7] text-graphite mb-4" style="font-style:italic;">"I wanted something simpler — one workspace where client work stays connected."</p>
+        <div class="h-px w-full mb-4" style="background:#C0E4DE;"></div>
+        <div class="flex items-center gap-3">
+          <div class="shrink-0 w-[40px] h-[40px] rounded-full overflow-hidden" style="border:2px solid rgba(31,138,112,0.3);box-shadow:0 2px 10px rgba(0,0,0,0.09);">
+            <img src="https://static.kite.ai/image/upload/f_auto,q_auto,w_80,h_80,c_fill,g_face/v1779817149/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/obhisrp9tei79pzbtubq.png"
+                 alt="Sharon Nkwah" class="w-full h-full object-cover portrait-img">
+          </div>
+          <div>
+            <p class="ht font-bold text-[13px] text-graphite">Sharon Nkwah</p>
+            <p class="text-[12px] text-text-soft">Founder, Vereli</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Three stat chips -->
+      <div class="flex flex-col gap-3 shrink-0">
+        <div class="card rounded-[14px] px-5 py-4" style="min-width:180px;">
+          <p class="ht font-black text-[30px] tracking-[-0.04em] text-graphite leading-none mb-1">1</p>
+          <p class="text-[12px] text-text-soft">workspace per client</p>
+        </div>
+        <div class="card rounded-[14px] px-5 py-4">
+          <p class="ht font-black text-[30px] tracking-[-0.04em] text-graphite leading-none mb-1">∞</p>
+          <p class="text-[12px] text-text-soft">files &amp; feedback</p>
+        </div>
+        <div class="card rounded-[14px] px-5 py-4">
+          <p class="ht font-black text-[30px] tracking-[-0.04em] text-graphite leading-none mb-1">0</p>
+          <p class="text-[12px] text-text-soft">scattered tools</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     STORY — wide editorial landscape image + narrative
+══════════════════════════════════ -->
+<section class="py-24 md:py-32" style="background:#E4F2F0;">
+  <div class="max-w-[1200px] mx-auto px-6 md:px-12">
+
+    <!-- Full-width editorial image at top — landscape, natural framing -->
+    <div class="rv mb-16 md:mb-20">
+      <div class="relative rounded-[28px] overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.09)]" style="aspect-ratio:16/9;">
+        <img src="https://static.kite.ai/image/upload/f_auto,q_auto,w_1600/v1779817144/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/wlvc3pjqid7lequuv2x0.png"
+             alt="Founder of Vereli at work"
+             class="w-full h-full object-cover portrait-img"
+             style="object-position:center 20%;">
+        <!-- Subtle warm overlay -->
+        <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(228,242,240,0.12) 0%,transparent 50%);"></div>
+      </div>
+    </div>
+
+    <!-- Two-column narrative below the image -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+      <!-- Left: section label + headline -->
+      <div class="lg:col-span-5 rv">
+        <p class="ht font-bold text-[11px] uppercase tracking-[0.14em] text-text-soft mb-5">The story</p>
+        <h2 class="ht font-black tracking-[-0.033em] text-graphite leading-[1.06] mb-6"
+            style="font-size:clamp(30px,3.5vw,48px);">
+          Everything felt<br>disconnected.
+        </h2>
+        <p class="text-[16px] text-text-soft leading-[1.78]">
+          The more clients and projects grew, the harder it became to keep work organized without constantly switching between tools.
+        </p>
+      </div>
+
+      <!-- Right: breakdown cards + promise -->
+      <div class="lg:col-span-7 rv rv-d1 flex flex-col gap-6">
+
+        <div class="card rounded-[20px] p-6 space-y-3.5">
+          <div class="flex items-center gap-3 text-[14px] text-graphite">
+            <i data-lucide="hard-drive" class="w-4 h-4 shrink-0 text-text-soft opacity-70"></i>
+            Files were in one place.
+          </div>
+          <div class="flex items-center gap-3 text-[14px] text-graphite">
+            <i data-lucide="message-circle" class="w-4 h-4 shrink-0 text-text-soft opacity-70"></i>
+            Feedback was somewhere else.
+          </div>
+          <div class="flex items-center gap-3 text-[14px] text-graphite">
+            <i data-lucide="stamp" class="w-4 h-4 shrink-0 text-text-soft opacity-70"></i>
+            Approvals got buried in chats.
+          </div>
+          <div class="flex items-center gap-3 text-[14px] text-graphite">
+            <i data-lucide="check-square" class="w-4 h-4 shrink-0 text-text-soft opacity-70"></i>
+            Tasks lived in another app.
+          </div>
+        </div>
+
+        <p class="text-[16px] text-text-soft leading-[1.78]">
+          I wanted something simpler.
+        </p>
+
+        <div class="rounded-[20px] p-6 space-y-3.5" style="background:#121212;">
+          <p class="ht font-bold text-[11px] uppercase tracking-[0.1em] mb-2" style="color:rgba(255,255,255,.4);">A workspace where:</p>
+          <div class="flex items-start gap-3 text-[14px]" style="color:rgba(255,255,255,.85);">
+            <span class="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5" style="background:rgba(31,138,112,.15);">
+              <i data-lucide="check" class="w-3 h-3" style="color:#E4F2F0;"></i>
+            </span>
+            client work stays connected,
+          </div>
+          <div class="flex items-start gap-3 text-[14px]" style="color:rgba(255,255,255,.85);">
+            <span class="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5" style="background:rgba(31,138,112,.15);">
+              <i data-lucide="check" class="w-3 h-3" style="color:#E4F2F0;"></i>
+            </span>
+            communication stays organized,
+          </div>
+          <div class="flex items-start gap-3 text-[14px]" style="color:rgba(255,255,255,.85);">
+            <span class="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5" style="background:rgba(31,138,112,.15);">
+              <i data-lucide="check" class="w-3 h-3" style="color:#E4F2F0;"></i>
+            </span>
+            and teams can manage delivery without operational chaos.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     MISSION — generous portrait + copy side by side
+══════════════════════════════════ -->
+<section class="py-24 md:py-36 relative overflow-clip" style="background:#FFFFFF;">
+
+  <!-- Glow -->
+  <div class="orb w-[700px] h-[500px]" style="bottom:-100px;right:-100px;background:radial-gradient(ellipse,rgba(31,138,112,.08) 0%,transparent 65%);filter:blur(90px);"></div>
+
+  <div class="max-w-[1200px] mx-auto px-6 md:px-12 relative z-10">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 xl:gap-20 items-center">
+
+      <!-- Left: mission copy -->
+      <div class="rv">
+        <h2 class="ht font-black tracking-[-0.038em] text-graphite leading-[1.04] mb-7"
+            style="font-size:clamp(34px,3.8vw,58px);">
+          That became<br>Vereli.
+        </h2>
+        <p class="text-[16px] text-text-soft leading-[1.78] mb-6 max-w-[440px]">
+          Vereli is designed for service businesses that want a cleaner and more organized way to manage client work from start to finish.
+        </p>
+        <p class="text-[16px] text-text-soft leading-[1.78] max-w-[420px]">
+          No unnecessary complexity. Just one workspace where the work actually happens.
+        </p>
+        <div class="mt-10 flex flex-col sm:flex-row gap-3">
+          <a href="/signup/" class="cta-primary" style="height:48px;font-size:14px;border-radius:11px;padding:0 28px;">Start Free Trial</a>
+          <a href="/features/" class="cta-ghost" style="height:48px;font-size:14px;border-radius:11px;padding:0 24px;">See features <i data-lucide="arrow-right" class="w-4 h-4 opacity-40"></i></a>
+        </div>
+      </div>
+
+      <!-- Right: values grid replacing portrait -->
+      <div class="rv rv-d1 grid grid-cols-2 gap-4">
+        <div class="card rounded-[20px] p-6 flex flex-col gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+            <i data-lucide="folder-open" class="w-4 h-4" style="color:#17A39B;"></i>
+          </div>
+          <p class="ht font-bold text-[14px] text-graphite leading-tight">One place for files</p>
+          <p class="text-[12.5px] text-text-soft leading-relaxed">Every deliverable, version, and asset in one client workspace.</p>
+        </div>
+        <div class="card rounded-[20px] p-6 flex flex-col gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+            <i data-lucide="stamp" class="w-4 h-4" style="color:#17A39B;"></i>
+          </div>
+          <p class="ht font-bold text-[14px] text-graphite leading-tight">Formal approvals</p>
+          <p class="text-[12.5px] text-text-soft leading-relaxed">Clients review and approve work — no more buried email threads.</p>
+        </div>
+        <div class="card rounded-[20px] p-6 flex flex-col gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+            <i data-lucide="receipt" class="w-4 h-4" style="color:#17A39B;"></i>
+          </div>
+          <p class="ht font-bold text-[14px] text-graphite leading-tight">Invoices &amp; payments</p>
+          <p class="text-[12.5px] text-text-soft leading-relaxed">Send invoices, collect payments, and track what's owed — all in context.</p>
+        </div>
+        <div class="card rounded-[20px] p-6 flex flex-col gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+            <i data-lucide="layout-dashboard" class="w-4 h-4" style="color:#17A39B;"></i>
+          </div>
+          <p class="ht font-bold text-[14px] text-graphite leading-tight">Client portal</p>
+          <p class="text-[12.5px] text-text-soft leading-relaxed">A branded space for each client — without giving them access to everything.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     CTA
+══════════════════════════════════ -->
+<section class="dark-bg relative overflow-clip">
+  <div class="orb w-[500px] h-[260px] bottom-0 left-1/2 -translate-x-1/2" style="background:radial-gradient(ellipse,rgba(31,138,112,.1) 0%,transparent 65%);filter:blur(2px);"></div>
+  <div class="max-w-[700px] mx-auto px-6 md:px-12 py-24 md:py-40 text-center rv">
+    <h2 class="ht font-black leading-[1.03] tracking-[-0.04em] mb-7" style="color:#fff;font-size:clamp(36px,5.5vw,72px);">
+      Keep client work<br>connected.
+    </h2>
+    <p class="text-[17px] leading-[1.65] mb-10" style="color:rgba(255,255,255,.5);">One workspace for every client.</p>
+    <a href="/signup/" class="cta-primary" style="height:54px;padding:0 36px;font-size:16px;border-radius:14px;">Start Free Trial</a>
+    <p class="mt-6 text-[13px]" style="color:rgba(255,255,255,.28);">No credit card required. Free for 14 days.</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="background:#062B2D;color:#fff;">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 pt-16 pb-10">
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-10 mb-14">
+      <div class="col-span-2">
+        <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-9 w-auto mb-5 brightness-0 invert opacity-70">
+        <p class="text-[13px] leading-relaxed max-w-[230px]" style="color:rgba(255,255,255,.58);">One workspace for every client. Built for modern service businesses.</p>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Product</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/features/" class="hover:text-white transition-colors">Features</a></li>
+          <li><a href="/pricing/"  class="hover:text-white transition-colors">Pricing</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Updates</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Roadmap</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Company</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/about/" class="hover:text-white transition-colors">About</a></li>
+          <li><a href="/contact/" class="hover:text-white transition-colors">Contact</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Careers</li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Resources</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/resources/#guides" class="hover:text-white transition-colors">Guides</a></li>
+          <li><a href="/resources/#templates" class="hover:text-white transition-colors">Templates</a></li>
+          <li><a href="/resources/#help-center" class="hover:text-white transition-colors">Help Center</a></li>
+          <li><a href="/resources/#help-center" class="hover:text-white transition-colors">Documentation</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Legal</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a></li>
+          <li><a href="/terms/" class="hover:text-white transition-colors">Terms</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Security</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4" style="border-top:1px solid rgba(255,255,255,.07);">
+      <p class="text-[12px]" id="footer-copy" style="color:rgba(255,255,255,.52);">© 2026 Vereli Inc.</p>
+      <div class="flex gap-5">
+        <a href="#" aria-label="Twitter" class="hover:opacity-100 transition-opacity" style="color:rgba(255,255,255,.38);"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+        <a href="#" aria-label="LinkedIn" class="hover:opacity-100 transition-opacity" style="color:rgba(255,255,255,.38);"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+</main>
+
+<script id="content" type="application/json">{"company":"content/company.json"}</script>
+<script type="module">
+const submitContactForm = async () => ({ ok: false, error: "Not configured" });
+document.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));
+</script>
+<script id="main_script">
+lucide.createIcons();
+document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' Vereli Inc.';
+var nav=document.getElementById('nav');
+window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40)},{passive:true});
+var drawer=document.getElementById('drawer'),overlay=document.getElementById('drawer-overlay');
+function openDrawer(){drawer.classList.add('open');overlay.classList.remove('hidden');document.body.style.overflow='hidden';}
+function closeDrawer(){drawer.classList.remove('open');overlay.classList.add('hidden');document.body.style.overflow='';}
+document.getElementById('hamburger').addEventListener('click',openDrawer);
+document.getElementById('close-drawer').addEventListener('click',closeDrawer);
+(function(){var io=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('on')})},{threshold:.07,rootMargin:'0px 0px -32px 0px'});document.querySelectorAll('.rv').forEach(function(el){io.observe(el)})})();
+</script>
+</body>
+</html>

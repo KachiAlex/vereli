@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset password — Vereli</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+    body{background:#FFFFFF;color:#0B4F52;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;min-height:100vh;}
+    .ht{font-family:'General Sans',sans-serif}
+    .field{width:100%;height:50px;padding:0 14px;border-radius:10px;border:1.5px solid #DCE5E6;background:#fff;color:#0B4F52;font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color 0.15s ease,box-shadow 0.15s ease;}
+    .field:focus{border-color:#17A39B;box-shadow:0 0 0 3px rgba(31,138,112,0.15);}
+    .field::placeholder{color:#8E9E9E;}
+    .btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:50px;border-radius:12px;background:#17A39B;color:#fff;font-family:'General Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.01em;border:none;cursor:pointer;box-shadow:0 6px 24px rgba(23,163,155,0.3);transition:transform 0.15s ease,box-shadow 0.15s ease;}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(23,163,155,0.4);}
+    .btn-primary:disabled{opacity:0.55;cursor:not-allowed;transform:none;}
+    .link{color:#0B4F52;font-weight:600;text-decoration:none;border-bottom:1px solid #DCE5E6;transition:border-color 0.15s ease;}
+    .link:hover{border-color:#0B4F52;}
+    .orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0;}
+  </style>
+</head>
+<body>
+  <div class="orb" style="width:600px;height:400px;top:-100px;left:50%;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(31,138,112,0.12) 0%,transparent 65%);filter:blur(80px);"></div>
+
+  <div class="w-full max-w-[400px] relative z-10">
+    <div class="text-center mb-10">
+      <a href="/"><img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-9 w-auto mx-auto mb-8"></a>
+      <h1 class="ht font-black text-[28px] tracking-[-0.03em] text-graphite mb-2" style="color:#0B4F52;">Reset your password</h1>
+      <p class="text-[15px] leading-relaxed" style="color:#6B7C7D;">Enter your email and we'll send you a reset link.</p>
+    </div>
+
+    <div id="form-wrap" style="background:#fff;border:1px solid #EEF2F2;border-radius:20px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,0.05);">
+      <form id="reset-form" novalidate>
+        <div class="mb-5">
+          <label class="ht font-semibold text-[12px] text-graphite block mb-2" style="color:#0B4F52;">Email address</label>
+          <input type="email" id="email" class="field" placeholder="you@company.com" autocomplete="email">
+          <p id="email-err" class="text-[12px] mt-1.5 hidden" style="color:#D94040;"></p>
+        </div>
+        <button type="submit" class="btn-primary" id="submit-btn">Send reset link</button>
+      </form>
+
+      <div id="success-msg" class="hidden text-center py-4">
+        <div class="w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background:#EAF2EE;border:1px solid #B8D6C8;">
+          <i data-lucide="mail-check" class="w-6 h-6" style="color:#17A39B;"></i>
+        </div>
+        <p class="ht font-bold text-[16px] text-graphite mb-2" style="color:#0B4F52;">Check your inbox</p>
+        <p class="text-[14px]" style="color:#6B7C7D;">We've sent a reset link to your email address.</p>
+      </div>
+    </div>
+
+    <p class="text-center text-[14px] mt-6" style="color:#6B7C7D;">
+      Remembered it? <a href="/login/" class="link">Log in</a>
+    </p>
+  </div>
+
+  <script id="content" type="application/json">{}</script>
+  <script type="module">
+const submitContactForm = async () => ({ ok: false, error: "Not configured" });
+document.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));
+</script>
+  <script>
+    lucide.createIcons();
+    document.getElementById('reset-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var email = document.getElementById('email').value.trim();
+      var err = document.getElementById('email-err');
+      if (!email || !email.includes('@')) {
+        err.textContent = 'Please enter a valid email address.';
+        err.classList.remove('hidden');
+        document.getElementById('email').style.borderColor = '#E87070';
+        return;
+      }
+      err.classList.add('hidden');
+      document.getElementById('email').style.borderColor = '';
+      var btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      }).then(function(res) {
+        return res.json().then(function(json) {
+          if (!res.ok) {
+            err.textContent = json.error || 'Something went wrong. Please try again.';
+            err.classList.remove('hidden');
+            btn.disabled = false;
+            btn.textContent = 'Send reset link';
+            return;
+          }
+          document.getElementById('reset-form').classList.add('hidden');
+          document.getElementById('success-msg').classList.remove('hidden');
+        });
+      }).catch(function() {
+        err.textContent = 'Network error. Please try again.';
+        err.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'Send reset link';
+      });
+    });
+  </script>
+  </body>
+</html>

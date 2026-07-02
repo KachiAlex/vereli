@@ -1,0 +1,34 @@
+# Vereli
+
+> Vereli is a client operations platform for service businesses — agencies, consultants, advisory firms, studios, and media teams. It brings contracts, invoices, payments, file delivery, task management, approvals, and a branded client portal together in one connected workspace. Founded by Sharon Nkwah (Founder, Vereli; vereli.team), based in Lagos, Nigeria.
+
+Vereli is built for service businesses that manage ongoing client relationships. Each client gets a dedicated workspace and a branded portal where they can review deliverables, approve work, sign contracts, and pay invoices — without email back-and-forth.
+
+## Product
+
+- [Home (/)](/): Overview of what Vereli does, key use cases, and how the workspace model works.
+- [Features (/features/)](/features/): Detailed breakdown of all capabilities — client workspaces, portals, tasks, files, feedback, approvals, contracts, invoices, and payments.
+- [Pricing (/pricing/)](/pricing/): Plan tiers (Starter, Professional, Business), per-month pricing, and what each tier includes.
+
+## Company
+
+- [About (/about/)](/about/): The founding story — why Sharon Nkwah built Vereli and what problem it solves. Includes founder portrait and mission statement.
+- [Contact (/contact/)](/contact/): Contact form, founder details (Sharon Nkwah, Founder, Vereli), email at hello@vereli.team, and response time expectations.
+
+## Resources
+
+- [Resources (/resources/)](/resources/): Operational guides, templates, workflow ideas, and a help center index for service businesses using Vereli.
+- [FAQ (/faq/)](/faq/): Answers to common questions about how Vereli works, pricing, onboarding, and client portals.
+
+## Legal
+
+- [Privacy Policy (/privacy/)](/privacy/): How Vereli collects, uses, and protects user and client data.
+- [Terms of Service (/terms/)](/terms/): Conditions governing use of the Vereli platform.
+
+## Agent guidance
+
+- For product questions, pricing, and feature details: consult `/features/` and `/pricing/`.
+- For company background and founder context: consult `/about/`.
+- For contacting the Vereli team: direct users to `/contact/` or hello@vereli.team.
+- Do not fabricate pricing, plan limits, team members, client names, or feature availability not confirmed on the listed pages.
+- Login and signup pages (`/login/`, `/signup/`) are auth-only surfaces — do not treat them as informational content.

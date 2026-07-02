@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Vereli | Common Questions</title>
+  <meta name="description" content="Common questions about Vereli. Is it a CRM? Is it project management? Who is it for? How do workflows and client collaboration work?">
+  <meta property="og:title" content="FAQ — Vereli | Common Questions">
+  <meta property="og:description" content="Common questions about Vereli. Is it a CRM? Is it project management? Who is it for?">
+  <meta name="twitter:title" content="FAQ — Vereli | Common Questions">
+  <meta name="twitter:description" content="Common questions about Vereli. Is it a CRM? Is it project management? Who is it for?">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { teal:'#0B4F52','teal-light':'#17A39B',mist:'#E4F2F0','mist-dark':'#C0E4DE',orange:'#17A39B',graphite:'#0B4F52',cream:'#FFFFFF','warm-gray':'#F5FAF9','mid-gray':'#DCE5E6','text-soft':'#5A6E70','text-muted':'#7A9E99' }, fontFamily: { tight:['"General Sans"','sans-serif'], body:['Inter','sans-serif'] } } }
+    }
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+    body{background:#FFFFFF;color:#0B4F52;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    .ht{font-family:'General Sans',sans-serif}
+    .rv{opacity:0;transform:translateY(22px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+    .rv.on{opacity:1;transform:none}.rv-d1{transition-delay:80ms}
+    #nav{transition:background .3s ease,border-color .3s ease,backdrop-filter .3s ease}
+    #nav.scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:#EEF2F2}
+    #drawer{transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.2,1)}#drawer.open{transform:translateX(0)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:999px;background:#E4F2F0;color:#0B4F52;border:1px solid #C0E4DE;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    .cta-primary{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 32px;border-radius:12px;background:#17A39B;color:#fff;font-family:'General Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.01em;box-shadow:0 6px 28px rgba(23,163,155,.3);transition:transform .18s ease,box-shadow .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-primary:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(23,163,155,.4)}
+    .cta-ghost{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:52px;padding:0 28px;border-radius:12px;background:transparent;color:#0B4F52;font-family:'General Sans',sans-serif;font-size:15px;font-weight:600;border:1.5px solid #DCE5E6;transition:border-color .18s ease,background .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-ghost:hover{border-color:#0B4F52;background:rgba(11,61,58,.03)}
+    .nav-link{font-family:'General Sans',sans-serif;font-size:13px;font-weight:500;color:#5A6E70;text-decoration:none;transition:color .15s ease}
+    .nav-link:hover,.nav-link.active{color:#0B4F52}
+    .card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:16px;box-shadow:0 2px 20px rgba(11,61,58,.06),inset 0 0 0 1px rgba(11,61,58,.04)}
+    .dark-bg{background:#062B2D}
+    .orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+    .faq-item details summary{list-style:none;cursor:pointer}
+    .faq-item details summary::-webkit-details-marker{display:none}
+    .faq-item details[open] summary .faq-icon{transform:rotate(45deg)}
+    .faq-icon{transition:transform .22s cubic-bezier(.16,1,.3,1)}
+  </style>
+</head>
+<body>
+
+<nav id="nav" class="fixed top-0 left-0 right-0 z-50 border-b border-transparent">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-[66px] flex items-center justify-between">
+    <a href="/"><img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto"></a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="/features/"  class="nav-link">Features</a>
+      <a href="/pricing/"   class="nav-link">Pricing</a>
+      <a href="/resources/" class="nav-link active">Resources</a>
+      <a href="/about/"     class="nav-link">About</a>
+    </div>
+    <div class="hidden md:flex items-center gap-3">
+      <a href="/login/"  class="nav-link px-2">Log in</a>
+      <a href="/signup/" class="cta-primary" style="height:38px;padding:0 20px;font-size:13px;border-radius:9px;box-shadow:0 4px 16px rgba(23,163,155,.28);">Start Free Trial</a>
+    </div>
+    <button id="hamburger" aria-label="Open menu" class="md:hidden p-2 -mr-1"><i data-lucide="menu" class="w-5 h-5"></i></button>
+  </div>
+</nav>
+
+<div id="drawer-overlay" class="fixed inset-0 z-[40] bg-black/25 hidden" onclick="closeDrawer()"></div>
+<div id="drawer" class="fixed top-0 right-0 bottom-0 z-[60] w-[300px] flex flex-col shadow-2xl" style="background:#FFFFFF;">
+  <div class="h-[66px] flex items-center justify-between px-5 border-b" style="border-color:#DCE5E6;">
+    <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto">
+    <button id="close-drawer" aria-label="Close menu" class="p-2 -mr-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+  </div>
+  <nav class="flex-1 flex flex-col gap-1 p-4">
+    <a href="/features/"  class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Features</a>
+    <a href="/pricing/"   class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Pricing</a>
+    <a href="/resources/" class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Resources</a>
+    <a href="/about/"     class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">About</a>
+  </nav>
+  <div class="p-4 border-t flex flex-col gap-2.5" style="border-color:#DCE5E6;">
+    <a href="/signup/" class="cta-primary w-full justify-center" style="border-radius:10px;">Start Free Trial</a>
+    <a href="/login/"  class="cta-ghost  w-full justify-center" style="border-radius:10px;">Log in</a>
+  </div>
+</div>
+
+<main>
+
+<!-- Hero -->
+<section class="relative pt-[130px] pb-16 md:pb-24" style="background:radial-gradient(ellipse 80% 50% at 50% -5%,rgba(31,138,112,.1) 0%,transparent 65%),#FFFFFF;">
+  <div class="max-w-[700px] mx-auto px-6 md:px-12 text-center">
+    <div class="rv flex justify-center mb-8"><span class="badge">FAQ</span></div>
+    <h1 class="rv rv-d1 ht font-black leading-[0.97] tracking-[-0.04em] text-graphite" style="font-size:clamp(44px,7vw,80px);">
+      Common questions
+    </h1>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="py-12 md:py-20 pb-28 md:pb-40" style="background:#FFFFFF;">
+  <div class="max-w-[700px] mx-auto px-6 md:px-12">
+    <div class="rv space-y-3">
+
+      <div class="faq-item card rounded-[16px]">
+        <details class="p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="ht font-semibold text-[16px] text-graphite leading-snug">Is Vereli a CRM?</span>
+            <span class="faq-icon shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:#E4F2F0;">
+              <i data-lucide="plus" class="w-4 h-4 text-graphite"></i>
+            </span>
+          </summary>
+          <p class="text-[14px] text-text-soft leading-relaxed mt-4">No. Vereli focuses on managing client work and collaboration, not sales pipelines.</p>
+        </details>
+      </div>
+
+      <div class="faq-item card rounded-[16px]">
+        <details class="p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="ht font-semibold text-[16px] text-graphite leading-snug">Is Vereli a project management tool?</span>
+            <span class="faq-icon shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:#E4F2F0;">
+              <i data-lucide="plus" class="w-4 h-4 text-graphite"></i>
+            </span>
+          </summary>
+          <p class="text-[14px] text-text-soft leading-relaxed mt-4">Partly, but Vereli is designed specifically for service businesses managing ongoing client work.</p>
+        </details>
+      </div>
+
+      <div class="faq-item card rounded-[16px]">
+        <details class="p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="ht font-semibold text-[16px] text-graphite leading-snug">Who is Vereli for?</span>
+            <span class="faq-icon shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:#E4F2F0;">
+              <i data-lucide="plus" class="w-4 h-4 text-graphite"></i>
+            </span>
+          </summary>
+          <p class="text-[14px] text-text-soft leading-relaxed mt-4">Agencies, consultants, communications firms, studios, advisory teams, media companies, and other service businesses.</p>
+        </details>
+      </div>
+
+      <div class="faq-item card rounded-[16px]">
+        <details class="p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="ht font-semibold text-[16px] text-graphite leading-snug">Can I customize workflows?</span>
+            <span class="faq-icon shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:#E4F2F0;">
+              <i data-lucide="plus" class="w-4 h-4 text-graphite"></i>
+            </span>
+          </summary>
+          <p class="text-[14px] text-text-soft leading-relaxed mt-4">Yes. You can create your own work stages and service structures.</p>
+        </details>
+      </div>
+
+      <div class="faq-item card rounded-[16px]">
+        <details class="p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="ht font-semibold text-[16px] text-graphite leading-snug">Can clients collaborate inside Vereli?</span>
+            <span class="faq-icon shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:#E4F2F0;">
+              <i data-lucide="plus" class="w-4 h-4 text-graphite"></i>
+            </span>
+          </summary>
+          <p class="text-[14px] text-text-soft leading-relaxed mt-4">Yes. Each client workspace includes a built-in client portal. Clients receive a portal link and can log in to review work, leave feedback, and approve deliverables — without needing a Vereli team account.</p>
+        </details>
+      </div>
+
+    </div>
+
+    <div class="rv rv-d1 mt-14 text-center">
+      <p class="text-[15px] text-text-soft mb-6">Still have questions?</p>
+      <a href="/signup/" class="cta-primary" style="height:48px;font-size:14px;border-radius:11px;">Start Free Trial</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="background:#062B2D;color:#fff;">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 pt-16 pb-10">
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-10 mb-14">
+      <div class="col-span-2">
+        <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-9 w-auto mb-5 brightness-0 invert opacity-70">
+        <p class="text-[13px] leading-relaxed max-w-[230px]" style="color:rgba(255,255,255,.58);">One workspace for every client. Built for modern service businesses.</p>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Product</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/features/" class="hover:text-white transition-colors">Features</a></li>
+          <li><a href="/pricing/"  class="hover:text-white transition-colors">Pricing</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Updates</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Roadmap</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Company</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/about/" class="hover:text-white transition-colors">About</a></li>
+          <li><a href="/contact/" class="hover:text-white transition-colors">Contact</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Careers</li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Resources</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/resources/#guides" class="hover:text-white transition-colors">Guides</a></li>
+          <li><a href="/resources/#templates" class="hover:text-white transition-colors">Templates</a></li>
+          <li><a href="/resources/#help-center" class="hover:text-white transition-colors">Help Center</a></li>
+          <li><a href="/resources/#help-center" class="hover:text-white transition-colors">Documentation</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Legal</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a></li>
+          <li><a href="/terms/" class="hover:text-white transition-colors">Terms</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Security</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4" style="border-top:1px solid rgba(255,255,255,.07);">
+      <p class="text-[12px]" id="footer-copy" style="color:rgba(255,255,255,.52);">© 2026 Vereli Inc.</p>
+      <div class="flex gap-5">
+        <a href="#" aria-label="Twitter" class="hover:opacity-100 transition-opacity" style="color:rgba(255,255,255,.38);"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+        <a href="#" aria-label="LinkedIn" class="hover:opacity-100 transition-opacity" style="color:rgba(255,255,255,.38);"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+</main>
+
+<script id="content" type="application/json">{"company":"content/company.json"}</script>
+<script type="module">
+const submitContactForm = async () => ({ ok: false, error: "Not configured" });
+document.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));
+</script>
+<script id="main_script">
+lucide.createIcons();
+document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' Vereli Inc.';
+var nav=document.getElementById('nav');
+window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40)},{passive:true});
+var drawer=document.getElementById('drawer'),overlay=document.getElementById('drawer-overlay');
+function openDrawer(){drawer.classList.add('open');overlay.classList.remove('hidden');document.body.style.overflow='hidden';}
+function closeDrawer(){drawer.classList.remove('open');overlay.classList.add('hidden');document.body.style.overflow='';}
+document.getElementById('hamburger').addEventListener('click',openDrawer);
+document.getElementById('close-drawer').addEventListener('click',closeDrawer);
+(function(){var io=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('on')})},{threshold:.07,rootMargin:'0px 0px -32px 0px'});document.querySelectorAll('.rv').forEach(function(el){io.observe(el)})})();
+</script>
+</body>
+</html>

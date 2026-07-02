@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — Vereli | Plans for every service business</title>
+  <meta name="description" content="Vereli pricing plans for service businesses. Starter, Professional, and Business tiers. Client workspaces, branded portals, tasks, files, feedback, approvals, invoices, and payments.">
+  <meta property="og:title" content="Pricing — Vereli | Plans for every service business">
+  <meta property="og:description" content="Vereli pricing plans for service businesses. Starter, Professional, and Business tiers. Client workspaces, branded portals, tasks, files, feedback, approvals, invoices, and payments.">
+  <meta name="twitter:title" content="Pricing — Vereli | Plans for every service business">
+  <meta name="twitter:description" content="Vereli pricing plans for service businesses. Starter, Professional, and Business tiers. Client workspaces, branded portals, tasks, files, feedback, approvals, invoices, and payments.">
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            teal:'#0B4F52','teal-light':'#17A39B',mist:'#E4F2F0','mist-dark':'#C0E4DE',orange:'#17A39B',
+            graphite:'#0B4F52',cream:'#FFFFFF','warm-gray':'#F5FAF9','mid-gray':'#DCE5E6','text-soft':'#5A6E70','text-muted':'#7A9E99',
+          },
+          fontFamily: { tight:['"General Sans"','sans-serif'], body:['Inter','sans-serif'] },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:#FFFFFF;color:#0B4F52;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    .ht{font-family:'General Sans',sans-serif}
+    .rv{opacity:0;transform:translateY(22px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+    .rv.on{opacity:1;transform:none}.rv-d1{transition-delay:80ms}.rv-d2{transition-delay:160ms}.rv-d3{transition-delay:240ms}
+    #nav{transition:background .3s ease,border-color .3s ease,backdrop-filter .3s ease}
+    #nav.scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:#EEF2F2}
+    #drawer{transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.2,1)}#drawer.open{transform:translateX(0)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:999px;background:#E4F2F0;color:#0B4F52;border:1px solid #C0E4DE;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    .cta-primary{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 32px;border-radius:12px;background:#17A39B;color:#fff;font-family:'General Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.01em;box-shadow:0 6px 28px rgba(23,163,155,.3);transition:transform .18s ease,box-shadow .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-primary:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(23,163,155,.4)}
+    .cta-ghost{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:52px;padding:0 28px;border-radius:12px;background:transparent;color:#0B4F52;font-family:'General Sans',sans-serif;font-size:15px;font-weight:600;border:1.5px solid #DCE5E6;transition:border-color .18s ease,background .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-ghost:hover{border-color:#0B4F52;background:rgba(11,61,58,.03)}
+    .nav-link{font-family:'General Sans',sans-serif;font-size:13px;font-weight:500;color:#5A6E70;text-decoration:none;transition:color .15s ease}
+    .nav-link:hover,.nav-link.active{color:#0B4F52}
+    .card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:16px;box-shadow:0 2px 20px rgba(11,61,58,.06),inset 0 0 0 1px rgba(11,61,58,.04)}
+    .card-warm{background:#E4F2F0;border:1px solid #C0E4DE;border-radius:20px}
+    .orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+    .dark-bg{background:#062B2D}
+    .y-line{display:inline-block;position:relative}
+    .y-line::after{content:'';position:absolute;left:0;bottom:2px;width:100%;height:3px;background:#17A39B;border-radius:2px}
+    /* plan cards */
+    .plan-featured{background:#121212;border:1px solid #2A2A28;border-radius:24px;box-shadow:0 24px 80px rgba(0,0,0,.18);position:relative}
+    .plan-card{background:#fff;border:1px solid #EEF2F2;border-radius:24px;box-shadow:0 4px 24px rgba(0,0,0,.05);transition:box-shadow .2s ease,transform .2s ease}
+    .plan-card:hover{box-shadow:0 12px 48px rgba(0,0,0,.09);transform:translateY(-3px)}
+    .comp-check{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+    /* faq */
+    .faq-item details summary{list-style:none;cursor:pointer}
+    .faq-item details summary::-webkit-details-marker{display:none}
+    .faq-item details[open] summary .faq-icon{transform:rotate(45deg)}
+    .faq-icon{transition:transform .22s cubic-bezier(.16,1,.3,1)}
+    /* hero gradient */
+    .hero-gradient{background:radial-gradient(ellipse 100% 60% at 50% -10%,rgba(31,138,112,.1) 0%,transparent 65%),#FFFFFF}
+    @media(min-width:1024px){.plan-featured-inset{margin-top:-12px;margin-bottom:-12px}}
+  </style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav id="nav" class="fixed top-0 left-0 right-0 z-50 border-b border-transparent">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-[66px] flex items-center justify-between">
+    <a href="/"><img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto"></a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="/features/"  class="nav-link">Features</a>
+      <a href="/pricing/"   class="nav-link active">Pricing</a>
+      <a href="/resources/" class="nav-link">Resources</a>
+      <a href="/about/"     class="nav-link">About</a>
+    </div>
+    <div class="hidden md:flex items-center gap-3">
+      <a href="/login/"  class="nav-link px-2">Log in</a>
+      <a href="/signup/" class="cta-primary" style="height:38px;padding:0 20px;font-size:13px;border-radius:9px;box-shadow:0 4px 16px rgba(23,163,155,.28);">Start Free Trial</a>
+    </div>
+    <button id="hamburger" aria-label="Open menu" class="md:hidden p-2 -mr-1"><i data-lucide="menu" class="w-5 h-5"></i></button>
+  </div>
+</nav>
+
+<div id="drawer-overlay" class="fixed inset-0 z-[40] bg-black/25 hidden" onclick="closeDrawer()"></div>
+<div id="drawer" class="fixed top-0 right-0 bottom-0 z-[60] w-[300px] flex flex-col shadow-2xl" style="background:#FFFFFF;">
+  <div class="h-[66px] flex items-center justify-between px-5 border-b" style="border-color:#DCE5E6;">
+    <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto">
+    <button id="close-drawer" aria-label="Close menu" class="p-2 -mr-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+  </div>
+  <nav class="flex-1 flex flex-col gap-1 p-4">
+    <a href="/features/"  class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Features</a>
+    <a href="/pricing/"   class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Pricing</a>
+    <a href="/resources/" class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Resources</a>
+    <a href="/about/"     class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">About</a>
+  </nav>
+  <div class="p-4 border-t flex flex-col gap-2.5" style="border-color:#DCE5E6;">
+    <a href="/signup/" class="cta-primary w-full justify-center" style="border-radius:10px;">Start Free Trial</a>
+    <a href="/login/"  class="cta-ghost  w-full justify-center" style="border-radius:10px;">Log in</a>
+  </div>
+</div>
+
+
+<main>
+
+<!-- ══ HERO ══ -->
+<section class="hero-gradient relative overflow-clip pt-[130px] pb-20 md:pb-28">
+  <div class="orb w-[900px] h-[500px] top-[-220px] left-1/2 -translate-x-1/2"
+       style="background:radial-gradient(ellipse,rgba(31,138,112,.14) 0%,transparent 68%);filter:blur(2px);"></div>
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 relative z-10 text-center">
+
+    <div class="rv rv-d1 max-w-[700px] mx-auto mb-6">
+      <h1 class="ht font-black leading-[0.97] tracking-[-0.04em] text-graphite"
+          style="font-size:clamp(44px,7vw,90px);">
+        Plans that fit your business.
+      </h1>
+    </div>
+
+    <div class="rv rv-d2 max-w-[480px] mx-auto mb-6">
+      <p class="text-[17px] md:text-[18px] text-text-soft leading-[1.7]">
+        Every plan includes client workspaces, a branded portal for every client, tasks, files, feedback, approvals, invoices, and payments.
+      </p>
+    </div>
+
+    <div class="rv rv-d3 flex flex-col items-center gap-2 mb-20 md:mb-28">
+      <div class="flex items-center gap-5 text-[13px]" style="color:#8E9E9E;">
+        <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5" style="color:#17A39B;"></i>14-day free trial.</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5" style="color:#17A39B;"></i>No credit card required.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ PLAN CARDS ══ -->
+<section class="relative pb-28 md:pb-36" style="background:#FFFFFF;">
+  <div class="orb w-[700px] h-[400px] top-0 left-1/2 -translate-x-1/2"
+       style="background:radial-gradient(ellipse,rgba(31,138,112,.08) 0%,transparent 65%);filter:blur(60px);"></div>
+
+  <div class="max-w-[1200px] mx-auto px-6 md:px-12 relative z-10">
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+
+      <!-- ── STARTER ── -->
+      <div class="plan-card p-8 md:p-10 rv flex flex-col">
+        <div class="mb-8">
+          <p class="ht font-bold text-[11px] uppercase tracking-[0.1em] text-text-soft mb-5">Starter</p>
+          <div class="flex items-end gap-2 mb-3">
+            <span class="ht font-black text-graphite leading-none" style="font-size:56px;">$15</span>
+            <span class="text-[14px] text-text-soft mb-2">/ month</span>
+          </div>
+          <p class="text-[14px] text-text-soft leading-relaxed mb-6">For solo service providers.</p>
+
+          <div class="mb-5">
+            <p class="ht font-bold text-[10px] uppercase tracking-[0.12em] text-text-soft mb-3">Limits</p>
+            <ul class="space-y-1.5">
+              <li class="text-[12px] text-text-soft flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-mid-gray shrink-0"></span>1 team member (owner only)</li>
+              <li class="text-[12px] text-text-soft flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-mid-gray shrink-0"></span>Up to 10 clients</li>
+              <li class="text-[12px] text-text-soft flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-mid-gray shrink-0"></span>Up to 20 work areas total</li>
+              <li class="text-[12px] text-text-soft flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-mid-gray shrink-0"></span>Up to 200 tasks total</li>
+              <li class="text-[12px] text-text-soft flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-mid-gray shrink-0"></span>1 active portal branding setup</li>
+            </ul>
+          </div>
+        </div>
+
+        <a href="/signup/" class="cta-ghost w-full justify-center mb-8" style="height:46px;font-size:14px;border-radius:10px;">Start Free Trial</a>
+
+        <div class="mb-6 flex-1">
+          <p class="ht font-bold text-[10px] uppercase tracking-[0.12em] text-text-soft mb-3.5">Includes</p>
+          <ul class="space-y-2.5">
+            <li class="flex items-start gap-3 text-[13px] text-graphite"><span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>Client management</li>
+            <li class="flex items-start gap-3 text-[13px] text-graphite"><span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>Client workspaces</li>
+            <li class="flex items-start gap-3 text-[13px] text-graphite"><span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>Client portal (basic branding: logo + colour)</li>
+            <li class="flex items-start gap-3 text-[13px] text-graphite"><span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>Tasks, files, feedback, approvals</li>
+            <li class="flex items-start gap-3 text-[13px] text-graphite"><span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>Invoices + payments (Paystack / Flutterwave / Stripe)</li>
+          </ul>
+        </div>
+
+        <div class="mt-auto pt-5 border-t" style="border-color:#EEF2F2;">
+          <p class="text-[12px] text-text-soft">Best for solo service providers and freelancers.</p>
+        </div>
+      </div>
+
+      <!-- ── PROFESSIONAL (featured) ── -->
+      <div class="plan-featured p-8 md:p-10 rv rv-d1 flex flex-col plan-featured-inset">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+          <span class="badge" style="font-size:10px;padding:4px 14px;box-shadow:0 4px 16px rgba(31,138,112,.25);">Most popular</span>
+        </div>
+
+        <div class="mb-8">
+          <p class="ht font-bold text-[11px] uppercase tracking-[0.1em] mb-5" style="color:rgba(255,255,255,.4);">Professional</p>
+          <div class="flex items-end gap-2 mb-3">
+            <span class="ht font-black leading-none" style="font-size:56px;color:#fff;">$39</span>
+            <span class="text-[14px] mb-2" style="color:rgba(255,255,255,.5);">/ month</span>
+          </div>
+          <p class="text-[14px] leading-relaxed mb-6" style="color:rgba(255,255,255,.6);">For growing service businesses.</p>
+
+          <div class="mb-5">
+            <p class="ht font-bold text-[10px] uppercase tracking-[0.12em] mb-3" style="color:rgba(255,255,255,.35);">Limits</p>
+            <ul class="space-y-1.5">
+              <li class="text-[12px] flex items-center gap-2" style="color:rgba(255,255,255,.5);"><span class="w-1 h-1 rounded-full shrink-0" style="background:rgba(255,255,255,.25);"></span>Up to 5 team members</li>
+              <li class="text-[12px] flex items-center gap-2" style="color:rgba(255,255,255,.5);"><span class="w-1 h-1 rounded-full shrink-0" style="background:rgba(255,255,255,.25);"></span>Up to 30 clients</li>
+              <li class="text-[12px] flex items-center gap-2" style="color:rgba(255,255,255,.5);"><span class="w-1 h-1 rounded-full shrink-0" style="background:rgba(255,255,255,.25);"></span>Up to 100 work areas</li>
+              <li class="text-[12px] flex items-center gap-2" style="color:rgba(255,255,255,.5);"><span class="w-1 h-1 rounded-full shrink-0" style="background:rgba(255,255,255,.25);"></span>Up to 1,000 tasks</li>
+              <li class="text-[12px] flex items-center gap-2" style="color:rgba(255,255,255,.5);"><span class="w-1 h-1 rounded-full shrink-0" style="background:rgba(255,255,255,.25);"></span>Unlimited files</li>
+            </ul>
+          </div>
+        </div>
+
+        <a href="/signup/" class="cta-primary w-full justify-center mb-8" style="height:46px;font-size:14px;border-radius:10px;">Start Free Trial</a>
+
+        <div class="mb-6 flex-1">
+          <p class="ht font-bold text-[10px] uppercase tracking-[0.12em] mb-3.5" style="color:rgba(255,255,255,.35);">Everything in Starter, plus:</p>
+          <ul class="space-y-2.5">
+            <li class="flex items-start gap-3 text-[13px]" style="color:rgba(255,255,255,.85);"><span class="comp-check shrink-0 mt-0.5" style="background:rgba(31,138,112,.2);"><i data-lucide="check" class="w-3 h-3" style="color:#E4F2F0;"></i></span>Full client portal branding (logo, colours, layout)</li>
+            <li class="flex items-start gap-3 text-[13px]" style="color:rgba(255,255,255,.85);"><span class="comp-check shrink-0 mt-0.5" style="background:rgba(31,138,112,.2);"><i data-lucide="check" class="w-3 h-3" style="color:#E4F2F0;"></i></span>Multiple work areas per client</li>
+            <li class="flex items-start gap-3 text-[13px]" style="color:rgba(255,255,255,.85);"><span class="comp-check shrink-0 mt-0.5" style="background:rgba(31,138,112,.2);"><i data-lucide="check" class="w-3 h-3" style="color:#E4F2F0;"></i></span>Recurring invoices &amp; retainers</li>
+            <li class="flex items-start gap-3 text-[13px]" style="color:rgba(255,255,255,.85);"><span class="comp-check shrink-0 mt-0.5" style="background:rgba(31,138,112,.2);"><i data-lucide="check" class="w-3 h-3" style="color:#E4F2F0;"></i></span>Activity timeline per client</li>
+            <li class="flex items-start gap-3 text-[13px]" style="color:rgba(255,255,255,.85);"><span class="comp-check shrink-0 mt-0.5" style="background:rgba(31,138,112,.2);"><i data-lucide="check" class="w-3 h-3" style="color:#E4F2F0;"></i></span>Full approvals + feedback system</li>
+          </ul>
+        </div>
+
+        <div class="mt-auto pt-5" style="border-top:1px solid rgba(255,255,255,.1);">
+          <p class="text-[12px]" style="color:rgba(255,255,255,.45);">Best for agencies, studios, consultancies, and advisory teams.</p>
+        </div>
+      </div>
+
+      <!-- ── BUSINESS ── -->
+      <div class="plan-card p-8 md:p-10 rv rv-d2 flex flex-col">
+        <div class="mb-8">
+          <p class="ht font-bold text-[11px] uppercase tracking-[0.1em] text-text-soft mb-5">Business</p>
+          <div class="flex items-end gap-2 mb-3">
+            <span class="ht font-black text-graphite leading-none" style="font-size:56px;">$79</span>
+            <span class="text-[14px] text-text-soft mb-2">/ month</span>
+          </div>
+          <p class="text-[14px] text-text-soft leading-relaxed mb-6">For established service teams.</p>
+
+          <div class="mb-5">
+            <p class="ht font-bold text-[10px] uppercase tracking-[0.12em] text-text-soft mb-3">Limits</p>
+            <ul class="space-y-1.5">
+              <li class="text-[12px] text-text-soft flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-mid-gray shrink-0"></span>Up to 15 team members</li>
+              <li class="text-[12px] text-text-soft flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-mid-gray shrink-0"></span>Up to 100 clients</li>
+              <li class="text-[12px] text-text-soft flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-mid-gray shrink-0"></span>Up to 300 work areas</li>
+              <li class="text-[12px] text-text-soft flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-mid-gray shrink-0"></span>Up to 5,000 tasks</li>
+              <li class="text-[12px] text-text-soft flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-mid-gray shrink-0"></span>Unlimited files + history</li>
+            </ul>
+          </div>
+        </div>
+
+        <a href="/signup/" class="cta-ghost w-full justify-center mb-8" style="height:46px;font-size:14px;border-radius:10px;">Start Free Trial</a>
+
+        <div class="mb-6 flex-1">
+          <p class="ht font-bold text-[10px] uppercase tracking-[0.12em] text-text-soft mb-3.5">Everything in Professional, plus:</p>
+          <ul class="space-y-2.5">
+            <li class="flex items-start gap-3 text-[13px] text-graphite"><span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>Advanced workflows per service type</li>
+            <li class="flex items-start gap-3 text-[13px] text-graphite"><span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>Audit trail (full activity log)</li>
+            <li class="flex items-start gap-3 text-[13px] text-graphite"><span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>Multi-step approvals</li>
+            <li class="flex items-start gap-3 text-[13px] text-graphite"><span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>Priority support</li>
+            <li class="flex items-start gap-3 text-[13px] text-graphite"><span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>Advanced payment handling (multi-provider + flexible routing)</li>
+          </ul>
+        </div>
+
+        <div class="mt-auto pt-5 border-t" style="border-color:#EEF2F2;">
+          <p class="text-[12px] text-text-soft">Best for established service businesses with larger client rosters.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ EVERY PLAN INCLUDES ══ -->
+<section class="py-20 md:py-28" style="background:#E4F2F0;">
+  <div class="max-w-[900px] mx-auto px-6 md:px-12">
+
+    <div class="rv text-center mb-12">
+      <h2 class="ht font-black tracking-[-0.033em] text-graphite leading-[1.06]"
+          style="font-size:clamp(28px,3.5vw,44px);">
+        Every plan includes
+      </h2>
+      <p class="text-[16px] text-text-soft mt-3">The full Vereli system — no core features hidden behind higher tiers.</p>
+    </div>
+
+    <div class="rv grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="card rounded-[18px] p-5 flex items-start gap-3.5">
+        <span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>
+        <p class="text-[14px] text-graphite leading-snug">A dedicated workspace per client</p>
+      </div>
+      <div class="card rounded-[18px] p-5 flex items-start gap-3.5">
+        <span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>
+        <p class="text-[14px] text-graphite leading-snug">A branded client portal for every client</p>
+      </div>
+      <div class="card rounded-[18px] p-5 flex items-start gap-3.5">
+        <span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>
+        <p class="text-[14px] text-graphite leading-snug">Tasks, files, and deliverables</p>
+      </div>
+      <div class="card rounded-[18px] p-5 flex items-start gap-3.5">
+        <span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>
+        <p class="text-[14px] text-graphite leading-snug">Feedback and approvals</p>
+      </div>
+      <div class="card rounded-[18px] p-5 flex items-start gap-3.5">
+        <span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>
+        <p class="text-[14px] text-graphite leading-snug">Invoices and payments built in</p>
+      </div>
+      <div class="card rounded-[18px] p-5 flex items-start gap-3.5">
+        <span class="comp-check shrink-0 mt-0.5" style="background:#E4F2F0;"><i data-lucide="check" class="w-3 h-3" style="color:#17A39B;"></i></span>
+        <p class="text-[14px] text-graphite leading-snug">Ongoing product updates</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══ FAQ ══ -->
+<section class="py-24 md:py-36" style="background:#FFFFFF;">
+  <div class="max-w-[680px] mx-auto px-6 md:px-12">
+
+    <div class="rv text-center mb-12">
+      <h2 class="ht font-black tracking-[-0.033em] text-graphite leading-[1.06]"
+          style="font-size:clamp(28px,3.5vw,44px);">Common questions</h2>
+    </div>
+
+    <div class="rv space-y-3">
+
+      <div class="faq-item card rounded-[16px]">
+        <details class="p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="ht font-semibold text-[15px] text-graphite leading-snug">Can I change plans later?</span>
+            <span class="faq-icon shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:#E4F2F0;">
+              <i data-lucide="plus" class="w-4 h-4 text-graphite"></i>
+            </span>
+          </summary>
+          <p class="text-[14px] text-text-soft leading-relaxed mt-4">Yes. You can upgrade or change your plan anytime as your business grows.</p>
+        </details>
+      </div>
+
+      <div class="faq-item card rounded-[16px]">
+        <details class="p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="ht font-semibold text-[15px] text-graphite leading-snug">Is there a free trial?</span>
+            <span class="faq-icon shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:#E4F2F0;">
+              <i data-lucide="plus" class="w-4 h-4 text-graphite"></i>
+            </span>
+          </summary>
+          <p class="text-[14px] text-text-soft leading-relaxed mt-4">Yes. Every plan comes with a 14-day free trial.</p>
+        </details>
+      </div>
+
+      <div class="faq-item card rounded-[16px]">
+        <details class="p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="ht font-semibold text-[15px] text-graphite leading-snug">Do clients get their own access?</span>
+            <span class="faq-icon shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:#E4F2F0;">
+              <i data-lucide="plus" class="w-4 h-4 text-graphite"></i>
+            </span>
+          </summary>
+          <p class="text-[14px] text-text-soft leading-relaxed mt-4">Yes. Every client workspace includes a client portal. You share a portal link with your client — they can log in to review files, leave feedback, and approve deliverables without needing a Vereli team seat.</p>
+        </details>
+      </div>
+
+      <div class="faq-item card rounded-[16px]">
+        <details class="p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="ht font-semibold text-[15px] text-graphite leading-snug">Do I need to install anything?</span>
+            <span class="faq-icon shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:#E4F2F0;">
+              <i data-lucide="plus" class="w-4 h-4 text-graphite"></i>
+            </span>
+          </summary>
+          <p class="text-[14px] text-text-soft leading-relaxed mt-4">No. Vereli runs directly in your browser.</p>
+        </details>
+      </div>
+
+      <div class="faq-item card rounded-[16px]">
+        <details class="p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="ht font-semibold text-[15px] text-graphite leading-snug">What happens after the free trial?</span>
+            <span class="faq-icon shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:#E4F2F0;">
+              <i data-lucide="plus" class="w-4 h-4 text-graphite"></i>
+            </span>
+          </summary>
+          <p class="text-[14px] text-text-soft leading-relaxed mt-4">You can choose a paid plan to continue using Vereli. Your data stays intact.</p>
+        </details>
+      </div>
+
+      <div class="faq-item card rounded-[16px]">
+        <details class="p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="ht font-semibold text-[15px] text-graphite leading-snug">Which payment providers are supported?</span>
+            <span class="faq-icon shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:#E4F2F0;">
+              <i data-lucide="plus" class="w-4 h-4 text-graphite"></i>
+            </span>
+          </summary>
+          <p class="text-[14px] text-text-soft leading-relaxed mt-4">Vereli supports Paystack, Flutterwave, and Stripe for collecting payments from clients through their portal.</p>
+        </details>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ FINAL CTA ══ -->
+<section class="dark-bg relative overflow-clip">
+  <div class="orb w-[600px] h-[300px] bottom-0 left-1/2 -translate-x-1/2"
+       style="background:radial-gradient(ellipse,rgba(31,138,112,.1) 0%,transparent 65%);filter:blur(2px);"></div>
+  <div class="orb w-[900px] h-[900px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+       style="background:radial-gradient(circle,rgba(255,255,255,.025) 0%,transparent 55%);"></div>
+
+  <div class="max-w-[700px] mx-auto px-6 md:px-12 py-24 md:py-44 relative z-10 text-center rv">
+
+    <h2 class="ht font-black leading-[1.03] tracking-[-0.04em] mb-6" style="color:#fff;font-size:clamp(36px,5.5vw,72px);">
+      All your client work.<br>One place.
+    </h2>
+
+    <p class="text-[17px] leading-[1.65] mb-10 max-w-[460px] mx-auto" style="color:rgba(255,255,255,.5);">
+      Pick the plan that fits your business and start your free trial today.
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a href="/signup/" class="cta-primary" style="height:56px;padding:0 40px;font-size:16px;border-radius:14px;">
+        Start Free Trial
+      </a>
+    </div>
+
+    <p class="mt-6 text-[13px]" style="color:rgba(255,255,255,.28);">14-day free trial. No credit card required.</p>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer style="background:#062B2D;color:#fff;">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 pt-16 pb-10">
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-10 mb-14">
+      <div class="col-span-2">
+        <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-9 w-auto mb-5 brightness-0 invert opacity-70">
+        <p class="text-[13px] leading-relaxed max-w-[230px]" style="color:rgba(255,255,255,.58);">One workspace for every client. Built for modern service businesses.</p>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Product</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/features/" class="hover:text-white transition-colors">Features</a></li>
+          <li><a href="/pricing/"  class="hover:text-white transition-colors">Pricing</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Updates</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Roadmap</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Company</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/about/" class="hover:text-white transition-colors">About</a></li>
+          <li><a href="/contact/" class="hover:text-white transition-colors">Contact</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Careers</li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Resources</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/resources/#guides" class="hover:text-white transition-colors">Guides</a></li>
+          <li><a href="/resources/#templates" class="hover:text-white transition-colors">Templates</a></li>
+          <li><a href="/resources/#help-center" class="hover:text-white transition-colors">Help Center</a></li>
+          <li><a href="/resources/#help-center" class="hover:text-white transition-colors">Documentation</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Legal</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a></li>
+          <li><a href="/terms/" class="hover:text-white transition-colors">Terms</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Security</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4" style="border-top:1px solid rgba(255,255,255,.07);">
+      <p class="text-[12px]" id="footer-copy" style="color:rgba(255,255,255,.52);">© 2026 Vereli Inc.</p>
+      <div class="flex gap-5">
+        <a href="#" aria-label="Twitter" class="hover:opacity-100 transition-opacity" style="color:rgba(255,255,255,.38);"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+        <a href="#" aria-label="LinkedIn" class="hover:opacity-100 transition-opacity" style="color:rgba(255,255,255,.38);"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<script id="content" type="application/json">{"company":"content/company.json"}</script>
+<script type="module">
+const submitContactForm = async () => ({ ok: false, error: "Not configured" });
+document.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));
+</script>
+<script id="main_script">
+let submitContactForm = null;
+document.addEventListener('kite:core-ready', (e) => { submitContactForm = e.detail.submitContactForm; });
+lucide.createIcons();
+document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' Vereli Inc.';
+var nav=document.getElementById('nav');
+window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40)},{passive:true});
+var drawer=document.getElementById('drawer'),overlay=document.getElementById('drawer-overlay');
+function openDrawer(){drawer.classList.add('open');overlay.classList.remove('hidden');document.body.style.overflow='hidden';}
+function closeDrawer(){drawer.classList.remove('open');overlay.classList.add('hidden');document.body.style.overflow='';}
+document.getElementById('hamburger').addEventListener('click',openDrawer);
+document.getElementById('close-drawer').addEventListener('click',closeDrawer);
+(function(){var io=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('on')})},{threshold:.07,rootMargin:'0px 0px -32px 0px'});document.querySelectorAll('.rv').forEach(function(el){io.observe(el)})})();
+</script>
+</body>
+</html>

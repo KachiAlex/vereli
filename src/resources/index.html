@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resources — Vereli | Guides for Service Businesses</title>
+  <meta name="description" content="Practical guides, frameworks, and operational ideas for agencies, consultants, studios, advisory firms, and modern service businesses managing client work.">
+  <meta property="og:title" content="Resources — Vereli | Guides for Service Businesses">
+  <meta property="og:description" content="Practical guides, frameworks, and operational ideas for agencies, consultants, studios, advisory firms, and modern service businesses managing client work.">
+  <meta name="twitter:title" content="Resources — Vereli | Guides for Service Businesses">
+  <meta name="twitter:description" content="Practical guides, frameworks, and operational ideas for agencies, consultants, studios, advisory firms, and modern service businesses managing client work.">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { teal:'#0B4F52','teal-light':'#17A39B',mist:'#E4F2F0','mist-dark':'#C0E4DE',orange:'#17A39B',graphite:'#0B4F52',cream:'#FFFFFF','warm-gray':'#F5FAF9','mid-gray':'#DCE5E6','text-soft':'#5A6E70','text-muted':'#7A9E99' }, fontFamily: { tight:['"General Sans"','sans-serif'], body:['Inter','sans-serif'] } } }
+    }
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+    body{background:#FFFFFF;color:#0B4F52;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    .ht{font-family:'General Sans',sans-serif}
+    .rv{opacity:0;transform:translateY(22px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+    .rv.on{opacity:1;transform:none}.rv-d1{transition-delay:80ms}.rv-d2{transition-delay:160ms}.rv-d3{transition-delay:240ms}
+    #nav{transition:background .3s ease,border-color .3s ease,backdrop-filter .3s ease}
+    #nav.scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:#EEF2F2}
+    #drawer{transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.2,1)}#drawer.open{transform:translateX(0)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:999px;background:#E4F2F0;color:#0B4F52;border:1px solid #C0E4DE;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    .cta-primary{display:inline-flex;align-items:center;justify-content:center;height:52px;padding:0 32px;border-radius:12px;background:#17A39B;color:#fff;font-family:'General Sans',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.01em;box-shadow:0 6px 28px rgba(23,163,155,.3);transition:transform .18s ease,box-shadow .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-primary:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(23,163,155,.4)}
+    .cta-ghost{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:52px;padding:0 28px;border-radius:12px;background:transparent;color:#0B4F52;font-family:'General Sans',sans-serif;font-size:15px;font-weight:600;border:1.5px solid #DCE5E6;transition:border-color .18s ease,background .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-ghost:hover{border-color:#0B4F52;background:rgba(11,61,58,.03)}
+    .nav-link{font-family:'General Sans',sans-serif;font-size:13px;font-weight:500;color:#5A6E70;text-decoration:none;transition:color .15s ease}
+    .nav-link:hover,.nav-link.active{color:#0B4F52}
+    .card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:20px;box-shadow:0 2px 20px rgba(11,61,58,.05),inset 0 0 0 1px rgba(11,61,58,.04)}
+    .card-warm{background:#E4F2F0;border:1px solid #C0E4DE;border-radius:20px}
+    .orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+    /* Resource article cards */
+    .article-card{background:#fff;border:1px solid rgba(11,61,58,.07);border-radius:20px;box-shadow:0 2px 24px rgba(11,61,58,.05),inset 0 0 0 1px rgba(11,61,58,.04);transition:box-shadow .2s ease,transform .2s ease}
+    .article-card:hover{box-shadow:0 8px 40px rgba(11,61,58,.1);transform:translateY(-2px)}
+    .article-tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+    .tag-guide{background:#E4F2F0;color:#0B4F52;border:1px solid #C8E2DB}
+    .tag-framework{background:#F0EEF8;color:#4B3B8C;border:1px solid #D8D0F0}
+    .tag-ops{background:#FFF3EC;color:#8B3A10;border:1px solid #F5D5BE}
+    .tag-portal{background:#E8F4FB;color:#0C4A72;border:1px solid #C0DCF0}
+    /* Section divider */
+    .section-label{font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7A9E99;display:flex;align-items:center;gap:12px}
+    .section-label::after{content:'';flex:1;height:1px;background:#EEF3F1}
+    /* Featured layout */
+    .featured-card{background:#fff;border:1px solid rgba(11,61,58,.07);border-radius:24px;box-shadow:0 4px 32px rgba(11,61,58,.08),inset 0 0 0 1px rgba(11,61,58,.04)}
+    /* Framework rows */
+    .fw-row{display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #EEF3F1}
+    .fw-row:last-child{border-bottom:none}
+    .fw-num{font-family:'General Sans',sans-serif;font-size:11px;font-weight:800;color:#A8D4CC;min-width:24px;margin-top:2px}
+  </style>
+</head>
+<body>
+
+<nav id="nav" class="fixed top-0 left-0 right-0 z-50 border-b border-transparent">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-[66px] flex items-center justify-between">
+    <a href="/"><img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto"></a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="/features/"  class="nav-link">Features</a>
+      <a href="/pricing/"   class="nav-link">Pricing</a>
+      <a href="/resources/" class="nav-link active">Resources</a>
+      <a href="/about/"     class="nav-link">About</a>
+    </div>
+    <div class="hidden md:flex items-center gap-3">
+      <a href="/login/"  class="nav-link px-2">Log in</a>
+      <a href="/signup/" class="cta-primary" style="height:38px;padding:0 20px;font-size:13px;border-radius:9px;box-shadow:0 4px 16px rgba(23,163,155,.28);">Start Free Trial</a>
+    </div>
+    <button id="hamburger" aria-label="Open menu" class="md:hidden p-2 -mr-1"><i data-lucide="menu" class="w-5 h-5"></i></button>
+  </div>
+</nav>
+
+<div id="drawer-overlay" class="fixed inset-0 z-[40] bg-black/25 hidden" onclick="closeDrawer()"></div>
+<div id="drawer" class="fixed top-0 right-0 bottom-0 z-[60] w-[300px] flex flex-col shadow-2xl" style="background:#FFFFFF;">
+  <div class="h-[66px] flex items-center justify-between px-5 border-b" style="border-color:#DCE5E6;">
+    <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-11 w-auto">
+    <button id="close-drawer" aria-label="Close menu" class="p-2 -mr-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+  </div>
+  <nav class="flex-1 flex flex-col gap-1 p-4">
+    <a href="/features/"  class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Features</a>
+    <a href="/pricing/"   class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Pricing</a>
+    <a href="/resources/" class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">Resources</a>
+    <a href="/about/"     class="px-4 py-3 text-[15px] font-semibold text-graphite rounded-xl hover:bg-warm-gray transition-colors ht" onclick="closeDrawer()">About</a>
+  </nav>
+  <div class="p-4 border-t flex flex-col gap-2.5" style="border-color:#DCE5E6;">
+    <a href="/signup/" class="cta-primary w-full justify-center" style="border-radius:10px;">Start Free Trial</a>
+    <a href="/login/"  class="cta-ghost  w-full justify-center" style="border-radius:10px;">Log in</a>
+  </div>
+</div>
+
+<main>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="relative pt-[120px] pb-16 md:pb-24 overflow-clip" style="background:radial-gradient(ellipse 80% 55% at 50% -5%,rgba(31,138,112,.09) 0%,transparent 65%),#FFFFFF;">
+  <div class="max-w-[860px] mx-auto px-6 md:px-12 text-center">
+    <div class="rv flex justify-center mb-6"><span class="badge">Resources</span></div>
+    <h1 class="rv rv-d1 ht font-black leading-[0.96] tracking-[-0.043em] text-graphite mb-6" style="font-size:clamp(40px,6.5vw,80px);">
+      How to run a better<br>service business.
+    </h1>
+    <p class="rv rv-d2 text-[17px] leading-[1.76] max-w-[520px] mx-auto" style="color:#5A6E70;">
+      Practical guides, operational frameworks, and ideas for agencies, studios, consultants, advisory firms, and service teams that take client work seriously.
+    </p>
+  </div>
+</section>
+
+
+<!-- ═══════════ FEATURED ═══════════ -->
+<section id="guides" class="py-16 md:py-24" style="background:#FFFFFF;">
+  <div class="max-w-[1100px] mx-auto px-6 md:px-12">
+
+    <p class="section-label mb-10">Featured</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5">
+
+      <!-- Lead article -->
+      <div class="rv featured-card p-8 md:p-10 flex flex-col justify-between gap-8">
+        <div>
+          <span class="article-tag tag-guide mb-5 inline-flex">Guide</span>
+          <h2 class="ht font-black text-[26px] md:text-[32px] tracking-[-0.035em] leading-[1.07] text-graphite mb-5">
+            The client operations gap: why service businesses lose control of their work.
+          </h2>
+          <p class="text-[16px] leading-[1.78]" style="color:#5A6E70;">
+            Most service businesses don't fail at doing the work — they fail at organizing it. Approvals happen over email. Files live in shared folders nobody named properly. Clients repeat questions you already answered. Invoices go out late. Retainers feel loose.
+          </p>
+          <p class="text-[16px] leading-[1.78] mt-4" style="color:#5A6E70;">
+            This isn't a discipline problem. It's a system problem. The tools service businesses use were built for other contexts — internal project management, accounting, general-purpose storage — not for managing an ongoing, visible, collaborative relationship with a client.
+          </p>
+          <p class="text-[16px] leading-[1.78] mt-4" style="color:#5A6E70;">
+            When you're managing six clients simultaneously, the cost of context-switching becomes real. You spend time figuring out where things are instead of moving them forward. Your client experiences your disorganization directly — through slow replies, repeated questions, and a portal that feels like someone's Dropbox.
+          </p>
+          <p class="text-[16px] leading-[1.78] mt-4" style="color:#5A6E70;">
+            The fix isn't adding more tools. It's connecting the tools you're already doing — contracts, delivery, feedback, payments — into one place that's organized around each client relationship. When your client has a single portal and you have a single workspace, most of the friction disappears automatically.
+          </p>
+        </div>
+        <div class="flex items-center gap-3 pt-6" style="border-top:1px solid #EEF3F1;">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+            <i data-lucide="book-open" class="w-3.5 h-3.5" style="color:#0B4F52;"></i>
+          </div>
+          <span class="ht font-semibold text-[13px]" style="color:#0B4F52;">5 min read · Client operations</span>
+        </div>
+      </div>
+
+      <!-- Sidebar cards -->
+      <div class="flex flex-col gap-5">
+
+        <div class="rv rv-d1 article-card p-7 flex flex-col gap-4">
+          <span class="article-tag tag-framework inline-flex">Framework</span>
+          <h3 class="ht font-bold text-[18px] tracking-[-0.025em] leading-[1.2] text-graphite">
+            The five moments where client work falls apart — and what to do about each one.
+          </h3>
+          <p class="text-[14px] leading-[1.72]" style="color:#5A6E70;">
+            Kickoff, first delivery, revision rounds, invoicing, and retainer renewal. These are the five points where service relationships break down most often. Here's how to systematize each one.
+          </p>
+          <div class="flex items-center gap-2 mt-auto pt-4" style="border-top:1px solid #EEF3F1;">
+            <span class="ht font-semibold text-[12px]" style="color:#7A9E99;">4 min read</span>
+          </div>
+        </div>
+
+        <div class="rv rv-d2 article-card p-7 flex flex-col gap-4">
+          <span class="article-tag tag-ops inline-flex">Operations</span>
+          <h3 class="ht font-bold text-[18px] tracking-[-0.025em] leading-[1.2] text-graphite">
+            What a good client portal actually does — and why most are just file dumps.
+          </h3>
+          <p class="text-[14px] leading-[1.72]" style="color:#5A6E70;">
+            A client portal should reduce back-and-forth, not replicate it. The difference between a portal clients actually use and one they ignore comes down to three design decisions.
+          </p>
+          <div class="flex items-center gap-2 mt-auto pt-4" style="border-top:1px solid #EEF3F1;">
+            <span class="ht font-semibold text-[12px]" style="color:#7A9E99;">3 min read</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ OPERATIONAL FRAMEWORKS ═══════════ -->
+<section class="py-16 md:py-24" style="background:#F7FAF8;">
+  <div class="max-w-[1100px] mx-auto px-6 md:px-12">
+
+    <p class="section-label mb-10">Operational frameworks</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+      <!-- Framework 1 -->
+      <div class="rv article-card p-8">
+        <span class="article-tag tag-framework mb-6 inline-flex">Framework</span>
+        <h3 class="ht font-bold text-[20px] tracking-[-0.025em] leading-[1.2] text-graphite mb-5">
+          The client workspace structure that scales to 30+ clients without breaking.
+        </h3>
+        <div style="border-top:1px solid #EEF3F1;">
+          <div class="fw-row">
+            <span class="fw-num">01</span>
+            <div>
+              <p class="ht font-semibold text-[14px] text-graphite mb-1">Standardize the onboarding sequence</p>
+              <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Every new client gets the same contract → portal invite → kickoff sequence. No exceptions. This creates predictability for your team and professionalism for the client.</p>
+            </div>
+          </div>
+          <div class="fw-row">
+            <span class="fw-num">02</span>
+            <div>
+              <p class="ht font-semibold text-[14px] text-graphite mb-1">Keep all files inside the workspace</p>
+              <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Resist the urge to send Google Drive links. Everything shared with a client should live in their workspace. This keeps version control obvious and gives the client one place to look.</p>
+            </div>
+          </div>
+          <div class="fw-row">
+            <span class="fw-num">03</span>
+            <div>
+              <p class="ht font-semibold text-[14px] text-graphite mb-1">Attach approvals to the actual deliverable</p>
+              <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Never ask for approval over email. The review and sign-off happen on the item itself — so there's no question later about what was approved, when, and by whom.</p>
+            </div>
+          </div>
+          <div class="fw-row">
+            <span class="fw-num">04</span>
+            <div>
+              <p class="ht font-semibold text-[14px] text-graphite mb-1">Invoice on schedule, not on memory</p>
+              <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Set recurring invoices for retainer clients so billing is automatic and consistent. Manual invoicing introduces gaps that compound over time.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Framework 2 -->
+      <div class="rv rv-d1 article-card p-8">
+        <span class="article-tag tag-guide mb-6 inline-flex">Guide</span>
+        <h3 class="ht font-bold text-[20px] tracking-[-0.025em] leading-[1.2] text-graphite mb-5">
+          How to run a retainer engagement without losing structure month to month.
+        </h3>
+        <p class="text-[14px] leading-[1.78] mb-6" style="color:#5A6E70;">
+          Retainer clients are the foundation of most service businesses — but retainers are also where scope creep, delayed approvals, and billing confusion concentrate most.
+        </p>
+        <div class="space-y-4">
+          <div class="rounded-2xl p-4" style="background:#E4F2F0;border:1px solid #C8E2DB;">
+            <p class="ht font-semibold text-[13px] text-graphite mb-1">Define the monthly deliverable scope in writing</p>
+            <p class="text-[12.5px] leading-relaxed" style="color:#6B7C7D;">A retainer without a written monthly scope is a retainer that will drift. Put what you're delivering in the workspace each month so both sides can see it.</p>
+          </div>
+          <div class="rounded-2xl p-4" style="background:#E4F2F0;border:1px solid #C8E2DB;">
+            <p class="ht font-semibold text-[13px] text-graphite mb-1">Run a monthly reset inside the client workspace</p>
+            <p class="text-[12.5px] leading-relaxed" style="color:#6B7C7D;">At the start of each month, create a new work area with the period's deliverables, tasks, and any outstanding feedback items carried forward.</p>
+          </div>
+          <div class="rounded-2xl p-4" style="background:#E4F2F0;border:1px solid #C8E2DB;">
+            <p class="ht font-semibold text-[13px] text-graphite mb-1">Invoice before the work begins, not after</p>
+            <p class="text-[12.5px] leading-relaxed" style="color:#6B7C7D;">Retainers work best when payment comes at the top of the month. This aligns your cash flow with your team's capacity and signals professional structure to the client.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ GUIDES GRID ═══════════ -->
+<section id="templates" class="py-16 md:py-24" style="background:#FFFFFF;">
+  <div class="max-w-[1100px] mx-auto px-6 md:px-12">
+
+    <p class="section-label mb-10">Practical guides</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <div class="rv article-card p-7 flex flex-col gap-4">
+        <div class="w-9 h-9 rounded-2xl flex items-center justify-center" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+          <i data-lucide="file-signature" class="w-4 h-4" style="color:#0B4F52;"></i>
+        </div>
+        <div class="flex-1">
+          <span class="article-tag tag-guide mb-3 inline-flex">Guide</span>
+          <h3 class="ht font-bold text-[16px] tracking-[-0.02em] leading-[1.25] text-graphite mb-2">
+            Sending contracts that clients actually sign promptly.
+          </h3>
+          <p class="text-[13px] leading-[1.72]" style="color:#6B7C7D;">Why contracts sit unsigned for days — and how structure, not chasing, gets them signed faster.</p>
+        </div>
+      </div>
+
+      <div class="rv rv-d1 article-card p-7 flex flex-col gap-4">
+        <div class="w-9 h-9 rounded-2xl flex items-center justify-center" style="background:#F0EEF8;border:1px solid #D8D0F0;">
+          <i data-lucide="stamp" class="w-4 h-4" style="color:#4B3B8C;"></i>
+        </div>
+        <div class="flex-1">
+          <span class="article-tag tag-ops mb-3 inline-flex">Operations</span>
+          <h3 class="ht font-bold text-[16px] tracking-[-0.02em] leading-[1.25] text-graphite mb-2">
+            Getting client approvals without three reminder emails.
+          </h3>
+          <p class="text-[13px] leading-[1.72]" style="color:#6B7C7D;">Approvals stall when the item being approved is buried inside an email thread. Here's a better structure.</p>
+        </div>
+      </div>
+
+      <div class="rv rv-d2 article-card p-7 flex flex-col gap-4">
+        <div class="w-9 h-9 rounded-2xl flex items-center justify-center" style="background:#E8F4FB;border:1px solid #C0DCF0;">
+          <i data-lucide="layout-dashboard" class="w-4 h-4" style="color:#0C4A72;"></i>
+        </div>
+        <div class="flex-1">
+          <span class="article-tag tag-portal mb-3 inline-flex">Portal</span>
+          <h3 class="ht font-bold text-[16px] tracking-[-0.02em] leading-[1.25] text-graphite mb-2">
+            How to onboard a client into their portal in under 10 minutes.
+          </h3>
+          <p class="text-[13px] leading-[1.72]" style="color:#6B7C7D;">The fewer steps between invite and first login, the more likely your client actually uses the portal.</p>
+        </div>
+      </div>
+
+      <div class="rv article-card p-7 flex flex-col gap-4">
+        <div class="w-9 h-9 rounded-2xl flex items-center justify-center" style="background:#FFF3EC;border:1px solid #F5D5BE;">
+          <i data-lucide="receipt" class="w-4 h-4" style="color:#8B3A10;"></i>
+        </div>
+        <div class="flex-1">
+          <span class="article-tag tag-ops mb-3 inline-flex">Operations</span>
+          <h3 class="ht font-bold text-[16px] tracking-[-0.02em] leading-[1.25] text-graphite mb-2">
+            Invoice timing: why late invoicing costs more than you think.
+          </h3>
+          <p class="text-[13px] leading-[1.72]" style="color:#6B7C7D;">The psychology and practice of invoice timing for service businesses — and what a one-week delay compounds into over a year.</p>
+        </div>
+      </div>
+
+      <div class="rv rv-d1 article-card p-7 flex flex-col gap-4">
+        <div class="w-9 h-9 rounded-2xl flex items-center justify-center" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+          <i data-lucide="list-checks" class="w-4 h-4" style="color:#0B4F52;"></i>
+        </div>
+        <div class="flex-1">
+          <span class="article-tag tag-guide mb-3 inline-flex">Guide</span>
+          <h3 class="ht font-bold text-[16px] tracking-[-0.02em] leading-[1.25] text-graphite mb-2">
+            Managing delivery when you have five active clients at once.
+          </h3>
+          <p class="text-[13px] leading-[1.72]" style="color:#6B7C7D;">The mental model shift from project-thinking to client-thinking — and why it changes how you structure your week.</p>
+        </div>
+      </div>
+
+      <div class="rv rv-d2 article-card p-7 flex flex-col gap-4">
+        <div class="w-9 h-9 rounded-2xl flex items-center justify-center" style="background:#F0EEF8;border:1px solid #D8D0F0;">
+          <i data-lucide="refresh-cw" class="w-4 h-4" style="color:#4B3B8C;"></i>
+        </div>
+        <div class="flex-1">
+          <span class="article-tag tag-framework mb-3 inline-flex">Framework</span>
+          <h3 class="ht font-bold text-[16px] tracking-[-0.02em] leading-[1.25] text-graphite mb-2">
+            The service continuity playbook: keeping clients without restarting.
+          </h3>
+          <p class="text-[13px] leading-[1.72]" style="color:#6B7C7D;">How to transition from a project-based relationship into an ongoing retainer without losing momentum or margin.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ AUDIENCE SECTION ═══════════ -->
+<section class="py-16 md:py-24" style="background:#F7FAF8;">
+  <div class="max-w-[1100px] mx-auto px-6 md:px-12">
+
+    <div class="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-12 lg:gap-20 items-start">
+
+      <div class="rv">
+        <p class="section-label mb-8">Built for your type of work</p>
+        <h2 class="ht font-black text-[28px] md:text-[36px] tracking-[-0.038em] leading-[1.06] text-graphite mb-5">
+          These resources are written for how service businesses actually operate.
+        </h2>
+        <p class="text-[16px] leading-[1.76]" style="color:#5A6E70;">
+          Not for product teams or enterprise IT departments. For the people running agencies, studios, advisory practices, communications businesses, and consulting firms — where the work is creative, the clients are exacting, and the margin for organizational chaos is thin.
+        </p>
+      </div>
+
+      <div class="rv rv-d1" style="border-top:1px solid #DCE5E6;">
+        <div style="display:flex;align-items:center;gap:14px;padding:18px 0;border-bottom:1px solid #DCE5E6;">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #C0D8D2;">
+            <i data-lucide="building-2" class="w-4 h-4" style="color:#0B4F52;"></i>
+          </div>
+          <div>
+            <p class="ht font-bold text-[15px] text-graphite">Agencies</p>
+            <p class="text-[13px] mt-0.5" style="color:#6B7C7D;">Multi-client creative, strategy, and media teams</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:18px 0;border-bottom:1px solid #DCE5E6;">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #C0D8D2;">
+            <i data-lucide="briefcase" class="w-4 h-4" style="color:#0B4F52;"></i>
+          </div>
+          <div>
+            <p class="ht font-bold text-[15px] text-graphite">Consultants &amp; advisory firms</p>
+            <p class="text-[13px] mt-0.5" style="color:#6B7C7D;">Independent practitioners and specialist advisory practices</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:18px 0;border-bottom:1px solid #DCE5E6;">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #C0D8D2;">
+            <i data-lucide="pencil-ruler" class="w-4 h-4" style="color:#0B4F52;"></i>
+          </div>
+          <div>
+            <p class="ht font-bold text-[15px] text-graphite">Studios</p>
+            <p class="text-[13px] mt-0.5" style="color:#6B7C7D;">Design, production, and creative delivery businesses</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:18px 0;border-bottom:1px solid #DCE5E6;">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #C0D8D2;">
+            <i data-lucide="radio" class="w-4 h-4" style="color:#0B4F52;"></i>
+          </div>
+          <div>
+            <p class="ht font-bold text-[15px] text-graphite">Media &amp; communications companies</p>
+            <p class="text-[13px] mt-0.5" style="color:#6B7C7D;">Editorial, publishing, and communications businesses</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:18px 0;">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:#E4F2F0;border:1px solid #C0D8D2;">
+            <i data-lucide="users" class="w-4 h-4" style="color:#0B4F52;"></i>
+          </div>
+          <div>
+            <p class="ht font-bold text-[15px] text-graphite">Independent service professionals</p>
+            <p class="text-[13px] mt-0.5" style="color:#6B7C7D;">Solopreneurs and small teams with ongoing client relationships</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════ HELP CENTER ═══════════ -->
+<section id="help-center" class="py-16 md:py-24" style="background:#FFFFFF;">
+  <div class="max-w-[1100px] mx-auto px-6 md:px-12">
+
+    <p class="section-label mb-10">Help &amp; documentation</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+
+      <div class="rv card p-7">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-5" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+          <i data-lucide="circle-play" class="w-4 h-4" style="color:#0B4F52;"></i>
+        </div>
+        <h3 class="ht font-bold text-[16px] tracking-[-0.02em] text-graphite mb-2">Getting started</h3>
+        <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Set up your workspace, add your first client, and send your first portal invite. Takes about 15 minutes.</p>
+        <p class="ht font-semibold text-[12px] mt-4" style="color:#7A9E99;">Documentation coming soon</p>
+      </div>
+
+      <div class="rv rv-d1 card p-7">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-5" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+          <i data-lucide="layout-template" class="w-4 h-4" style="color:#0B4F52;"></i>
+        </div>
+        <h3 class="ht font-bold text-[16px] tracking-[-0.02em] text-graphite mb-2">Workspace setup</h3>
+        <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">How to structure client workspaces, work areas, and your team's access across multiple clients.</p>
+        <p class="ht font-semibold text-[12px] mt-4" style="color:#7A9E99;">Documentation coming soon</p>
+      </div>
+
+      <div class="rv rv-d2 card p-7">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-5" style="background:#E4F2F0;border:1px solid #C0E4DE;">
+          <i data-lucide="credit-card" class="w-4 h-4" style="color:#0B4F52;"></i>
+        </div>
+        <h3 class="ht font-bold text-[16px] tracking-[-0.02em] text-graphite mb-2">Payments &amp; invoicing</h3>
+        <p class="text-[13px] leading-relaxed" style="color:#6B7C7D;">Connecting Stripe, Paystack, or Flutterwave. Sending invoices, collecting payment, and managing retainers.</p>
+        <p class="ht font-semibold text-[12px] mt-4" style="color:#7A9E99;">Documentation coming soon</p>
+      </div>
+
+    </div>
+
+    <div id="updates" class="rv card-warm rounded-[20px] p-8 md:p-10">
+      <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 items-center">
+        <div>
+          <p class="ht font-bold text-[10.5px] uppercase tracking-[0.1em] mb-3" style="color:#3D8878;">Product updates</p>
+          <h3 class="ht font-black text-[22px] md:text-[26px] tracking-[-0.03em] leading-[1.1] text-graphite mb-3">
+            Vereli is in active development.
+          </h3>
+          <p class="text-[15px] leading-[1.74]" style="color:#5A6E70;">
+            We ship improvements continuously. Start your free trial to get access to the full platform, and you'll receive updates as new features land — portals, payments, approvals, contracts, and more, being refined every week.
+          </p>
+        </div>
+        <div class="flex flex-col gap-3 md:items-end">
+          <a href="/signup/" class="cta-primary" style="height:48px;font-size:14px;border-radius:11px;padding:0 28px;">Start Free Trial</a>
+          <p class="text-[12px]" style="color:#5A7A78;">No credit card required</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- Footer -->
+<footer style="background:#062B2D;color:#fff;">
+  <div class="max-w-[1400px] mx-auto px-6 md:px-12 pt-16 pb-10">
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-10 mb-14">
+      <div class="col-span-2">
+        <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" class="h-9 w-auto mb-5 brightness-0 invert opacity-70">
+        <p class="text-[13px] leading-relaxed max-w-[230px]" style="color:rgba(255,255,255,.58);">One workspace for every client. Built for modern service businesses.</p>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Product</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/features/" class="hover:text-white transition-colors">Features</a></li>
+          <li><a href="/pricing/"  class="hover:text-white transition-colors">Pricing</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Updates</a></li>
+          <li><a href="/resources/#updates" class="hover:text-white transition-colors">Roadmap</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Company</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/about/" class="hover:text-white transition-colors">About</a></li>
+          <li><a href="/contact/" class="hover:text-white transition-colors">Contact</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Careers</li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Resources</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/resources/#guides"      class="hover:text-white transition-colors">Guides</a></li>
+          <li><a href="/resources/#templates"   class="hover:text-white transition-colors">Templates</a></li>
+          <li><a href="/resources/#help-center" class="hover:text-white transition-colors">Help Center</a></li>
+          <li><a href="/resources/#help-center" class="hover:text-white transition-colors">Documentation</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="ht font-bold text-[11px] uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.56);">Legal</p>
+        <ul class="space-y-3 text-[13px]" style="color:rgba(255,255,255,.5);">
+          <li><a href="/privacy/" class="hover:text-white transition-colors">Privacy</a></li>
+          <li><a href="/terms/"   class="hover:text-white transition-colors">Terms</a></li>
+          <li style="color:rgba(255,255,255,0.25);">Security</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4" style="border-top:1px solid rgba(255,255,255,.07);">
+      <p class="text-[12px]" id="footer-copy" style="color:rgba(255,255,255,.52);">© 2026 Vereli Inc.</p>
+      <div class="flex gap-5">
+        <a href="#" aria-label="Twitter" class="hover:opacity-100 transition-opacity" style="color:rgba(255,255,255,.38);"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+        <a href="#" aria-label="LinkedIn" class="hover:opacity-100 transition-opacity" style="color:rgba(255,255,255,.38);"><i data-lucide="linkedin" class="w-4 h-4"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+</main>
+
+<script id="content" type="application/json">{"company":"content/company.json"}</script>
+<script type="module">
+const submitContactForm = async () => ({ ok: false, error: "Not configured" });
+document.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));
+</script>
+<script id="main_script">
+lucide.createIcons();
+document.getElementById('footer-copy').textContent = '© ' + new Date().getFullYear() + ' Vereli Inc.';
+var nav=document.getElementById('nav');
+window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40)},{passive:true});
+var drawer=document.getElementById('drawer'),overlay=document.getElementById('drawer-overlay');
+function openDrawer(){drawer.classList.add('open');overlay.classList.remove('hidden');document.body.style.overflow='hidden';}
+function closeDrawer(){drawer.classList.remove('open');overlay.classList.add('hidden');document.body.style.overflow='';}
+document.getElementById('hamburger').addEventListener('click',openDrawer);
+document.getElementById('close-drawer').addEventListener('click',closeDrawer);
+(function(){var io=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('on')})},{threshold:.07,rootMargin:'0px 0px -32px 0px'});document.querySelectorAll('.rv').forEach(function(el){io.observe(el)})})();
+</script>
+</body>
+</html>

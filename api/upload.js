@@ -1,0 +1,40 @@
+import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
+import { sql } from './lib/neon.js';
+import { uploadBuffer, isS3Configured } from './lib/s3.js';
+import crypto from 'crypto';
+
+export default async function handler(req, res) {
+  if (handleCors(req, res)) return;
+
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
+  if (req.method !== 'POST') {
+    badRequest(res, 'Method not allowed');
+    return;
+  }
+
+  const { name, data, contentType } = req.body || {};
+  if (!name || !data) {
+    badRequest(res, 'name and base64 data are required');
+    return;
+  }
+
+  try {
+    // Ensure files table has url column
+    await sql`ALTER TABLE files ADD COLUMN IF NOT EXISTS url TEXT`;
+
+    let url = '';
+    if (isS3Configured()) {
+      const buffer = Buffer.from(data, 'base64');
+      const ext = name.split('.').pop() || 'bin';
+      const key = `tenants/${user.tenantId || 'global'}/${crypto.randomUUID()}.${ext}`;
+      url = await uploadBuffer(key, buffer, contentType || 'application/octet-stream');
+    }
+
+    sendJson(res, 200, { data: { url, name } });
+  } catch (err) {
+    console.error('Upload error:', err);
+    sendJson(res, 500, { error: 'Upload failed: ' + err.message });
+  }
+}

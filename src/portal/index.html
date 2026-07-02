@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Portal — Vereli</title>
+  <meta name="description" content="Your client portal. Review work, approve deliverables, leave feedback, and pay invoices.">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;color:#0B3D3F;background:#F5F8F7}
+.ht{font-family:'General Sans',sans-serif}
+
+/* ── Portal branding variables ── */
+:root{
+  --brand-primary:#0B4F52;
+  --brand-accent:#17A39B;
+  --brand-secondary:#E2F0EE;
+  --brand-text:#fff;
+}
+
+/* ── Layout ── */
+#shell{display:flex;height:100vh;overflow:hidden}
+
+/* ── Sidebar ── */
+#sidebar{width:252px;min-width:252px;background:#fff;border-right:1px solid #E4EDEA;display:flex;flex-direction:column;overflow:hidden;transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:2px 0 12px rgba(11,61,62,.04)}
+
+/* ── Branded portal header ── */
+.portal-head{flex-shrink:0;overflow:hidden}
+.portal-banner{height:90px;background:linear-gradient(140deg,var(--brand-primary) 0%,#14867E 60%,#1BB5A8 100%);position:relative;overflow:hidden}
+.portal-banner::after{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.06)}
+.portal-banner::before{content:'';position:absolute;bottom:-30px;left:-20px;width:120px;height:120px;border-radius:50%;background:rgba(123,224,197,.1)}
+.portal-identity{padding:0 18px 18px;margin-top:-26px;position:relative;border-bottom:1px solid #E4EDEA}
+.portal-logo-wrap{display:flex;align-items:flex-end;gap:12px;margin-bottom:12px}
+.portal-logo-av{width:50px;height:50px;border-radius:14px;border:3px solid #fff;box-shadow:0 4px 16px rgba(11,61,62,.16),0 1px 4px rgba(11,61,62,.08);background:var(--brand-secondary);color:var(--brand-primary);font-family:'General Sans',sans-serif;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.portal-co-name{font-family:'General Sans',sans-serif;font-size:14px;font-weight:800;color:#0B3D3F;letter-spacing:-.025em;line-height:1.2}
+.portal-badge{display:inline-flex;align-items:center;gap:4px;font-family:'General Sans',sans-serif;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;background:var(--brand-secondary);color:var(--brand-primary);border-radius:6px;padding:3px 8px;border:1px solid rgba(11,79,82,.12);margin-top:5px}
+.portal-user-chip{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#F5F8F7;border-radius:10px;border:1px solid #E4EDEA}
+
+/* ── Nav ── */
+.nav-group{padding:12px 10px;flex:1;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:2px}
+.nav-group::-webkit-scrollbar{display:none}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-family:'General Sans',sans-serif;font-size:13px;font-weight:500;color:#6B8E89;cursor:pointer;transition:all .14s;user-select:none;white-space:nowrap;position:relative}
+.ni:hover{background:#EEF5F3;color:#0B3D3F}
+.ni.active{background:var(--brand-primary);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(11,79,82,.18)}
+.ni.active svg{stroke:#fff}
+.ni svg{width:15px;height:15px;flex-shrink:0;stroke:currentColor;stroke-width:1.8}
+.ni-label{flex:1}
+.ni .dot{margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--brand-accent);flex-shrink:0}
+.ni.active .dot{background:rgba(255,255,255,.5)}
+.ni .dot-red{margin-left:auto;width:7px;height:7px;border-radius:50%;background:#E05050;flex-shrink:0}
+
+/* ── Sidebar footer ── */
+.sb-foot{padding:12px 10px;border-top:1px solid #E4EDEA;flex-shrink:0}
+.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:11px;font-weight:800;flex-shrink:0;background:var(--brand-secondary);color:var(--brand-primary)}
+
+/* ── Main ── */
+#main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;background:#F5F8F7}
+
+/* ── Topbar ── */
+#topbar{height:62px;background:#fff;border-bottom:1px solid #E4EDEA;display:flex;align-items:center;padding:0 32px;gap:12px;flex-shrink:0;box-shadow:0 1px 4px rgba(11,61,62,.04)}
+.page-title{font-family:'General Sans',sans-serif;font-size:14px;font-weight:700;color:#0B3D3F;letter-spacing:-.015em}
+#topbar .sp{flex:1}
+.tb-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;border:1.5px solid #DDE8E4;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#4A7A72;cursor:pointer;background:#fff;transition:all .14s;white-space:nowrap;text-decoration:none}
+.tb-btn:hover{border-color:var(--brand-primary);color:#0B3D3F}
+.tb-btn svg{width:13px;height:13px}
+#ham{display:none;background:none;border:none;cursor:pointer;padding:4px;color:#6A8E89}
+
+/* ── Content area ── */
+#cb{flex:1;overflow-y:auto;padding:40px 40px 80px;background:#F5F8F7}
+#cb::-webkit-scrollbar{width:3px}
+#cb::-webkit-scrollbar-track{background:transparent}
+#cb::-webkit-scrollbar-thumb{background:#C0D4D0;border-radius:2px}
+
+/* ── Views ── */
+.view{display:none}
+.view.active{display:block}
+
+/* ── Premium Cards ── */
+.card{background:#fff;border:1px solid #E0EAE7;border-radius:18px;box-shadow:0 1px 4px rgba(11,61,62,.03),0 6px 28px rgba(11,61,62,.06),inset 0 0 0 1px rgba(255,255,255,.7)}
+
+/* ── Status Badges ── */
+.st{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:700;white-space:nowrap}
+.st-green{background:#E4F5ED;color:#1A6B4A;border:1px solid #B8E0CE}
+.st-amber{background:#FEF4E0;color:#8C5208;border:1px solid #F0D9A0}
+.st-red{background:#FDECEA;color:#B01C1C;border:1px solid #F0C4C0}
+.st-gray{background:#EEF3F2;color:#5A7872;border:1px solid #D0DED8}
+.st-brand{background:var(--brand-secondary);color:var(--brand-primary);border:1px solid rgba(11,79,82,.14)}
+
+/* ── Section labels ── */
+.sec-lbl{font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#88AAA4;margin-bottom:14px;display:block}
+
+/* ── Overview greeting ── */
+.greeting-block{margin-bottom:40px}
+.greeting-title{font-family:'General Sans',sans-serif;font-size:28px;font-weight:900;letter-spacing:-.04em;color:#062B2D;margin-bottom:6px;line-height:1.1}
+.greeting-sub{font-size:14px;color:#7A9E99;line-height:1.6}
+
+/* ── Attention items ── */
+.attn-item{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid #EBF0EE;transition:background .12s;cursor:pointer}
+.attn-item:last-child{border-bottom:none;border-radius:0 0 18px 18px}
+.attn-item:hover{background:#F7FBFA}
+.attn-item:first-child:hover{border-radius:18px 18px 0 0}
+
+/* ── Action buttons ── */
+.act-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:9px;font-family:'General Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .14s;white-space:nowrap}
+.act-btn:hover{transform:translateY(-1px)}
+.act-approve{background:#E2F0EE;color:#0B4F52;border:1px solid rgba(11,79,82,.12)}
+.act-approve:hover{background:#D0E8E4}
+.act-comment{background:#F0F5F3;color:#3A5A56;border:1px solid #DDE8E4}
+.act-comment:hover{background:#E4EFE9}
+.act-pay{background:var(--brand-primary);color:#fff;box-shadow:0 3px 12px rgba(11,79,82,.28);border:none}
+.act-pay:hover{box-shadow:0 5px 18px rgba(11,79,82,.38);background:#0D5558}
+
+/* ── File items ── */
+.fi{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;background:#fff;border:1px solid #E0EAE7;margin-bottom:8px;transition:box-shadow .12s;box-shadow:0 1px 4px rgba(11,61,62,.03)}
+.fi:hover{box-shadow:0 4px 16px rgba(11,61,62,.08);border-color:#C8DDD9}
+.fi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── Messages ── */
+.msg{display:flex;gap:10px;margin-bottom:14px}
+.msg-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:10px;font-weight:800;background:#E2F0EE;color:#0B4F52}
+.msg-body{flex:1;background:#EEF5F2;border-radius:12px;padding:11px 14px;font-size:13px;line-height:1.6;color:#2A4040}
+.msg-body.mine{background:var(--brand-secondary);color:#0B3D3F;border:1px solid rgba(11,79,82,.1)}
+.msg-meta{font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:600;color:#88AAA4;margin-bottom:5px}
+
+/* ── Progress ── */
+.prog-bar{height:4px;background:#E0EAE7;border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--brand-primary),var(--brand-accent))}
+
+/* ── Table ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#88AAA4;padding:0 16px 10px;text-align:left;border-bottom:1px solid #E4EDEA}
+.tbl td{padding:14px 16px;border-bottom:1px solid #EBF0EE;vertical-align:middle;color:#2A4040}
+.tbl tr:last-child td{border-bottom:none}
+
+/* ── Project progress cards ── */
+.proj-card{padding:22px 26px;border-bottom:1px solid #EBF0EE;transition:background .12s}
+.proj-card:last-child{border-bottom:none}
+.proj-card:hover{background:#FAFCFC}
+
+/* ── Mobile ── */
+#overlay{display:none;position:fixed;inset:0;background:rgba(6,24,26,.38);z-index:40;backdrop-filter:blur(4px)}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;height:100%;z-index:50;transform:translateX(-100%);box-shadow:8px 0 40px rgba(0,0,0,.14)}
+  #sidebar.open{transform:translateX(0)}
+  #overlay.on{display:block}
+  #ham{display:flex!important;align-items:center}
+  #cb{padding:24px 18px 72px}
+  .thread-layout{flex-direction:column!important}
+  .thread-list{width:100%!important}
+}
+  </style>
+</head>
+<body>
+
+<div id="overlay" onclick="closeSidebar()"></div>
+
+<div id="shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside id="sidebar">
+
+    <!-- Client identity with branded banner -->
+    <div class="portal-head">
+      <div class="portal-banner"></div>
+      <div class="portal-identity">
+        <div class="portal-logo-wrap">
+          <div class="portal-logo-av" id="portal-av">--</div>
+          <div>
+            <div class="portal-co-name" id="portal-name">Loading...</div>
+            <div class="portal-badge">
+              <svg width="7" height="7" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+              Client Portal
+            </div>
+          </div>
+        </div>
+        <div class="portal-user-chip">
+          <div class="av" style="width:26px;height:26px;font-size:9px" id="user-av">--</div>
+          <div>
+            <div class="ht" style="font-size:12px;font-weight:700;color:#0B3D3F;line-height:1.2" id="user-name">Guest</div>
+            <div style="font-size:10px;color:#88AAA4;font-weight:500">Client</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-group">
+      <div class="ni active" onclick="nav('overview',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+        Overview
+      </div>
+      <div class="ni" onclick="nav('work',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        Work Areas
+      </div>
+      <div class="ni" onclick="nav('approvals',this)" id="nav-approvals">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span class="ni-label">Approvals</span>
+        <span class="dot" id="badge-approvals" style="display:none"></span>
+      </div>
+      <div class="ni" onclick="nav('files',this)" id="nav-files">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+        <span class="ni-label">Files &amp; Deliverables</span>
+        <span class="dot" id="badge-files" style="display:none"></span>
+      </div>
+      <div class="ni" onclick="nav('messages',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Messages
+      </div>
+      <div class="ni" onclick="nav('payments',this)" id="nav-payments">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <span class="ni-label">Payments</span>
+        <span class="dot-red" id="badge-payments" style="display:none"></span>
+      </div>
+    </div>
+
+    <div class="sb-foot">
+      <div style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:#F0F5F3;border-radius:10px;border:1px solid #E0EAE7">
+        <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" style="height:22px;width:auto;flex-shrink:0">
+        <div style="font-size:11px;color:#88AAA4;font-family:'General Sans',sans-serif;font-weight:600">Powered by Vereli</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <div id="main">
+    <div id="topbar">
+      <button id="ham" onclick="toggleSidebar()" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="page-title" id="page-title">Overview</span>
+      <div class="sp"></div>
+      <button class="tb-btn" onclick="showToast('Your contact: Jordan at Vereli Creative — jordan@vereli.io')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Help
+      </button>
+    </div>
+
+    <div id="cb">
+
+      <!-- OVERVIEW --><div class="view active" id="view-overview"><div id="render-overview">Loading...</div></div>
+
+
+      <!-- WORK --><div class="view" id="view-work"><div id="render-work">Loading...</div></div>
+
+
+      <!-- APPROVALS --><div class="view" id="view-approvals"><div id="render-approvals">Loading...</div></div>
+
+
+      <!-- FILES --><div class="view" id="view-files"><div id="render-files">Loading...</div></div>
+
+
+      <!-- MESSAGES --><div class="view" id="view-messages"><div id="render-messages">Loading...</div></div>
+
+
+      <!-- PAYMENTS --><div class="view" id="view-payments"><div id="render-payments">Loading...</div></div>
+
+    </div><!-- /cb -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script id="content" type="application/json">{"company":"content/company.json"}</script>
+<script type="module">
+const submitContactForm = async () => ({ ok: false, error: "Not configured" });
+document.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));
+</script>
+<script>
+lucide.createIcons();
+
+/* ── Nav ── */
+const TITLES={overview:'Overview',work:'Work',approvals:'Approvals',files:'Files',messages:'Messages',payments:'Payments'};
+function nav(viewId,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+viewId).classList.add('active');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('page-title').textContent=TITLES[viewId]||viewId;
+  closeSidebar();
+}
+
+/* ── Approvals ── */
+function approveItem(btn,name,cardId){
+  const group=btn.closest('[style*="display:flex"]')||btn.parentElement;
+  const newHtml='<span class="st st-green" style="font-size:11px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg> Approved</span>';
+  group.innerHTML=newHtml;
+  showToast('"'+name+'" approved.');
+  lucide.createIcons();
+}
+
+/* ── Signing ── */
+function signItem(btn,name,cardId){
+  const group=btn.closest('[style*="display:flex"]')||btn.parentElement;
+  const newHtml='<span class="st st-green" style="font-size:11px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="margin-right:3px"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Signed</span>';
+  group.innerHTML=newHtml;
+  // Also update the status badge in a nearby fi row if applicable
+  const card=cardId?document.getElementById(cardId):null;
+  if(card){const badge=card.querySelector('.st-amber');if(badge){badge.className='st st-green';badge.textContent='Signed';}}
+  showToast('"'+name+'" signed successfully.');
+  lucide.createIcons();
+}
+
+/* ── Messaging ── */
+const THREADS={
+  website:'<div class="msg"><div class="msg-av" style="background:#E8F0EC;color:#6B7C7D">JW</div><div><div class="msg-meta">Jordan · 2 days ago</div><div class="msg-body">Hey Sarah — v3 of the hero is ready. We\'ve addressed the spacing from last round. Let us know!</div></div></div><div class="msg" style="flex-direction:row-reverse"><div class="msg-av">SC</div><div style="max-width:75%"><div class="msg-meta" style="text-align:right">You · 1 day ago</div><div class="msg-body mine">Looks great! Can we try a slightly darker CTA button? Otherwise love it.</div></div></div><div class="msg"><div class="msg-av" style="background:#E8F0EC;color:#6B7C7D">JW</div><div><div class="msg-meta">Jordan · 1 day ago</div><div class="msg-body">Done — re-uploaded. v3.1 above should be exactly what you had in mind!</div></div></div>',
+  brand:'<div class="msg"><div class="msg-av" style="background:#E8F0EC;color:#6B7C7D">JW</div><div><div class="msg-meta">Jordan · 5 days ago</div><div class="msg-body">Hi Sarah — the brand guide is almost done. Finalising typography this week and will have the full PDF to you by Thursday.</div></div></div><div class="msg" style="flex-direction:row-reverse"><div class="msg-av">SC</div><div style="max-width:75%"><div class="msg-meta" style="text-align:right">You · 4 days ago</div><div class="msg-body mine">Brilliant — will it include digital vs print usage examples?</div></div></div><div class="msg"><div class="msg-av" style="background:#E8F0EC;color:#6B7C7D">JW</div><div><div class="msg-meta">Jordan · 3 days ago</div><div class="msg-body">Yes — both sections are included. Digital application (web, social) and print spec with CMYK breakdowns.</div></div></div>'
+};
+
+function selectThread(id,el){
+  document.querySelectorAll('[id^="thr-"]').forEach(t=>{t.style.background='';});
+  el.style.background='var(--brand-secondary)';
+  document.getElementById('thread-heading').textContent=id==='website'?'Website Redesign':'Brand Identity';
+  document.getElementById('thread-msgs').innerHTML=THREADS[id]||'';
+}
+
+function sendMsg(){
+  const input=document.getElementById('msg-input');
+  const text=input.value.trim();
+  if(!text) return;
+  const msgs=document.getElementById('thread-msgs');
+  const m=document.createElement('div');
+  m.className='msg';
+  m.style.flexDirection='row-reverse';
+  m.innerHTML='<div class="msg-av">SC</div><div style="max-width:75%"><div class="msg-meta" style="text-align:right">You · Just now</div><div class="msg-body mine">'+esc(text)+'</div></div>';
+  msgs.appendChild(m);
+  input.value='';
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+/* ── Toast ── */
+function showToast(msg){
+  const t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#062B2D;color:#fff;font-family:"General Sans",sans-serif;font-size:13px;font-weight:600;padding:11px 22px;border-radius:12px;z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(6,43,45,.35)';
+  document.body.appendChild(t);
+  requestAnimationFrame(()=>{t.style.opacity='1';});
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),200);},2600);
+}
+
+/* ── Sidebar ── */
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const ov=document.getElementById('overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('on');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('on');
+}
+
+</script>
+<script>
+const API_BASE='/api';
+let PORTAL_DATA={client:null,workAreas:[],tasks:[],files:[],comments:[],approvals:[],invoices:[]};
+async function apiFetch(path,opts={}){
+  const url=path.startsWith('http')?path:API_BASE+path;
+  const res=await fetch(url,{...opts,credentials:'include'});
+  if(res.status===401&&!path.includes('/auth/'))throw new Error('Unauthorized');
+  return res;
+}
+function getGreeting(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtDate(d){if(!d)return'--';const date=new Date(d);return date.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
+function timeAgo(d){if(!d)return'--';const now=new Date(),then=new Date(d);const diffMin=Math.floor((now-then)/60000);if(diffMin<1)return'just now';if(diffMin<60)return diffMin+'m ago';const diffH=Math.floor(diffMin/60);if(diffH<24)return diffH+'h ago';const diffD=Math.floor(diffH/24);if(diffD<7)return diffD+'d ago';return fmtDate(d);}
+function getInitials(name){return(name||'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'--';}
+function fileIcon(type){
+  const t=(type||'').toLowerCase();
+  if(t.includes('pdf'))return{bg:'#FEF3E2',tc:'#A0621A',i:'file-text'};
+  if(t.includes('fig'))return{bg:'#EEF3FF',tc:'#3558CC',i:'layers'};
+  if(t.includes('zip'))return{bg:'#EEF2F2',tc:'#6B7C7D',i:'archive'};
+  if(t.includes('png')||t.includes('jpg')||t.includes('img'))return{bg:'#EEF3FF',tc:'#3558CC',i:'image'};
+  if(t.includes('mp4')||t.includes('vid'))return{bg:'#F5F0FF',tc:'#6B3FA0',i:'film'};
+  return{bg:'#EAF2EE',tc:'#2D6A4F',i:'file-text'};
+}
+async function loadPortalData(){
+  const params=new URLSearchParams(window.location.search);
+  const clientId=params.get('client');
+  if(!clientId){document.getElementById('render-overview').innerHTML='<div style="padding:40px;text-align:center;color:#88AAA4">No client selected.</div>';return;}
+  try{
+    const [cRes,waRes,tRes,fRes,cmRes,aRes,iRes]=await Promise.all([
+      apiFetch('/clients/'+clientId),apiFetch('/work-areas?clientId='+clientId),
+      apiFetch('/tasks').catch(()=>null),apiFetch('/files').catch(()=>null),
+      apiFetch('/comments').catch(()=>null),apiFetch('/approvals').catch(()=>null),
+      apiFetch('/invoices').catch(()=>null)
+    ]);
+    let client=null,workAreas=[],tasks=[],files=[],comments=[],approvals=[],invoices=[];
+    if(cRes.ok){const j=await cRes.json();client=j.data;}
+    if(waRes.ok){const j=await waRes.json();workAreas=j.data||[];}
+    if(tRes&&tRes.ok){const j=await tRes.json();tasks=j.data||[];}
+    if(fRes&&fRes.ok){const j=await fRes.json();files=j.data||[];}
+    if(cmRes&&cmRes.ok){const j=await cmRes.json();comments=j.data||[];}
+    if(aRes&&aRes.ok){const j=await aRes.json();approvals=j.data||[];}
+    if(iRes&&iRes.ok){const j=await iRes.json();invoices=j.data||[];}
+    PORTAL_DATA={client,workAreas,tasks,files,comments,approvals,invoices};
+    if(client){
+      document.getElementById('portal-name').textContent=client.name;
+      document.getElementById('portal-av').textContent=getInitials(client.name);
+      document.getElementById('user-name').textContent=client.contact||'Client';
+      document.getElementById('user-av').textContent=getInitials(client.contact);
+    }
+    updateBadges();renderOverview();renderWork();renderApprovals();renderFiles();renderMessages();renderPayments();if(typeof lucide!=='undefined')lucide.createIcons();
+  }catch(err){
+    const msg=err.message==='Unauthorized'?'Please log in to view this portal.':'Failed to load data.';
+    ['overview','work','approvals','files','messages','payments'].forEach(v=>{document.getElementById('render-'+v).innerHTML='<div style="padding:40px;text-align:center;color:#88AAA4">'+msg+'</div>';});
+  }
+}
+function updateBadges(){
+  const{approvals,files,invoices}=PORTAL_DATA;
+  const pendingAp=approvals.filter(a=>a.status==='waiting').length;
+  const sharedFiles=files.filter(f=>f.visibility==='shared'||f.visibility==='client').length;
+  const unpaidInv=invoices.filter(i=>i.status==='unpaid'||i.status==='pending').length;
+  document.getElementById('badge-approvals').style.display=pendingAp?'':'none';
+  document.getElementById('badge-files').style.display=sharedFiles?'':'none';
+  document.getElementById('badge-payments').style.display=unpaidInv?'':'none';
+}
+</script>
+<script>
+function renderOverview(){
+  const{client,workAreas,tasks,files,approvals,invoices}=PORTAL_DATA;
+  if(!client)return;
+  const firstName=(client.contact||'there').split(' ')[0];
+  const pendingApprovals=approvals.filter(a=>a.status==='waiting');
+  const unpaidInvoices=invoices.filter(i=>i.status==='unpaid'||i.status==='pending');
+  const sharedFiles=files.filter(f=>f.visibility==='shared'||f.visibility==='client');
+  let attentionHtml='';
+  pendingApprovals.forEach(a=>{
+    const wa=workAreas.find(w=>w.id===a.workAreaId);
+    attentionHtml+='<div class="attn-item"><div style="width:36px;height:36px;border-radius:10px;background:#FEF4E2;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#96590F" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B3D3F;margin-bottom:3px">'+esc(a.item)+'</div><div style="font-size:12px;color:#88AAA4">'+esc(wa?wa.name:'Project')+' &middot; '+timeAgo(a.createdAt)+'</div></div><span class="st st-amber" style="margin-right:12px;flex-shrink:0">Needs approval</span><button class="act-btn act-approve" onclick="approveItem(this,'+esc(a.item)+')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Approve</button></div>';
+  });
+  sharedFiles.slice(0,3).forEach(f=>{
+    const wa=workAreas.find(w=>w.id===f.workAreaId);
+    attentionHtml+='<div class="attn-item"><div style="width:36px;height:36px;border-radius:10px;background:#E6F4EE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1A6B55" stroke-width="2" stroke-linecap="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B3D3F;margin-bottom:3px">'+esc(f.name)+'</div><div style="font-size:12px;color:#88AAA4">'+esc(wa?wa.name:'Project')+' &middot; Shared '+timeAgo(f.createdAt)+'</div></div><span class="st st-brand" style="margin-right:12px;flex-shrink:0">Ready to review</span><button class="act-btn act-approve" onclick="showToast(\'Downloading...\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Download</button></div>';
+  });
+  unpaidInvoices.slice(0,2).forEach(inv=>{
+    attentionHtml+='<div class="attn-item"><div style="width:36px;height:36px;border-radius:10px;background:#FDECEA;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B01C1C" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B3D3F;margin-bottom:3px">'+esc(inv.invoiceNumber)+' &middot; $'+esc(inv.total)+'</div><div style="font-size:12px;color:#B01C1C;font-weight:600">Due '+fmtDate(inv.dueDate)+'</div></div><button class="act-btn act-pay" style="flex-shrink:0" onclick="showToast(\'Redirecting to payment...\')">Pay now</button></div>';
+  });
+  if(!attentionHtml)attentionHtml='<div class="attn-item" style="justify-content:center;color:#88AAA4"><div style="padding:22px">Nothing needs your attention right now.</div></div>';
+  let projectsHtml='';
+  workAreas.forEach(wa=>{
+    const waTasks=tasks.filter(t=>t.workAreaId===wa.id);
+    const total=waTasks.length; const done=waTasks.filter(t=>t.done).length;
+    const pct=total?Math.round((done/total)*100):0;
+    const status=wa.status||'active';
+    const statusClass=status==='completed'?'st-green':status==='paused'?'st-gray':'st-amber';
+    const statusLabel=status==='completed'?'Completed':status==='paused'?'Paused':'In progress';
+    projectsHtml+='<div class="proj-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="ht" style="font-size:14px;font-weight:700;color:#0B3D3F">'+esc(wa.name)+'</div><span class="st '+statusClass+'">'+statusLabel+'</span></div><div class="prog-bar" style="margin-bottom:8px"><div class="prog-fill" style="width:'+pct+'%"></div></div><div style="font-size:12px;color:#88AAA4">'+pct+'% complete &middot; '+(total-done)+' tasks open</div></div>';
+  });
+  if(!projectsHtml)projectsHtml='<div class="proj-card"><div style="padding:22px;color:#88AAA4">No active projects yet.</div></div>';
+  document.getElementById('render-overview').innerHTML='<div class="greeting-block"><div class="greeting-title">'+getGreeting()+', '+esc(firstName)+'.</div><p class="greeting-sub">Here\'s what needs your attention.</p></div><div style="margin-bottom:36px"><span class="sec-lbl">Needs your attention</span><div class="card" style="overflow:hidden">'+attentionHtml+'</div></div><div><span class="sec-lbl">Active projects</span><div class="card" style="overflow:hidden">'+projectsHtml+'</div></div>';
+}
+function renderWork(){
+  const{client,workAreas,tasks,approvals}=PORTAL_DATA;
+  if(!client)return;
+  let html='<div style="margin-bottom:24px"><h1 class="ht" style="font-size:22px;font-weight:900;letter-spacing:-.025em;margin-bottom:4px">Work Areas</h1><p style="font-size:13px;color:#6B7C7D">Your active projects.</p></div>';
+  if(!workAreas.length){html+='<div class="card" style="padding:22px;color:#88AAA4">No work areas yet.</div>';document.getElementById('render-work').innerHTML=html;return;}
+  workAreas.forEach(wa=>{
+    const waTasks=tasks.filter(t=>t.workAreaId===wa.id);
+    const total=waTasks.length; const done=waTasks.filter(t=>t.done).length;
+    const pct=total?Math.round((done/total)*100):0;
+    const status=wa.status||'active';
+    const statusClass=status==='completed'?'st-green':status==='paused'?'st-gray':'st-amber';
+    const statusLabel=status==='completed'?'Completed':status==='paused'?'Paused':'In progress';
+    html+='<div class="card" style="overflow:hidden;margin-bottom:16px"><div style="padding:20px 22px"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px"><div><div class="ht" style="font-size:15px;font-weight:800;color:#0B3D3F;letter-spacing:-.02em;margin-bottom:3px">'+esc(wa.name)+'</div><div style="font-size:12.5px;color:#6B7C7D">'+esc(wa.description||'')+'</div></div><span class="st '+statusClass+'">'+statusLabel+'</span></div><div class="prog-bar" style="height:5px;margin-bottom:6px"><div class="prog-fill" style="width:'+pct+'%"></div></div><div style="font-size:11.5px;color:#8E9E9E">'+pct+'% complete</div></div>';
+    const openTasks=waTasks.filter(t=>!t.done);
+    if(openTasks.length){
+      html+='<div style="border-top:1px solid #E8F0EC;padding:14px 22px"><div class="sec-lbl" style="margin-bottom:8px">Open tasks for you</div><div style="display:flex;flex-direction:column;gap:8px">';
+      openTasks.forEach(t=>{
+        html+='<div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#0B3D3F"><div style="width:6px;height:6px;border-radius:50%;background:var(--brand-primary);flex-shrink:0"></div>'+esc(t.title)+'<span class="st st-brand" style="font-size:10px;margin-left:auto">Needs you</span></div>';
+      });
+      html+='</div></div>';
+    }
+    const waApprovals=approvals.filter(a=>a.workAreaId===wa.id&&a.status==='waiting');
+    if(waApprovals.length){
+      html+='<div style="border-top:1px solid #E8F0EC;padding:14px 22px"><div class="sec-lbl" style="margin-bottom:8px">Needs your approval</div>';
+      waApprovals.forEach(a=>{
+        html+='<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#F2F7F5;border-radius:10px;border:1px solid #E0EAE7;margin-bottom:8px"><div style="flex:1"><div class="ht" style="font-size:13px;font-weight:600;color:#0B3D3F;margin-bottom:2px">'+esc(a.item)+'</div><div style="font-size:11.5px;color:#8E9E9E">'+esc(a.type||'Deliverable')+'</div></div><button class="act-btn act-approve" onclick="approveItem(this,'+esc(a.item)+')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Approve</button></div>';
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  document.getElementById('render-work').innerHTML=html;
+}
+</script>
+<script>
+function renderApprovals(){
+  const{client,workAreas,approvals}=PORTAL_DATA;
+  if(!client)return;
+  let html='<div style="margin-bottom:24px"><h1 class="ht" style="font-size:22px;font-weight:900;letter-spacing:-.025em;margin-bottom:4px">Approvals</h1><p style="font-size:13px;color:#6B7C7D">Deliverables waiting for your sign-off.</p></div>';
+  const pending=approvals.filter(a=>a.status==='waiting');
+  html+='<div class="sec-lbl">Pending ('+pending.length+')</div><div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px">';
+  if(!pending.length)html+='<div class="card" style="padding:22px;color:#88AAA4">Nothing pending approval.</div>';
+  pending.forEach((a,idx)=>{
+    const wa=workAreas.find(w=>w.id===a.workAreaId);
+    html+='<div class="card" style="padding:18px 20px;display:flex;align-items:flex-start;gap:14px" id="ap-'+idx+'"><div style="width:40px;height:40px;border-radius:10px;background:#EEF3FF;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3558CC" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B3D3F;margin-bottom:2px">'+esc(a.item)+'</div><div style="font-size:12px;color:#6B7C7D;margin-bottom:12px">'+esc(wa?wa.name:'Project')+' &middot; '+esc(a.type||'Deliverable')+' &middot; '+timeAgo(a.createdAt)+'</div><div style="display:flex;gap:8px"><button class="act-btn act-approve" onclick="approveItem(this,'+esc(a.item)+','+idx+')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Approve</button><button class="act-btn act-comment" onclick="showToast(\'Request sent\')">Request changes</button></div></div></div>';
+  });
+  html+='</div>';
+  const completed=approvals.filter(a=>a.status==='approved'||a.status==='signed');
+  if(completed.length){
+    html+='<div class="sec-lbl" style="margin-top:28px">Completed</div><div class="card" style="overflow:hidden"><table class="tbl"><thead><tr><th>Item</th><th>Decision</th><th>Date</th></tr></thead><tbody>';
+    completed.forEach(a=>{
+      const decision=a.status==='signed'?'Signed':'Approved';
+      html+='<tr><td class="ht" style="font-weight:600">'+esc(a.item)+'</td><td><span class="st st-green">'+decision+'</span></td><td style="color:#8E9E9E;font-size:12px">'+fmtDate(a.updatedAt)+'</td></tr>';
+    });
+    html+='</tbody></table></div>';
+  }
+  document.getElementById('render-approvals').innerHTML=html;
+}
+function renderFiles(){
+  const{client,workAreas,files}=PORTAL_DATA;
+  if(!client)return;
+  let html='<div style="margin-bottom:24px"><h1 class="ht" style="font-size:22px;font-weight:900;letter-spacing:-.025em;margin-bottom:4px">Files</h1><p style="font-size:13px;color:#6B7C7D">Everything shared with you.</p></div>';
+  const shared=files.filter(f=>f.visibility==='shared'||f.visibility==='client');
+  if(!shared.length){html+='<div class="card" style="padding:22px;color:#88AAA4">No files shared yet.</div>';document.getElementById('render-files').innerHTML=html;return;}
+  const byWa={};
+  shared.forEach(f=>{
+    const wa=workAreas.find(w=>w.id===f.workAreaId);
+    const key=wa?wa.name:'General';
+    if(!byWa[key])byWa[key]=[];
+    byWa[key].push(f);
+  });
+  Object.keys(byWa).forEach(key=>{
+    html+='<div class="sec-lbl">'+esc(key)+'</div><div style="margin-bottom:20px">';
+    byWa[key].forEach(f=>{
+      const ic=fileIcon(f.type);
+      html+='<div class="fi"><div class="fi-icon" style="background:'+ic.bg+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="'+ic.tc+'" stroke-width="2" stroke-linecap="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:600">'+esc(f.name)+'</div><div style="font-size:11.5px;color:#8E9E9E">'+esc(f.type||'File')+' &middot; '+fmtDate(f.createdAt)+'</div></div>';
+      if(f.status==='waiting')html+='<span class="st st-amber" style="font-size:10px;margin-right:8px">Pending approval</span>';
+      else if(f.status==='approved')html+='<span class="st st-green" style="font-size:10px;margin-right:8px">Approved</span>';
+      html+='<button class="act-btn act-comment" style="font-size:11px;padding:5px 11px" onclick="showToast(\'Downloading...\')">Download</button></div>';
+    });
+    html+='</div>';
+  });
+  document.getElementById('render-files').innerHTML=html;
+}
+</script>
+<script>
+function renderMessages(){
+  const{client,comments}=PORTAL_DATA;
+  if(!client)return;
+  let html='<div style="margin-bottom:24px"><h1 class="ht" style="font-size:22px;font-weight:900;letter-spacing:-.025em;margin-bottom:4px">Messages</h1><p style="font-size:13px;color:#6B7C7D">Shared conversations.</p></div>';
+  if(!comments.length){html+='<div class="card" style="padding:22px;color:#88AAA4">No messages yet.</div>';document.getElementById('render-messages').innerHTML=html;return;}
+  html+='<div id="thread-msgs" class="card" style="overflow:hidden;padding:16px 18px">';
+  comments.forEach(c=>{
+    const mine=c.author==='client';
+    html+='<div class="msg"'+(mine?' style="flex-direction:row-reverse"':'')+'><div class="msg-av"'+(mine?'':' style="background:#E8F0EC;color:#6B7C7D"')+'>'+getInitials(c.authorName||'Team')+'</div><div'+(mine?' style="max-width:75%"':'')+'><div class="msg-meta"'+(mine?' style="text-align:right"':'')+'>'+esc(c.authorName||'Team')+' &middot; '+timeAgo(c.createdAt)+'</div><div class="msg-body'+(mine?' mine':'')+'">'+esc(c.text)+'</div></div></div>';
+  });
+  html+='</div><div style="padding:12px 0;display:flex;gap:8px"><input id="msg-input" type="text" placeholder="Write a message..." style="flex:1;height:40px;padding:0 13px;border-radius:9px;border:1.5px solid #EEF2F2;font-family:Inter,sans-serif;font-size:13px;outline:none;background:#fff" onfocus="this.style.borderColor=\'var(--brand-primary)\'" onblur="this.style.borderColor=\'#EEF2F2\'" onkeydown="if(event.key===\'Enter\')sendMsg()"><button class="act-btn act-pay" onclick="sendMsg()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send</button></div>';
+  document.getElementById('render-messages').innerHTML=html;
+}
+function renderPayments(){
+  const{client,invoices}=PORTAL_DATA;
+  if(!client)return;
+  let html='<div style="margin-bottom:24px"><h1 class="ht" style="font-size:22px;font-weight:900;letter-spacing:-.025em;margin-bottom:4px">Payments</h1><p style="font-size:13px;color:#6B7C7D">Invoices and payment history.</p></div>';
+  const unpaid=invoices.filter(i=>i.status==='unpaid'||i.status==='pending');
+  if(unpaid.length){
+    html+='<div style="margin-bottom:24px"><div class="sec-lbl">Due</div>';
+    unpaid.forEach(inv=>{
+      html+='<div class="card" style="padding:22px 24px;margin-bottom:16px"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap"><div><div class="ht" style="font-size:15px;font-weight:800;color:#0B3D3F;margin-bottom:3px">'+esc(inv.invoiceNumber)+'</div><div style="font-size:13px;color:#6B7C7D;margin-bottom:2px">'+esc(inv.description||'')+'</div><div style="font-size:12px;color:#B91C1C;font-weight:600">Due '+fmtDate(inv.dueDate)+'</div></div><div style="text-align:right"><div class="ht" style="font-size:26px;font-weight:900;color:#0B3D3F;letter-spacing:-.03em">$'+esc(inv.total)+'</div><span class="st st-red">Unpaid</span></div></div>';
+      if(inv.lineItems&&inv.lineItems.length){
+        html+='<div style="border-top:1px solid #E8F0EC;padding-top:14px;margin-bottom:14px">';
+        inv.lineItems.forEach(li=>{html+='<div style="display:flex;justify-content:space-between;font-size:13px;color:#3A3A38;margin-bottom:7px"><span>'+esc(li.description)+'</span><span class="ht" style="font-weight:600">$'+esc(li.amount)+'</span></div>';});
+        html+='<div style="display:flex;justify-content:space-between;font-size:14px;font-weight:800;padding-top:7px;border-top:1px solid #E2EBE9;margin-top:4px" class="ht"><span>Total</span><span>$'+esc(inv.total)+'</span></div></div>';
+      }
+      html+='<div style="display:flex;gap:10px"><button class="act-btn act-pay" style="font-size:13px;padding:10px 20px;border-radius:10px" onclick="showToast(\'Redirecting to secure payment...\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pay $'+esc(inv.total)+'</button><button class="act-btn act-comment" style="font-size:13px;padding:10px 20px;border-radius:10px" onclick="showToast(\'Downloading invoice PDF...\')">Download PDF</button></div></div>';
+    });
+    html+='</div>';
+  }
+  const paid=invoices.filter(i=>i.status==='paid');
+  if(paid.length){
+    html+='<div class="sec-lbl">Payment history</div><div class="card" style="overflow:hidden"><table class="tbl"><thead><tr><th>Invoice</th><th>Description</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead><tbody>';
+    paid.forEach(inv=>{
+      html+='<tr><td class="ht" style="font-weight:600">'+esc(inv.invoiceNumber)+'</td><td style="font-size:12px;color:#6B7C7D">'+esc(inv.description||'')+'</td><td class="ht" style="font-weight:700">$'+esc(inv.total)+'</td><td style="font-size:12px;color:#8E9E9E">'+fmtDate(inv.paidDate||inv.dueDate)+'</td><td><span class="st st-green">Paid</span></td></tr>';
+    });
+    html+='</tbody></table></div>';
+  }
+  if(!unpaid.length&&!paid.length)html+='<div class="card" style="padding:22px;color:#88AAA4">No invoices yet.</div>';
+  document.getElementById('render-payments').innerHTML=html;
+}
+loadPortalData();
+</script>
+</body>
+</html>

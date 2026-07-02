@@ -1,0 +1,2428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vereli — Workspace</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-500-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/general-sans@latest/latin-700-normal.css" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+  <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-serif;background:#F6F9F8;color:#0B4F52;-webkit-font-smoothing:antialiased}
+.ht{font-family:'General Sans',sans-serif}
+#shell{display:flex;height:100vh;overflow:hidden}
+
+/* ─── SIDEBAR ─── */
+#sidebar{width:192px;min-width:192px;background:#F8FAF9;border-right:1px solid #E6EDEB;display:flex;flex-direction:column;overflow:hidden;transition:transform .26s cubic-bezier(.4,0,.2,1);z-index:10}
+.sb-logo{height:62px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid #E6EDEB;flex-shrink:0;gap:10px}
+.sb-logo img{height:24px;width:auto;opacity:1}
+.sb-ws-name{font-family:'General Sans',sans-serif;font-size:13px;font-weight:700;color:#0B4F52;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.sb-nav{flex:1;overflow-y:auto;padding:12px 10px;display:flex;flex-direction:column;gap:2px;scrollbar-width:none}
+.sb-nav::-webkit-scrollbar{display:none}
+.sb-group-label{font-family:'General Sans',sans-serif;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#A0C4C0;padding:10px 10px 4px;display:block}
+.ni{width:100%;height:38px;border-radius:10px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s;color:#6B9E99;position:relative;flex-shrink:0;padding:0 11px}
+.ni:hover{background:#E4EDEA;color:#0B4F52}
+.ni.active{background:#0B4F52;color:#fff;box-shadow:0 2px 8px rgba(11,79,82,.18)}
+.ni.active svg{stroke:#fff}
+.ni svg{width:15px;height:15px;stroke:currentColor;flex-shrink:0;stroke-width:1.75}
+.ni-label{font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;flex:1;letter-spacing:-.01em}
+.ni-badge{position:absolute;top:50%;right:10px;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#7BE0C5;flex-shrink:0}
+.ni.active .ni-badge{background:#7BE0C5}
+.ni-badge-count{position:absolute;top:50%;right:10px;transform:translateY(-50%);min-width:17px;height:17px;border-radius:9px;background:#17A39B;font-family:'General Sans',sans-serif;font-size:9px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.ni.active .ni-badge-count{background:rgba(255,255,255,.25);color:#fff}
+.sb-sep{height:1px;background:#E6EDEB;margin:8px 10px}
+.sb-foot{padding:10px 10px;border-top:1px solid #E6EDEB;flex-shrink:0}
+.sb-user{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;cursor:pointer;transition:background .12s}
+.sb-user:hover{background:#E4EDEA}
+.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:800;flex-shrink:0;cursor:pointer}
+
+/* ─── MAIN ─── */
+#main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;max-width:100%}
+#topbar{height:62px;background:#FBFBFA;border-bottom:1px solid #E6EDEB;display:flex;align-items:center;padding:0 36px;gap:12px;flex-shrink:0}
+.pg-breadcrumb{display:flex;align-items:center;gap:7px}
+.pg-title{font-family:'General Sans',sans-serif;font-size:14px;font-weight:700;color:#0B4F52;letter-spacing:-.02em}
+.pg-sub{font-size:12.5px;color:#7A9E99}
+#topbar .sp{flex:1}
+.tb-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 15px;border-radius:9px;border:1px solid #DCE5E6;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#4A6E6B;cursor:pointer;background:#fff;transition:all .15s;white-space:nowrap;text-decoration:none;box-shadow:0 1px 2px rgba(15,61,62,.04)}
+.tb-btn:hover{border-color:#A8CCC4;color:#0B4F52;background:#F8FDFB}
+.tb-btn.pri{background:#0B4F52;border-color:#0B4F52;color:#fff;box-shadow:0 2px 8px rgba(15,61,62,.22),0 1px 2px rgba(15,61,62,.1)}
+.tb-btn.pri:hover{background:#0D5558;box-shadow:0 4px 16px rgba(15,61,62,.28)}
+.tb-btn svg{width:12px;height:12px}
+#ham{display:none;background:none;border:none;cursor:pointer;padding:4px;color:#6B7C7D}
+
+/* ─── SCROLL AREA ─── */
+#cb{flex:1;overflow-y:auto;overflow-x:hidden;padding:40px 40px 80px;background:#F6F9F8}
+#cb::-webkit-scrollbar{width:3px}
+#cb::-webkit-scrollbar-track{background:transparent}
+#cb::-webkit-scrollbar-thumb{background:#C0D4D0;border-radius:2px}
+
+/* ─── VIEWS ─── */
+.view{display:none;max-width:1100px}
+.view.active{display:block}
+
+/* ─── SURFACE CARDS ─── */
+.card{background:#fff;border:1px solid #E2EBE9;border-radius:18px;box-shadow:0 1px 3px rgba(11,79,82,.03),0 4px 20px rgba(11,79,82,.04),inset 0 0 0 1px rgba(255,255,255,.7)}
+.card-sm{background:#fff;border:1px solid #E2EBE9;border-radius:13px;box-shadow:0 1px 3px rgba(11,79,82,.03)}
+
+/* ─── STATUS PILLS ─── */
+.st{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;white-space:nowrap;letter-spacing:.01em}
+.green{background:#E8F8F0;color:#1A8B5A;border:1px solid #C0E8D4}
+.amber{background:#FEF6E8;color:#8E5510;border:1px solid #F0DFC0}
+.blue{background:#EDF1FF;color:#3148C2;border:1px solid #D0D8F4}
+.purple{background:#F2EFFE;color:#5E3B9E;border:1px solid #DDD4F4}
+.gray{background:#F0F2F0;color:#5C6860;border:1px solid #E0E4E0}
+.red{background:#FEF2F0;color:#B01C1C;border:1px solid #F0D4D0}
+.teal{background:#E2EEF0;color:#0B4F52;border:1px solid #C0DCD8}
+.orange{background:#FFF0E9;color:#C4541A;border:1px solid #F0D8C8}
+
+/* ─── SECTION LABEL ─── */
+.slbl{font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:#8AADA8;margin-bottom:12px;display:block}
+
+/* ─── UNDERLINE TABS ─── */
+.tab-bar{display:flex;gap:0;border-bottom:1px solid #E2EBE9;margin-bottom:28px;flex-wrap:wrap}
+.tab{padding:9px 15px;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#8AADA8;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .12s,border-color .12s;white-space:nowrap}
+.tab:hover{color:#0B4F52}
+.tab.active{color:#0B4F52;border-bottom-color:#0B4F52}
+
+/* ─── ACTIVITY ROWS ─── */
+.act{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #EEF2F2;align-items:flex-start}
+.act:last-child{border-bottom:none}
+.adot{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.atext{font-size:13px;color:#3A5052;flex:1;line-height:1.55}
+.atime{font-size:11px;color:#9ABDB7;white-space:nowrap;margin-top:2px;flex-shrink:0}
+
+/* ─── CLIENT LIST ─── */
+.cl-list{background:#fff;border:1px solid #E2EBE9;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(11,79,82,.03),0 4px 14px rgba(11,79,82,.04),inset 0 0 0 1px rgba(255,255,255,.6)}
+.cl-row{display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid #EEF2F2;cursor:pointer;transition:background .12s}
+.cl-row:last-child{border-bottom:none}
+.cl-row:hover{background:#F7FAF9}
+.cl-av{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:13px;font-weight:800;flex-shrink:0}
+.cl-add-row{display:flex;align-items:center;gap:12px;padding:18px 22px;cursor:pointer;transition:all .12s;border-bottom:1px solid #EEF2F2;color:#6A8E89}
+.cl-add-row:last-child{border-bottom:none}
+.cl-add-row:hover{background:#F0F8F5;color:#0B4F52}
+.cl-header{display:none;align-items:center;gap:14px;padding:10px 22px;border-bottom:1px solid #EEF2F2;background:#FBFBFA;font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ABDB7}
+@media(min-width:768px){
+  .cl-header{display:flex}
+  .cl-row{padding:16px 22px}
+}
+@media(max-width:767px){
+  .cl-header{display:none!important}
+  .cl-row{flex-wrap:wrap;padding:14px 16px}
+  .cl-row > div[style*="width:100px"]{display:none}
+  .cl-row > div[style*="width:90px"]:not(:first-child){display:none}
+}
+
+/* ─── WORK AREA ROWS ─── */
+.wa-row{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid #EEF2F2;cursor:pointer;transition:background .12s}
+.wa-row:last-child{border-bottom:none}
+.wa-row:hover{background:#FBFBFA}
+.wa-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ─── TASK ROWS ─── */
+.tr{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #EEF2F2}
+.tr:last-child{border-bottom:none}
+.tck{width:18px;height:18px;border-radius:6px;border:1.5px solid #C2D4CE;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s}
+.tck.done{background:#17A39B;border-color:#17A39B}
+.tt{font-size:13px;color:#1A3436;flex:1;line-height:1.4}
+.tt.done{color:#8AADA8;text-decoration:line-through}
+.ta{font-size:11px;color:#AACCCA;white-space:nowrap}
+
+/* ─── INVOICE / FILE ROWS ─── */
+.ir{display:flex;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid #EEF2F2}
+.ir:last-child{border-bottom:none}
+.iname{font-family:'General Sans',sans-serif;font-size:13px;font-weight:700;color:#0B4F52}
+.imeta{font-size:11.5px;color:#7A9E99;margin-top:2px}
+
+/* ─── PORTAL TOGGLE ─── */
+.tog{width:40px;height:22px;border-radius:99px;background:#D8E4E0;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.tog.on{background:#17A39B}
+.tog-th{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.16);transition:left .18s cubic-bezier(.4,0,.2,1)}
+.tog.on .tog-th{left:21px}
+
+/* ─── STAT CARDS ─── */
+.stat{padding:22px 24px;border-radius:14px;background:#fff;border:1px solid #E2EBE9;box-shadow:0 1px 3px rgba(11,79,82,.03),0 3px 12px rgba(11,79,82,.04),inset 0 0 0 1px rgba(255,255,255,.6)}
+.stat-n{font-family:'General Sans',sans-serif;font-size:34px;font-weight:900;letter-spacing:-.04em;line-height:1}
+.stat-l{font-size:11.5px;color:#7A9E99;margin-top:6px;font-weight:500}
+.stat-trend{font-size:11px;font-family:'General Sans',sans-serif;font-weight:700;margin-top:8px;display:flex;align-items:center;gap:3px}
+
+/* ─── PROGRESS BAR ─── */
+.prog{height:3px;background:#E2EBE9;border-radius:99px;overflow:hidden;margin-top:8px}
+.prog-f{height:100%;border-radius:99px;background:#17A39B;transition:width .4s ease}
+
+/* ─── FORM FIELDS ─── */
+.field{width:100%;height:44px;padding:0 14px;border-radius:10px;border:1.5px solid #DCE5E6;background:#fff;font-size:13px;font-family:'Inter',sans-serif;color:#0B4F52;outline:none;transition:border-color .15s,box-shadow .15s}
+.field:focus{border-color:#17A39B;box-shadow:0 0 0 3px rgba(31,138,112,.09)}
+.field::placeholder{color:#BACDC9}
+.flbl{font-size:11px;font-family:'General Sans',sans-serif;font-weight:700;color:#5A7A74;display:block;margin-bottom:7px;letter-spacing:.01em;text-transform:uppercase}
+
+/* ─── UPLOAD ZONE ─── */
+.upl{border:1.5px dashed #CCDDD9;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .12s;background:#FBFBFA}
+.upl:hover{border-color:#7A9E99;background:#F5FAF7}
+
+/* ─── COLOR DOTS ─── */
+.cdot{width:26px;height:26px;border-radius:50%;border:2.5px solid transparent;cursor:pointer;transition:border-color .12s;flex-shrink:0}
+.cdot.on{border-color:#0B4F52}
+
+/* ─── PORTAL BANNER ─── */
+.pb{border-radius:14px;padding:18px 20px;display:flex;align-items:center;gap:16px;margin-bottom:22px}
+.pb.on{background:#E2F2EC;border:1px solid #AACFBE}
+.pb.off{background:#F2F5F3;border:1px solid #DCE5E6}
+
+/* ─── EMPTY STATE ─── */
+.emp{text-align:center;padding:60px 24px}
+.emp-ico{width:52px;height:52px;border-radius:15px;background:#EDF2F0;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.emp-t{font-family:'General Sans',sans-serif;font-size:15px;font-weight:700;color:#0B4F52;margin-bottom:6px;letter-spacing:-.01em}
+.emp-b{font-size:13px;color:#7A9E99;max-width:240px;margin:0 auto;line-height:1.65}
+
+/* ─── MODAL ─── */
+#mod{display:none;position:fixed;inset:0;background:rgba(6,24,26,.46);z-index:200;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)}
+#mod.open{display:flex}
+.modal{background:#fff;border-radius:22px;width:100%;max-width:540px;box-shadow:0 30px 80px rgba(6,24,26,.22),0 0 0 1px rgba(255,255,255,.6);overflow:hidden;max-height:90vh;display:flex;flex-direction:column}
+.mh{padding:24px 28px 20px;border-bottom:1px solid #EBF0EC;display:flex;align-items:center;gap:14px;flex-shrink:0}
+.mb{padding:26px 28px;overflow-y:auto;flex:1}
+.mf{padding:18px 28px;border-top:1px solid #EEF2F2;display:flex;gap:10px;justify-content:flex-end;flex-shrink:0}
+
+/* ─── CLIENT WORKSPACE HEADER ─── */
+.cw-banner{border-radius:18px 18px 0 0;height:110px;background:linear-gradient(135deg,#062B2D 0%,#14857A 100%);position:relative;overflow:hidden;flex-shrink:0}
+.cw-banner-inner{position:absolute;inset:0;background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="110"><defs><radialGradient id="g" cx="75%" cy="40%" r="55%"><stop offset="0%" stop-color="%231F8A70" stop-opacity=".5"/><stop offset="100%" stop-color="%230F3D3E" stop-opacity="0"/></radialGradient></defs><rect width="400" height="110" fill="url(%23g)"/></svg>') no-repeat center;background-size:cover}
+.cw-header-body{background:#fff;border:1px solid #E2EBE9;border-top:none;border-radius:0 0 18px 18px;padding:0 26px 22px}
+.cw-logo-wrap{display:flex;align-items:flex-end;gap:16px;margin-top:-26px;margin-bottom:16px}
+.cw-logo{width:52px;height:52px;border-radius:14px;border:3px solid #fff;box-shadow:0 4px 18px rgba(15,61,62,.14);display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:17px;font-weight:800;flex-shrink:0}
+.cw-meta{padding-top:10px;flex:1;min-width:0}
+.cw-name{font-family:'General Sans',sans-serif;font-size:19px;font-weight:800;color:#0B4F52;letter-spacing:-.025em;margin-bottom:4px}
+.cw-sub{font-size:13px;color:#6A8E89;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cw-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+
+/* ─── DASHBOARD SPECIFIC ─── */
+.dash-kpi{background:#fff;border:1px solid #E2EBE9;border-radius:16px;padding:22px 24px;box-shadow:0 1px 3px rgba(11,79,82,.03),0 4px 18px rgba(11,79,82,.04),inset 0 0 0 1px rgba(255,255,255,.65);position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.dash-kpi:hover{box-shadow:0 6px 28px rgba(11,79,82,.08),inset 0 0 0 1px rgba(255,255,255,.65);transform:translateY(-1px)}
+.dash-kpi::before{content:'';position:absolute;top:-24px;right:-24px;width:100px;height:100px;border-radius:50%;opacity:.04;background:currentColor}
+.attn-row{display:flex;align-items:center;gap:12px;padding:15px 22px;border-bottom:1px solid #EEF2F2;cursor:pointer;transition:background .12s}
+.attn-row:last-child{border-bottom:none}
+.attn-row:hover{background:#F8FBFA}
+
+/* ─── DATA TABLE ─── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8AADA8;padding:10px 16px;text-align:left;border-bottom:1px solid #E2EBE9;background:#FBFBFA}
+.tbl td{padding:12px 16px;border-bottom:1px solid #EEF2F2;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#F8FBFA}
+
+/* ─── PAYMENT EXPERIENCE ─── */
+.pay-card{background:linear-gradient(140deg,#062B2D 0%,#0B4F52 60%,#17A39B 100%);border-radius:20px;padding:28px 30px;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 40px rgba(12,52,53,.3)}
+.pay-card::before{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.05)}
+.pay-card::after{content:'';position:absolute;bottom:-40px;left:-30px;width:140px;height:140px;border-radius:50%;background:rgba(31,138,112,.2)}
+
+/* ─── MOBILE ─── */
+#mob-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.32);z-index:40}
+@media(max-width:900px){
+  #sidebar{width:192px;position:fixed;top:0;left:0;bottom:0;z-index:50;transform:translateX(-100%);box-shadow:6px 0 32px rgba(0,0,0,.14)}
+  #sidebar.open{transform:translateX(0)}
+  #mob-ov.show{display:block}
+  #ham{display:flex!important;align-items:center;color:#6B7C7D}
+  #cb{padding:20px 16px 72px;overflow-x:hidden}
+  #main{overflow-x:hidden}
+  #dash-kpi-row{grid-template-columns:1fr 1fr!important}
+  #dash-main-grid{grid-template-columns:1fr!important}
+  .stat{padding:18px 20px}
+  .inv-stat-grid .stat,.pay-stat-grid .stat{padding:14px 12px!important}
+  .inv-stat-grid .stat-n,.pay-stat-grid .stat-n{font-size:20px!important}
+  .tab-bar{overflow-x:auto;flex-wrap:nowrap!important;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tab-bar::-webkit-scrollbar{display:none}
+  .tab{white-space:nowrap;flex-shrink:0}
+  .cp-side-col{width:100%!important;flex-direction:column!important}
+  .cp-stat-row{width:100%!important;flex-wrap:wrap!important}
+  .cp-stat-box{flex:1!important;min-width:calc(33% - 6px)!important}
+  .cp-actions{flex-wrap:wrap!important}
+  .view-header-row{flex-direction:column!important;align-items:flex-start!important;gap:12px!important}
+  .view-header-row .filter-row{flex-wrap:wrap!important;width:100%}
+  .view-header-row select{flex:1 1 calc(50% - 4px)!important;min-width:0!important}
+  #view-tasks .filter-row{display:flex!important;flex-wrap:wrap!important;gap:6px!important;width:100%}
+  #view-tasks .filter-row select{flex:1!important;min-width:120px!important}
+  .files-table-wrap{display:none!important}
+  .files-card-list{display:flex!important;flex-direction:column;gap:10px}
+  .modal{max-width:100%!important;margin:0!important;border-radius:20px 20px 0 0!important;max-height:92vh!important}
+  #mod{align-items:flex-end!important;padding:0!important}
+  .card{overflow:hidden}
+  #cg{grid-template-columns:1fr!important}
+  #pay-rev-grid{grid-template-columns:1fr 1fr!important}
+  .pay-win-btn{padding:4px 9px!important;font-size:10.5px!important}
+  .ir{flex-wrap:nowrap;min-width:0}
+  .iname,.imeta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cw-banner{height:80px;border-radius:14px 14px 0 0}
+  .cw-header-body{padding:0 18px 18px}
+  .cw-actions{gap:6px}
+  #cb{padding:16px 14px 72px}
+  .dash-kpi{padding:18px 18px}
+}
+  </style>
+</head>
+<body>
+
+<!-- ADD CLIENT MODAL -->
+<div id="mod">
+  <div class="modal">
+    <div class="mh">
+      <div style="width:36px;height:36px;border-radius:10px;background:#DDE8E0;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#17A39B" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>
+      </div>
+      <div style="flex:1">
+        <div class="ht" style="font-size:15px;font-weight:800;color:#121212">Add new client</div>
+        <div style="font-size:12px;color:#8E9E9E;margin-top:1px">Set up a client record and workspace</div>
+      </div>
+      <button onclick="closeMod()" style="background:none;border:none;cursor:pointer;color:#8E9E9E;padding:4px;display:flex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="mb">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div>
+          <label class="flbl">Client / company name <span style="color:#E87070">*</span></label>
+          <input type="text" class="field" placeholder="e.g. Acme Co." id="nc-name">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div><label class="flbl">Primary contact</label><input type="text" class="field" placeholder="Jane Smith" id="nc-contact"></div>
+          <div><label class="flbl">Contact email <span style="color:#E87070">*</span></label><input type="email" class="field" placeholder="jane@client.co" id="nc-email"></div>
+        </div>
+        <div>
+          <label class="flbl">Service category</label>
+          <select class="field" id="nc-svc" style="appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236B6B68%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22/></svg>');background-repeat:no-repeat;background-position:right 12px center;padding-right:36px">
+            <option value="">Select…</option>
+            <option>Strategy</option>
+            <option>Communications</option>
+            <option>Media</option>
+            <option>Editorial</option>
+            <option>Advisory</option>
+            <option>Design</option>
+            <option>Production</option>
+            <option>Marketing</option>
+            <option>Partnerships</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="flbl">Engagement status</label>
+          <div style="display:flex;gap:8px" id="eng-opts">
+            <label id="eng-active" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1.5px solid #17A39B;background:#EBF5F0;cursor:pointer;font-size:13px;font-family:'General Sans',sans-serif;font-weight:600;transition:all .12s" onclick="setEng('active')"><span style="width:8px;height:8px;border-radius:50%;background:#2D6A4F;display:inline-block"></span>Active</label>
+            <label id="eng-prospect" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1.5px solid #EEF2F2;cursor:pointer;font-size:13px;font-family:'General Sans',sans-serif;font-weight:600;transition:all .12s" onclick="setEng('prospect')"><span style="width:8px;height:8px;border-radius:50%;background:#8E9E9E;display:inline-block"></span>Prospect</label>
+            <label id="eng-paused" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1.5px solid #EEF2F2;cursor:pointer;font-size:13px;font-family:'General Sans',sans-serif;font-weight:600;transition:all .12s" onclick="setEng('paused')"><span style="width:8px;height:8px;border-radius:50%;background:#B0B0AD;display:inline-block"></span>Paused</label>
+          </div>
+          <input type="hidden" id="nc-eng" value="active">
+        </div>
+        <div style="padding:16px 18px;border-radius:12px;border:1px solid #E2EBE9;background:#F8F7F4">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div><div class="ht" style="font-size:13px;font-weight:700;color:#121212;margin-bottom:2px">Enable client portal</div><div style="font-size:12px;color:#8E9E9E">Give this client a branded login</div></div>
+            <div class="tog" id="nc-ptog" onclick="toggleNP()"><div class="tog-th"></div></div>
+          </div>
+        </div>
+        <div>
+          <label class="flbl">Client logo <span style="font-weight:400;color:#B8B8B4">(optional)</span></label>
+          <div class="upl" onclick="toast('File picker in production')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B0B0AD" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 8px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="ht" style="font-size:12px;font-weight:600;color:#6B7C7D">Upload logo</div>
+            <div style="font-size:11px;color:#B0B0AD;margin-top:2px">PNG or SVG preferred</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mf" id="mod-foot">
+      <button onclick="closeMod()" class="tb-btn">Cancel</button>
+      <button onclick="addClient()" class="tb-btn pri">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Create client
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPANY SETUP MODAL (temporary for existing users) -->
+<div id="comp-mod" style="display:none;position:fixed;inset:0;background:rgba(6,24,26,.46);z-index:200;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)">
+  <div class="modal">
+    <div class="mh">
+      <div style="width:36px;height:36px;border-radius:10px;background:#DDE8E0;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#17A39B" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div style="flex:1">
+        <div class="ht" style="font-size:15px;font-weight:800;color:#121212">Set your workspace name</div>
+        <div style="font-size:12px;color:#8E9E9E;margin-top:1px">This appears across your dashboard and client portals</div>
+      </div>
+    </div>
+    <div class="mb">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div>
+          <label class="flbl">Company / workspace name <span style="color:#E87070">*</span></label>
+          <input type="text" class="field" placeholder="e.g. Kreatix Technologies" id="comp-name">
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button onclick="hideCompMod();initFromApi();" class="tb-btn" style="color:#7A9E99">Skip for now</button>
+      <button onclick="saveCompany()" class="tb-btn pri">Save workspace name</button>
+    </div>
+  </div>
+</div>
+
+<div id="auth-overlay" style="display:none;position:fixed;inset:0;background:#F6F9F8;z-index:9999;align-items:center;justify-content:center;padding:24px;overflow-y:auto">
+  <div style="width:100%;max-width:380px">
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="font-family:'General Sans',sans-serif;font-size:28px;font-weight:800;color:#0B4F52;letter-spacing:-.03em;margin-bottom:6px">Vereli</div>
+      <div style="font-size:13.5px;color:#7A9E99">Client workspace for agencies</div>
+    </div>
+    <div id="auth-box" style="background:#fff;border:1px solid #E2EBE9;border-radius:18px;padding:28px;box-shadow:0 4px 24px rgba(11,79,82,.06)">
+      <div id="auth-tabs" style="display:flex;gap:1px;background:#EEF3F0;border-radius:8px;padding:3px;margin-bottom:24px">
+        <button id="tab-login" onclick="setAuthTab('login')" style="flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:700;background:#fff;color:#0B4F52;box-shadow:0 1px 3px rgba(15,61,62,.08)">Log in</button>
+        <button id="tab-register" onclick="setAuthTab('register')" style="flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:700;background:transparent;color:#8AADA8">Register</button>
+      </div>
+      <div id="auth-login">
+        <div style="margin-bottom:16px"><label class="flbl">Email</label><input type="email" class="field" id="li-email" placeholder="you@agency.com"></div>
+        <div style="margin-bottom:20px"><label class="flbl">Password</label><input type="password" class="field" id="li-pass" placeholder="••••••••"></div>
+        <button onclick="doLogin()" class="tb-btn pri" style="width:100%;justify-content:center;height:44px">Log in</button>
+      </div>
+      <div id="auth-register" style="display:none">
+        <div style="margin-bottom:14px"><label class="flbl">Full name</label><input type="text" class="field" id="reg-name" placeholder="Jane Smith"></div>
+        <div style="margin-bottom:14px"><label class="flbl">Company / Workspace</label><input type="text" class="field" id="reg-company" placeholder="Kreatix Technologies"></div>
+        <div style="margin-bottom:14px"><label class="flbl">Email</label><input type="email" class="field" id="reg-email" placeholder="you@agency.com"></div>
+        <div style="margin-bottom:20px"><label class="flbl">Password</label><input type="password" class="field" id="reg-pass" placeholder="••••••••"></div>
+        <button onclick="doRegister()" class="tb-btn pri" style="width:100%;justify-content:center;height:44px">Create account</button>
+      </div>
+      <div id="auth-error" style="margin-top:12px;font-size:12px;color:#B01C1C;text-align:center;display:none"></div>
+    </div>
+  </div>
+</div>
+
+<div id="shell">
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sb-logo">
+    <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" style="height:24px;width:auto;flex-shrink:0">
+    <span class="sb-ws-name" id="sb-ws-name">Workspace</span>
+  </div>
+  <nav class="sb-nav">
+    <div class="ni active" id="nav-dashboard" onclick="goView('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span class="ni-label">Dashboard</span>
+    </div>
+    <div class="ni" id="nav-clients" onclick="goView('clients',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="ni-label" id="nav-clients-label">Clients</span>
+      <span class="ni-badge-count" id="cl-bdg">0</span>
+    </div>
+    <div class="ni" id="nav-deliverables" onclick="goView('deliverables',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      <span class="ni-label">Deliverables</span>
+    </div>
+    <div class="ni" id="nav-contracts" onclick="goView('contracts',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h6"/></svg>
+      <span class="ni-label">Contracts</span>
+    </div>
+    <div class="ni" id="nav-invoices" onclick="goView('invoices',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      <span class="ni-label">Invoices</span>
+      <span class="ni-badge" id="inv-dot"></span>
+    </div>
+    <div class="ni" id="nav-payments" onclick="goView('payments',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span class="ni-label">Payments</span>
+    </div>
+    <div class="sb-sep"></div>
+    <div class="ni" id="nav-files" onclick="goView('files',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      <span class="ni-label">Files</span>
+    </div>
+    <div class="ni" id="nav-team" onclick="goView('team',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>
+      <span class="ni-label">Team</span>
+    </div>
+    <div class="ni" id="nav-early-access" onclick="goView('early-access',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+      <span class="ni-label">Early Access</span>
+      <span class="ni-badge-count" id="ea-bdg" style="display:none">0</span>
+    </div>
+    <div class="ni" id="nav-settings" onclick="goView('settings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="ni-label">Settings</span>
+    </div>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-user" id="sb-user">
+      <div class="av" id="sb-av" style="background:#DDE8E5;color:#0B4F52"></div>
+      <div style="min-width:0;flex:1">
+        <div class="ht" id="sb-name" style="font-size:12px;font-weight:700;color:#0B4F52;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div style="font-size:10.5px;color:#8AADA8;margin-top:1px" id="sb-role"></div>
+      </div>
+      <button onclick="doLogout()" style="background:none;border:none;cursor:pointer;color:#8AADA8;padding:4px;display:flex" title="Log out">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+<div id="mob-ov" onclick="closeSB()"></div>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="topbar">
+    <button id="ham" onclick="openSB()" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="pg-breadcrumb">
+      <span class="pg-title" id="pt">Dashboard</span>
+      <span class="pg-sub" id="pt-sub" style="display:none"></span>
+    </div>
+    <div class="sp"></div>
+    <div id="tba" style="display:flex;align-items:center;gap:8px"></div>
+    <div style="width:1px;height:20px;background:#E2EBE9;margin:0 4px"></div>
+    <div style="display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:8px;background:#E8F0EE;border:1px solid #DCE9E5">
+      <div style="width:6px;height:6px;border-radius:50%;background:#17A39B;flex-shrink:0"></div>
+      <span class="ht" id="top-ws-name" style="font-size:11.5px;font-weight:700;color:#0B4F52;letter-spacing:-.01em">Workspace</span>
+    </div>
+  </div>
+  <div id="cb">
+
+    <!-- ════ DASHBOARD ════ -->
+    <div class="view active" id="view-dashboard">
+      <div style="margin-bottom:36px">
+        <div class="ht" style="font-size:28px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:6px;line-height:1.15" id="dash-greeting">Good morning</div>
+        <div style="font-size:14px;color:#7A9E99;font-weight:400;line-height:1.5">Here's what's happening with your clients today.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px" id="dash-kpi-row"></div>
+      <div style="display:grid;grid-template-columns:5fr 4fr;gap:22px;margin-bottom:28px" id="dash-main-grid">
+        <div style="display:flex;flex-direction:column;gap:22px">
+          <div>
+            <span class="slbl">Needs attention</span>
+            <div class="card" style="overflow:hidden" id="dash-attn"></div>
+          </div>
+          <div>
+            <span class="slbl">Active clients</span>
+            <div id="dash-clients" style="display:flex;flex-direction:column;gap:10px"></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:22px">
+          <div>
+            <span class="slbl">Recent activity</span>
+            <div class="card" style="overflow:hidden;padding:0 22px" id="dash-act"></div>
+          </div>
+          <div>
+            <span class="slbl">Revenue</span>
+            <div class="card" style="padding:22px 24px" id="dash-rev"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ CLIENTS ════ -->
+    <div class="view" id="view-clients">
+      <div id="cg-view">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;gap:12px;flex-wrap:wrap">
+          <div>
+            <div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Clients</div>
+            <div style="font-size:13.5px;color:#7A9E99" id="cl-subtitle">Loading…</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #DCE5E6;border-radius:10px;padding:7px 13px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8AADA8" stroke-width="1.75" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" placeholder="Search clients…" style="background:none;border:none;outline:none;font-size:13px;color:#0B4F52;width:140px;font-family:'Inter',sans-serif" oninput="filterCG(this.value)">
+            </div>
+            <button onclick="openMod()" class="tb-btn pri">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add client</button>
+          </div>
+        </div>
+        <div id="cg" class="cl-list"></div>
+      </div>
+      <div id="cp-view" style="display:none"></div>
+    </div>
+
+    <!-- ════ (Tasks view hidden — no dedicated nav item now, accessed from client workspace) ════ -->
+    <div class="view" id="view-tasks" style="display:none!important"></div>
+
+    <!-- ════ DELIVERABLES ════ -->
+    <div class="view" id="view-deliverables">
+      <div style="max-width:760px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px">
+          <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Deliverables</div><div style="font-size:13.5px;color:#7A9E99">Files shared with clients across all workspaces</div></div>
+          <div style="display:flex;gap:8px">
+            <select style="height:38px;padding:0 12px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;box-shadow:0 1px 2px rgba(15,61,62,.04)">
+              <option>All clients</option>${DATA.clients.map(c=>`<option>${c.name}</option>`).join('')}
+            </select>
+            <button onclick="openFileUploadGlobal()" class="tb-btn pri">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button>
+          </div>
+        </div>
+        <div class="card" style="overflow:hidden" id="deliverables-list"></div>
+      </div>
+    </div>
+
+    <!-- ════ CONTRACTS ════ -->
+    <div class="view" id="view-contracts">
+      <div style="max-width:760px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px">
+          <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Contracts</div><div style="font-size:13.5px;color:#7A9E99">Agreements sent, signed, and stored</div></div>
+          <button onclick="document.getElementById('contract-file').click()" class="tb-btn pri">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New contract</button>
+        </div>
+        <div class="card" style="overflow:hidden" id="contracts-list"></div>
+      </div>
+    </div>
+
+    <!-- ════ FILES ════ -->
+    <div class="view" id="view-files">
+      <div style="max-width:880px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px">
+          <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Files</div><div style="font-size:13.5px;color:#7A9E99">All files across your workspace</div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <select style="height:36px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex:1;min-width:110px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
+              <option>All clients</option>${DATA.clients.map(c=>`<option>${c.name}</option>`).join('')}
+            </select>
+            <select style="height:36px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex:1;min-width:90px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
+              <option>All types</option><option>PDF</option><option>Figma</option><option>Image</option><option>Video</option>
+            </select>
+            <select style="height:36px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex:1;min-width:110px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
+              <option>Visibility: All</option><option>Internal only</option><option>Shared with client</option>
+            </select>
+          </div>
+        </div>
+        <div id="files-list"></div>
+      </div>
+    </div>
+
+    <!-- ════ INVOICES ════ -->
+    <div class="view" id="view-invoices">
+      <div style="max-width:760px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px">
+          <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Invoices</div><div style="font-size:13.5px;color:#7A9E99">Billing across all client engagements</div></div>
+          <button onclick="openInvModal()" class="tb-btn pri">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New invoice</button>
+        </div>
+        <div class="inv-stat-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px">
+          <div class="stat"><div class="stat-n" id="inv-stat-paid" style="font-size:26px;color:#22C55E">—</div><div class="stat-l">Paid this month</div></div>
+          <div class="stat"><div class="stat-n" id="inv-stat-pending" style="font-size:26px;color:#8E5510">—</div><div class="stat-l">Pending</div></div>
+          <div class="stat"><div class="stat-n" id="inv-stat-overdue" style="font-size:26px;color:#A81A1A">—</div><div class="stat-l">Overdue</div></div>
+        </div>
+        <div class="card" style="overflow:hidden">
+          <div style="padding:17px 24px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between">
+            <span class="ht" style="font-size:13px;font-weight:700;color:#0B4F52;letter-spacing:-.01em">All invoices</span>
+            <span class="st purple" style="font-size:10px" id="inv-unpaid-badge">Loading…</span>
+          </div>
+          <div style="padding:0 24px" id="inv-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PAYMENTS ════ -->
+    <div class="view" id="view-payments">
+      <div style="max-width:760px">
+        <div style="margin-bottom:32px">
+          <div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Payments</div>
+          <div style="font-size:13.5px;color:#7A9E99">Revenue collected and outstanding balance</div>
+        </div>
+        <!-- Premium payment hero card -->
+        <div class="pay-card" style="margin-bottom:22px">
+          <div style="position:relative;z-index:1">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+              <div>
+                <div style="font-size:10.5px;font-family:'General Sans',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.45);margin-bottom:10px">Collected this month</div>
+                <div class="ht" style="font-size:44px;font-weight:900;letter-spacing:-.05em;color:#fff;line-height:1" id="pay-collected">—</div>
+              </div>
+              <div style="display:flex;gap:2px;background:rgba(0,0,0,.2);border-radius:10px;padding:3px" id="pay-win-tabs">
+                <button onclick="switchPayWin('month',this)" class="pay-win-btn" style="padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;background:rgba(255,255,255,.18);color:#fff;letter-spacing:-.01em">This month</button>
+                <button onclick="switchPayWin('year',this)" class="pay-win-btn" style="padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;background:transparent;color:rgba(255,255,255,.45);letter-spacing:-.01em">This year</button>
+                <button onclick="switchPayWin('all',this)" class="pay-win-btn" style="padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;background:transparent;color:rgba(255,255,255,.45);letter-spacing:-.01em">All time</button>
+              </div>
+            </div>
+            <div class="pay-stat-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px" id="pay-rev-grid">
+              <div style="padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)"><div class="ht" style="font-size:22px;font-weight:900;color:rgba(255,218,140,1);letter-spacing:-.03em" id="pay-pending">—</div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:5px;font-weight:500">Pending collection</div></div>
+              <div style="padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)"><div class="ht" style="font-size:22px;font-weight:900;color:rgba(255,140,140,1);letter-spacing:-.03em" id="pay-overdue">—</div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:5px;font-weight:500">Overdue</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="overflow:hidden">
+          <div style="padding:17px 24px;border-bottom:1px solid #EEF2F2"><span class="ht" style="font-size:13px;font-weight:700;color:#0B4F52;letter-spacing:-.01em">Payment history</span></div>
+          <div style="padding:0 24px" id="pay-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ ACTIVITY (kept hidden — accessible from dashboard) ════ -->
+    <div class="view" id="view-activity" style="display:none!important"></div>
+
+    <!-- ════ TEAM ════ -->
+    <div class="view" id="view-team">
+      <div style="max-width:600px">
+        <div style="margin-bottom:32px">
+          <div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Team</div>
+          <div style="font-size:13.5px;color:#7A9E99" id="team-sub">Members of your workspace</div>
+        </div>
+        <div class="card" style="overflow:hidden;margin-bottom:14px">
+          <div style="padding:18px 24px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between">
+            <span class="ht" style="font-size:13px;font-weight:700;color:#0B4F52;letter-spacing:-.01em">Members</span>
+            <button onclick="inviteMember()" class="tb-btn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Invite member</button>
+          </div>
+          <div style="padding:22px 24px"><div style="display:flex;flex-direction:column;gap:18px" id="team-list"></div></div>
+        </div>
+        <div class="card" style="padding:22px 24px">
+          <div class="ht" style="font-size:13px;font-weight:700;color:#0A2E2F;margin-bottom:16px;letter-spacing:-.01em">Access roles</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:#F6F9F8;border-radius:10px;border:1px solid #E2EBE9"><span class="ht" style="color:#0A2E2F;font-weight:700;font-size:13px">Owner</span><span style="color:#7A9E99;font-size:12px">Full access, billing, settings</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:#F6F9F8;border-radius:10px;border:1px solid #E2EBE9"><span class="ht" style="color:#0A2E2F;font-weight:700;font-size:13px">Admin</span><span style="color:#7A9E99;font-size:12px">Manage clients, team, and work</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:#F6F9F8;border-radius:10px;border:1px solid #E2EBE9"><span class="ht" style="color:#0A2E2F;font-weight:700;font-size:13px">Team Member</span><span style="color:#7A9E99;font-size:12px">Work on assigned client areas</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:#F6F9F8;border-radius:10px;border:1px solid #E2EBE9"><span class="ht" style="color:#0A2E2F;font-weight:700;font-size:13px">Finance</span><span style="color:#7A9E99;font-size:12px">Invoices and payments only</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:#F6F9F8;border-radius:10px;border:1px solid #E2EBE9"><span class="ht" style="color:#0A2E2F;font-weight:700;font-size:13px">Client Viewer</span><span style="color:#7A9E99;font-size:12px">View-only access, no internal data</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ EARLY ACCESS ════ -->
+    <div class="view" id="view-early-access">
+      <div id="ea-view-content">Loading...</div>
+    </div>
+
+    <!-- ════ SETTINGS ════ -->
+    <div class="view" id="view-settings">
+      <div style="max-width:580px">
+        <div style="margin-bottom:32px">
+          <div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Settings</div>
+          <div style="font-size:13.5px;color:#7A9E99">Workspace configuration and integrations</div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active" onclick="settingsTab('general',this)">General</div>
+          <div class="tab" onclick="settingsTab('branding',this)">Branding</div>
+          <div class="tab" onclick="settingsTab('payments',this)">Payments</div>
+          <div class="tab" onclick="settingsTab('workflow',this)">Workflow</div>
+        </div>
+        <div id="settings-content"></div>
+      </div>
+    </div>
+
+  </div><!-- /cb -->
+</div><!-- /main -->
+</div><!-- /shell -->
+<script id="content" type="application/json">{}</script>
+<script type="module">
+  const submitContactForm = async () => ({ ok: false, error: "Not configured" });
+  document.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitContactForm } }));
+</script>
+<script>
+/* ══ DATA ══ */
+const PCOLS=['#2D6A4F','#3558CC','#121212','#A0621A','#6B3FA0','#B91C1C'];
+const IC={pdf:{bg:'#FEF3E2',tc:'#A0621A',i:'file-text'},fig:{bg:'#EEF3FF',tc:'#3558CC',i:'layers'},zip:{bg:'#EEF2F2',tc:'#6B7C7D',i:'archive'},doc:{bg:'#EAF2EE',tc:'#2D6A4F',i:'file-text'},img:{bg:'#EEF3FF',tc:'#3558CC',i:'image'},vid:{bg:'#F5F0FF',tc:'#6B3FA0',i:'film'},sig:{bg:'#EAF2EE',tc:'#2D6A4F',i:'file-signature'}};
+
+let DATA = { team:[], clients:[], tenants:[] };
+
+/* ══ STATE ══ */
+let SC=null,STAB='overview',SWA=null,SWATAB='tasks',ncPortalOn=false,ncEng='active';
+let CURRENT_USER=null;
+let SHOW_INV_FORM=false;
+let SHOW_PAY_FORM=false;
+
+/* ══ API ══ */
+const API_BASE = '/api';
+const BALS = ['#E4F2F0:#0B4F52','#EEF3FF:#3558CC','#EAF2EE:#17A39B','#F5F0FF:#6B3FA0'];
+
+async function apiFetch(path, opts = {}) {
+  const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
+  const headers = { ...opts.headers };
+  if (opts.body && typeof opts.body === 'string') headers['Content-Type'] = 'application/json';
+  const res = await fetch(url, { ...opts, headers, credentials: 'include' });
+  if (res.status === 401) {
+    const refreshed = await tryRefresh();
+    if (refreshed) return apiFetch(path, opts);
+    showAuth();
+    throw new Error('Unauthorized');
+  }
+  return res;
+}
+
+async function tryRefresh() {
+  try {
+    const res = await fetch(`${API_BASE}/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
+    });
+    return res.ok;
+  } catch { return false; }
+}
+
+function apiClientToData(c, idx) {
+  const [bg, tc] = BALS[(idx || 0) % BALS.length].split(':');
+  const inits = c.name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || 'CL';
+  return {
+    id: c.id,
+    name: c.name,
+    init: inits,
+    bg: bg,
+    tc: tc,
+    type: c.type || 'Service',
+    eng: c.status || 'active',
+    contact: c.contact || '—',
+    email: c.email || '',
+    portal: {
+      on: c.portal ? c.portal.on : false,
+      url: c.portal && c.portal.url ? c.portal.url : '',
+      primary: tc,
+      secondary: bg
+    },
+    nextAction: '',
+    latestActivity: 'Client record loaded',
+    latestTs: 'now',
+    workAreas: []
+  };
+}
+
+async function initFromApi() {
+  try {
+    // If superadmin, fetch tenants instead of clients
+    if (CURRENT_USER && isSuperadmin()) {
+      await fetchTenants();
+      return;
+    }
+    const res = await apiFetch('/clients');
+    if (!res.ok) throw new Error('Failed to fetch clients');
+    const json = await res.json();
+    if (json.data && json.data.length) {
+      DATA.clients = json.data.map((c, i) => apiClientToData(c, i));
+      document.getElementById('cl-bdg').textContent = DATA.clients.length;
+      const activeCount = DATA.clients.filter(c => c.eng === 'active').length;
+      const sub = document.getElementById('cl-subtitle');
+      if (sub) sub.textContent = `${activeCount} active engagement${activeCount !== 1 ? 's' : ''}`;
+      await loadInvoices();
+      await loadPayments();
+      await loadProjects();
+      await loadTeam();
+      await loadAllWorkspaces();
+      renderDash();
+      if (document.getElementById('view-clients').classList.contains('active')) renderCG();
+      // Restore client detail view from URL if present
+      const url=new URL(window.location.href);
+      const cid=url.searchParams.get('client');
+      if(cid){
+        const id=parseInt(cid,10);
+        if(!isNaN(id)){
+          goView('clients');
+          openCP(id);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('API fetch failed:', err.message);
+  }
+}
+
+let INVOICES = [];
+let PAYMENTS = [];
+let PROJECTS = [];
+
+async function loadInvoices() {
+  try {
+    const res = await apiFetch('/invoices');
+    if (!res.ok) return;
+    const json = await res.json();
+    INVOICES = json.data || [];
+    // Attach invoices to client workAreas for backward compat
+    INVOICES.forEach(inv => {
+      const client = DATA.clients.find(c => c.id === inv.clientId);
+      if (client && client.workAreas.length) {
+        // Attach to first work area as default
+        client.workAreas[0].invoices.push(apiInvoiceToData(inv));
+      }
+    });
+  } catch (err) {
+    console.warn('Invoice fetch failed:', err.message);
+  }
+}
+
+async function loadPayments() {
+  try {
+    const res = await apiFetch('/payments');
+    if (!res.ok) return;
+    const json = await res.json();
+    PAYMENTS = json.data || [];
+  } catch (err) {
+    console.warn('Payment fetch failed:', err.message);
+  }
+}
+
+async function loadProjects() {
+  try {
+    const res = await apiFetch('/projects');
+    if (!res.ok) return;
+    const json = await res.json();
+    PROJECTS = json.data || [];
+  } catch (err) {
+    console.warn('Project fetch failed:', err.message);
+  }
+}
+
+async function loadTeam() {
+  try {
+    const res = await apiFetch('/team');
+    if (!res.ok) return;
+    const json = await res.json();
+    DATA.team = (json.data || []).map(m => {
+      const inits = (m.name || m.email).split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
+      return { ...m, init: inits || '??', bg: '#E4F2F0', tc: '#0B4F52' };
+    });
+  } catch (err) {
+    console.warn('Team fetch failed:', err.message);
+  }
+}
+
+function apiInvoiceToData(inv) {
+  const fmt = new Intl.NumberFormat('en-NG', { style: 'currency', currency: inv.currency || 'NGN', maximumFractionDigits: 0 });
+  const amtStr = fmt.format(inv.amount);
+  return {
+    id: 'INV-' + String(inv.id).padStart(3, '0'),
+    apiId: inv.id,
+    desc: (inv.lineItems && inv.lineItems[0] && inv.lineItems[0].desc) || 'Invoice',
+    amt: amtStr,
+    status: inv.status,
+    date: inv.dueDate ? new Date(inv.dueDate).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' }) : '—',
+    dueDate: inv.dueDate,
+    lineItems: inv.lineItems || [],
+    sentAt: inv.sentAt,
+    paidAt: inv.paidAt,
+  };
+}
+
+function formatCurrency(amount, currency) {
+  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: currency || 'NGN', maximumFractionDigits: 0 }).format(amount);
+}
+
+function apiWorkAreaToData(wa, tasks, files, comments, approvals) {
+  const iconMap = { marketing: 'megaphone', design: 'palette', advisory: 'briefcase', project: 'layout', general: 'folder' };
+  const colorMap = { marketing: ['#EEF3FF','#3558CC'], design: ['#EAF2EE','#17A39B'], advisory: ['#E4F2F0','#0B4F52'], project: ['#EEF2F2','#6B7C7D'], general: ['#F5F0FF','#6B3FA0'] };
+  const [bg, tc] = colorMap[wa.type] || colorMap.general;
+  return {
+    id: 'wa' + wa.id,
+    apiId: wa.id,
+    name: wa.name,
+    type: wa.type.charAt(0).toUpperCase() + wa.type.slice(1),
+    icon: iconMap[wa.type] || 'folder',
+    ibg: bg,
+    itc: tc,
+    status: wa.status,
+    progress: wa.progress || 0,
+    tasks: tasks.map(t => ({ apiId: t.id, t: t.text, done: t.done, a: t.assignee || '—', status: t.status, p: t.priority })),
+    files: files.map(f => ({ apiId: f.id, n: f.name, type: f.type.toLowerCase(), sz: f.size || '—', vis: f.visibility, uploader: f.uploaderName || '—', date: 'now' })),
+    feedback: comments.map(c => ({ from: c.authorName, init: c.authorInitials || '??', bg: c.authorBg || '#EEF2F2', tc: c.authorTc || '#0B4F52', txt: c.text, time: timeAgo(c.createdAt), ref: c.reference || '' })),
+    approvals: approvals.map(a => ({ apiId: a.id, item: a.item, status: a.status })),
+    invoices: []
+  };
+}
+
+function timeAgo(dateStr) {
+  if(!dateStr) return 'now';
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diffMin = Math.floor((now - d) / 60000);
+  if(diffMin < 1) return 'now';
+  if(diffMin < 60) return diffMin + 'm ago';
+  const diffH = Math.floor(diffMin / 60);
+  if(diffH < 24) return diffH + 'h ago';
+  const diffD = Math.floor(diffH / 24);
+  if(diffD < 7) return diffD + 'd ago';
+  return d.toLocaleDateString();
+}
+
+async function loadClientWorkspace(cid) {
+  const client = DATA.clients.find(c => c.id === cid);
+  if (!client) return;
+  try {
+    const [waRes, tasksRes, filesRes, commentsRes, approvalsRes] = await Promise.all([
+      apiFetch(`/work-areas?clientId=${cid}`),
+      apiFetch(`/tasks`).catch(() => ({ ok: false })),
+      apiFetch(`/files`).catch(() => ({ ok: false })),
+      apiFetch(`/comments`).catch(() => ({ ok: false })),
+      apiFetch(`/approvals`).catch(() => ({ ok: false }))
+    ]);
+    if (!waRes.ok) return;
+    const waJson = await waRes.json();
+    let allTasks = [], allFiles = [], allComments = [], allApprovals = [];
+    if (tasksRes.ok) { const tj = await tasksRes.json(); allTasks = tj.data || []; }
+    if (filesRes.ok) { const fj = await filesRes.json(); allFiles = fj.data || []; }
+    if (commentsRes.ok) { const cj = await commentsRes.json(); allComments = cj.data || []; }
+    if (approvalsRes.ok) { const aj = await approvalsRes.json(); allApprovals = aj.data || []; }
+    client.workAreas = waJson.data.map(wa => {
+      const waTasks = allTasks.filter(t => t.workAreaId === wa.id);
+      const waFiles = allFiles.filter(f => f.workAreaId === wa.id);
+      const waComments = allComments.filter(c => c.workAreaId === wa.id);
+      const waApprovals = allApprovals.filter(a => a.workAreaId === wa.id);
+      return apiWorkAreaToData(wa, waTasks, waFiles, waComments, waApprovals);
+    });
+    // Update latestActivity after loading workspaces
+    client.latestActivity = computeLatestActivity(client);
+  } catch (err) {
+    console.warn('Workspace load failed:', err.message);
+  }
+}
+
+async function loadAllWorkspaces() {
+  await Promise.all(DATA.clients.map(c => loadClientWorkspace(c.id)));
+}
+
+function computeLatestActivity(client) {
+  let latest = { text: 'Client record loaded', ts: 0 };
+  (client.workAreas || []).forEach(wa => {
+    wa.feedback.forEach(f => { if (f.time) latest = { text: `${f.from} left feedback on ${f.ref || wa.name}`, ts: Date.now() }; });
+    wa.approvals.forEach(a => { if (a.status === 'approved') latest = { text: `Approved: ${a.item}`, ts: Date.now() }; });
+    wa.tasks.filter(t => t.done).forEach(t => { latest = { text: `Completed: ${t.t}`, ts: Date.now() }; });
+    wa.files.forEach(f => { latest = { text: `${f.uploader} uploaded ${f.n}`, ts: Date.now() }; });
+  });
+  return latest.text;
+}
+
+async function toggleTask(waApiId, taskApiId, done) {
+  try {
+    const res = await apiFetch(`/tasks/${taskApiId}`, { method: 'PATCH', body: JSON.stringify({ done }) });
+    if (!res.ok) throw new Error('Failed to update task');
+    return true;
+  } catch (err) {
+    toast('Failed to update task');
+    return false;
+  }
+}
+
+/* ══ AUTH UI ══ */
+function showAuth() {
+  document.getElementById('auth-overlay').style.display = 'flex';
+  document.getElementById('shell').style.display = 'none';
+}
+function hideAuth() {
+  document.getElementById('auth-overlay').style.display = 'none';
+  document.getElementById('shell').style.display = 'flex';
+}
+function setAuthTab(tab) {
+  document.getElementById('auth-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('auth-register').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('tab-login').style.cssText = tab === 'login' ? 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"General Sans",sans-serif;font-size:12.5px;font-weight:700;background:#fff;color:#0B4F52;box-shadow:0 1px 3px rgba(15,61,62,.08)' : 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"General Sans",sans-serif;font-size:12.5px;font-weight:700;background:transparent;color:#8AADA8';
+  document.getElementById('tab-register').style.cssText = tab === 'register' ? 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"General Sans",sans-serif;font-size:12.5px;font-weight:700;background:#fff;color:#0B4F52;box-shadow:0 1px 3px rgba(15,61,62,.08)' : 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"General Sans",sans-serif;font-size:12.5px;font-weight:700;background:transparent;color:#8AADA8';
+  document.getElementById('auth-error').style.display = 'none';
+}
+function authError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function doLogin() {
+  const email = document.getElementById('li-email').value.trim();
+  const password = document.getElementById('li-pass').value;
+  if (!email || !password) { authError('Email and password are required'); return; }
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include'
+    });
+    const json = await res.json();
+    if (!res.ok) { authError(json.error || 'Login failed'); return; }
+    updateUserUI(json.data.user);
+    hideAuth();
+    initFromApi();
+  } catch { authError('Network error. Please try again.'); }
+}
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const company = document.getElementById('reg-company').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-pass').value;
+  if (!name || !email || !password) { authError('All fields are required'); return; }
+  try {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, company, email, password }),
+      credentials: 'include'
+    });
+    const json = await res.json();
+    if (!res.ok) { authError(json.error || 'Registration failed'); return; }
+    updateUserUI(json.data.user);
+    hideAuth();
+    initFromApi();
+  } catch { authError('Network error. Please try again.'); }
+}
+
+async function doLogout() {
+  try { await fetch(`${API_BASE}/auth/logout`, { method: 'POST', credentials: 'include' }); } catch {}
+  showAuth();
+}
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function isSuperadmin() {
+  if (!CURRENT_USER) return false;
+  return CURRENT_USER.role === 'superadmin' || CURRENT_USER.email === 'admin@vereli.com';
+}
+
+function updateNavLabels() {
+  if (!CURRENT_USER) return;
+  
+  const clientsLabel = document.getElementById('nav-clients-label');
+  const clientsBadge = document.getElementById('cl-bdg');
+  
+  if (clientsLabel) {
+    if (isSuperadmin()) {
+      clientsLabel.textContent = 'Tenants';
+    } else {
+      clientsLabel.textContent = 'Clients';
+    }
+  }
+  
+  // Hide badge for superadmin (tenants don't have the same count display)
+  if (clientsBadge && isSuperadmin()) {
+    clientsBadge.style.display = 'none';
+  }
+
+  // Hide Early Access nav for non-superadmins
+  const eaNav = document.getElementById('nav-early-access');
+  if (eaNav) {
+    eaNav.style.display = isSuperadmin() ? '' : 'none';
+  }
+}
+
+function updateUserUI(user) {
+  if (!user) return;
+  CURRENT_USER = user;
+  updateNavLabels();
+  const inits = user.name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
+  const firstName = user.name.split(' ')[0] || user.name;
+  document.getElementById('sb-name').textContent = user.name;
+  document.getElementById('sb-role').textContent = user.role || 'Owner';
+  document.getElementById('sb-av').textContent = inits || 'U';
+  const wsEl = document.getElementById('sb-ws-name');
+  if (wsEl) wsEl.textContent = user.tenantName || user.company || firstName + ' workspace';
+  const topWsEl = document.getElementById('top-ws-name');
+  if (topWsEl) topWsEl.textContent = user.tenantName || user.company || firstName + ' workspace';
+  const greetEl = document.getElementById('dash-greeting');
+  if (greetEl) greetEl.textContent = getGreeting() + ', ' + firstName;
+  const teamSubEl = document.getElementById('team-sub');
+  if (teamSubEl) teamSubEl.textContent = 'Members of your ' + (user.company || firstName + ' workspace');
+  
+  // Update navigation labels based on user role
+  updateNavLabels();
+}
+
+function showCompMod(){document.getElementById('comp-mod').style.display='flex';}
+function hideCompMod(){document.getElementById('comp-mod').style.display='none';}
+async function saveCompany(){
+  const name=document.getElementById('comp-name').value.trim();
+  if(!name){toast('Please enter a workspace name');return;}
+  try{
+    const res=await apiFetch('/me',{method:'PATCH',body:JSON.stringify({company:name})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Failed to save');return;}
+    updateUserUI(json.data);
+    hideCompMod();
+    toast('Workspace name saved');
+    initFromApi();
+  }catch(err){toast('Failed to save');}
+}
+
+async function checkAuth() {
+  try {
+    const res = await apiFetch('/me');
+    if (!res.ok) { showAuth(); return; }
+    const json = await res.json();
+    updateUserUI(json.data);
+    hideAuth();
+    // Only prompt if user has no workspace assigned at all
+    if(!json.data || (!json.data.tenantId && !json.data.tenantName)){
+      showCompMod();
+      return; // defer initFromApi until company is saved
+    }
+    initFromApi();
+  } catch { showAuth(); }
+}
+
+/* ══ NAVIGATION ══ */
+const TITLES={dashboard:'Dashboard',clients:'Clients',deliverables:'Deliverables',contracts:'Contracts',files:'Files',invoices:'Invoices',payments:'Payments',team:'Team','early-access':'Early Access',settings:'Settings'};
+
+function goView(name,el){
+  document.querySelectorAll('.view').forEach(v=>{if(!v.style.cssText.includes('!important'))v.classList.remove('active');});
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const v=document.getElementById('view-'+name);
+  if(v)v.classList.add('active');
+  if(el)el.classList.add('active');
+  else{const ni=document.getElementById('nav-'+name);if(ni)ni.classList.add('active');}
+  document.getElementById('pt').textContent=TITLES[name]||name;
+  document.getElementById('pt-sub').style.display='none';
+  const tba=document.getElementById('tba');
+  if(name==='clients')tba.innerHTML=`<button onclick="openMod()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add client</button>`;
+  else if(name==='invoices')tba.innerHTML=`<button onclick="openInvModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New invoice</button>`;
+  else if(name==='files')tba.innerHTML=`<button onclick="openFileUploadGlobal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>`;
+  else tba.innerHTML='';
+  if(name==='clients')showCG();
+  else{
+    const url=new URL(window.location.href);
+    if(url.searchParams.has('client')){url.searchParams.delete('client');history.pushState({},'',url);}
+  }
+  if(name==='files')renderFiles();
+  if(name==='invoices')renderInv();
+  if(name==='payments'){renderPay();switchPayWin('month',document.querySelector('#pay-win-tabs button'));document.getElementById('tba').innerHTML=`<button onclick="openPayModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Record payment</button>`;}
+  if(name==='deliverables')renderDeliverables();
+  if(name==='contracts')renderContracts();
+  if(name==='team')renderTeam();
+  if(name==='settings')renderSettings('general');
+  if(name==='early-access'){
+    if(!isSuperadmin()){goView('dashboard');return;}
+    tba.innerHTML=`<button onclick="downloadEarlyAccessCSV()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Download CSV</button>`;renderEarlyAccess();
+  }
+  closeSB();
+}
+
+function computeRevenue(win){
+  const now=new Date();
+  const invs=INVOICES.length?INVOICES:[];
+  let collected=0,pending=0,overdue=0;
+  invs.forEach(inv=>{
+    const d=new Date(inv.dueDate);
+    const inWin=win==='month'?d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear():win==='year'?d.getFullYear()===now.getFullYear():true;
+    if(!inWin)return;
+    if(inv.status==='paid') collected+=Number(inv.amount)||0;
+    else if(inv.status==='sent'||inv.status==='pending'){
+      if(d<now) overdue+=Number(inv.amount)||0;
+      else pending+=Number(inv.amount)||0;
+    }
+  });
+  return {collected,pending,overdue};
+}
+
+/* ══ DASHBOARD ══ */
+function renderDash(){
+  // KPI cards — computed dynamically from real data
+  const kpiRow=document.getElementById('dash-kpi-row');
+  if(kpiRow){
+    const activeClients=DATA.clients.length;
+    const awaitingApproval=DATA.clients.reduce((sum,c)=>sum+(c.workAreas||[]).reduce((s,wa)=>s+wa.approvals.filter(a=>a.status==='waiting').length,0),0);
+    const unpaidInvoices=DATA.clients.reduce((sum,c)=>sum+(c.invoices||[]).filter(inv=>inv.status==='sent'||inv.status==='pending').length,0);
+    const revMonth=computeRevenue('month').collected;
+    const revStr=revMonth>=1000?(revMonth/1000).toFixed(1)+'k':revMonth.toString();
+    kpiRow.innerHTML=`<div class="dash-kpi" style="color:#0B4F52"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#E2EDE9;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B4F52" stroke-width="1.75" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="st teal" style="font-size:10px">Active</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#0A2E2F;line-height:1">${activeClients}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Active clients</div></div>
+      <div class="dash-kpi" style="color:#8E5510"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#FDF1E1;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8E5510" stroke-width="1.75" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><span class="st amber" style="font-size:10px">Needs action</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#8E5510;line-height:1">${awaitingApproval}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Awaiting approval</div></div>
+      <div class="dash-kpi" style="color:#5E3B9E"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#F0EDFD;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5E3B9E" stroke-width="1.75" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><span class="st purple" style="font-size:10px">Follow up</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#5E3B9E;line-height:1">${unpaidInvoices}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Unpaid invoices</div></div>
+      <div class="dash-kpi" style="color:#22C55E"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#E0F2EC;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="1.75" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span class="st green" style="font-size:10px">This month</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#22C55E;line-height:1">$${revStr}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Revenue collected</div></div>`;
+  }
+  // Attention items — computed dynamically from real data
+  const da=document.getElementById('dash-attn');
+  const attnItems=[];
+  DATA.clients.forEach(c=>{
+    (c.workAreas||[]).forEach(wa=>{
+      // Waiting approvals
+      wa.approvals.filter(a=>a.status==='waiting').forEach(a=>{
+        attnItems.push({cls:'amber',label:'Approval waiting',txt:a.item,sub:`${c.name} · ${wa.name}`,cid:c.id});
+      });
+      // Overdue invoices
+      if(c.invoices){
+        c.invoices.filter(inv=>inv.status==='sent'&&new Date(inv.dueDate)<new Date()).forEach(inv=>{
+          attnItems.push({cls:'red',label:'Invoice overdue',txt:`${inv.id} — Due ${inv.date}`,sub:c.name,cid:c.id});
+        });
+      }
+      // High-priority incomplete tasks
+      wa.tasks.filter(t=>!t.done&&t.p==='high').forEach(t=>{
+        attnItems.push({cls:'purple',label:'Needs action',txt:t.t,sub:`${c.name} · ${wa.name}`,cid:c.id});
+      });
+    });
+  });
+  if(attnItems.length){
+    da.innerHTML=attnItems.slice(0,4).map(w=>`<div class="attn-row" onclick="openCP(${w.cid})">
+      <div style="width:32px;height:32px;border-radius:9px;background:${w.cls==='amber'?'#FEF4E2':w.cls==='red'?'#FDECEA':'#EEF2FF'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${w.cls==='amber'?'#96590F':w.cls==='red'?'#B01C1C':'#3550C4'}" stroke-width="2" stroke-linecap="round">${w.cls==='amber'?'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>':w.cls==='red'?'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>':'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'}</svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="ht" style="font-size:13px;font-weight:700;color:#0B4F52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px">${w.txt}</div>
+        <div style="font-size:11.5px;color:#7A9E99">${w.sub}</div>
+      </div>
+      <span class="st ${w.cls}" style="font-size:10px;flex-shrink:0">${w.label}</span>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C0D4D0" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-left:4px"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`).join('');
+  } else {
+    da.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No items need attention right now.</div>`;
+  }
+  // Activity — only real data, no static fallback
+  const ac=document.getElementById('dash-act');
+  const allActs=DATA.clients.flatMap(c=>buildActivity(c)).slice(0,5);
+  if(allActs.length){
+    ac.innerHTML=allActs.map(a=>`<div class="act"><div class="adot" style="background:${a.bg}"><i data-lucide="${a.i}" style="width:12px;height:12px;color:${a.tc}"></i></div><div style="flex:1;min-width:0"><div class="atext">${a.t}</div><div style="font-size:11px;color:#7A9E99;margin-top:2px">${a.sub}</div></div><div class="atime">${a.ts}</div></div>`).join('');
+  } else {
+    ac.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No recent activity.</div>`;
+  }
+  // Clients  
+  const dc=document.getElementById('dash-clients');
+  dc.innerHTML=DATA.clients.map(c=>`<div style="background:#fff;border:1px solid #E2EBE9;border-radius:16px;padding:18px 20px;cursor:pointer;transition:all .18s;box-shadow:0 1px 3px rgba(15,61,62,.04),0 3px 12px rgba(15,61,62,.04)" onclick="openCP(${c.id})" onmouseenter="this.style.boxShadow='0 8px 28px rgba(15,61,62,.1)';this.style.borderColor='#BDDAD2';this.style.transform='translateY(-1px)'" onmouseleave="this.style.boxShadow='0 1px 3px rgba(15,61,62,.04),0 3px 12px rgba(15,61,62,.04)';this.style.borderColor='#E2EBE9';this.style.transform=''">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <div style="width:36px;height:36px;border-radius:10px;background:${c.bg};color:${c.tc};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:12px;font-weight:800;flex-shrink:0">${c.init}</div>
+      <div style="flex:1;min-width:0">
+        <div class="ht" style="font-size:13.5px;font-weight:700;color:#0A2E2F;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.015em">${c.name}</div>
+        <div style="font-size:12px;color:#7A9E99;margin-top:1px">${c.type}</div>
+      </div>
+      <span class="st ${c.portal.on?'green':'gray'}" style="font-size:9.5px">${c.portal.on?'Portal on':'No portal'}</span>
+    </div>
+    <div style="font-size:12px;color:#6A8E89;padding-top:11px;border-top:1px solid #EEF3F0;line-height:1.5">↳ ${c.latestActivity}</div>
+  </div>`).join('');
+  // Revenue snapshot
+  const rv=document.getElementById('dash-rev');
+  function renderRevSnapshot(win){
+    const d=computeRevenue(win);
+    rv.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><span class="slbl" style="margin-bottom:0">Revenue</span><div style="display:flex;gap:1px;background:#EEF3F0;border-radius:8px;padding:3px">${['month','year','all'].map(w=>`<button onclick="renderRevSnapshot('${w}')" style="padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:700;transition:all .12s;background:${win===w?'#fff':'transparent'};color:${win===w?'#0B4F52':'#8AADA8'};box-shadow:${win===w?'0 1px 3px rgba(15,61,62,.08)':'none'}">${w==='month'?'Month':w==='year'?'Year':'All'}</button>`).join('')}</div></div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#F2F9F6;border-radius:10px;border:1px solid #E0EFE8"><span style="font-size:12.5px;color:#5A8A80;font-weight:500">Collected</span><span class="ht" style="font-weight:800;color:#22C55E;font-size:15px;letter-spacing:-.02em">${formatCurrency(d.collected,'NGN')}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#FEFAF3;border-radius:10px;border:1px solid #F0E5CE"><span style="font-size:12.5px;color:#5A8A80;font-weight:500">Pending</span><span class="ht" style="font-weight:800;color:#8E5510;font-size:15px;letter-spacing:-.02em">${formatCurrency(d.pending,'NGN')}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#FEF6F5;border-radius:10px;border:1px solid #F0DBDA"><span style="font-size:12.5px;color:#5A8A80;font-weight:500">Overdue</span><span class="ht" style="font-weight:800;color:#A81A1A;font-size:15px;letter-spacing:-.02em">${formatCurrency(d.overdue,'NGN')}</span></div>
+    </div>`;
+  }
+  window.renderRevSnapshot=renderRevSnapshot;
+  renderRevSnapshot('month');
+  lucide.createIcons();
+}
+
+/* ══ CLIENT LIST ══ */
+function renderCG(filter){
+  const list=filter?DATA.clients.filter(c=>c.name.toLowerCase().includes(filter.toLowerCase())):DATA.clients;
+  const g=document.getElementById('cg');
+  const header=`<div class="cl-header">
+    <div style="width:40px"></div>
+    <div style="flex:1;min-width:140px">Client</div>
+    <div style="width:100px">Type</div>
+    <div style="width:90px">Status</div>
+    <div style="width:100px;text-align:center">Tasks</div>
+    <div style="width:100px;text-align:center">Pending</div>
+    <div style="width:100px;text-align:center">Unpaid</div>
+    <div style="width:40px"></div>
+  </div>`;
+  const rows=list.map(c=>{
+    const pend=c.workAreas.flatMap(w=>w.approvals.filter(a=>a.status==='waiting')).length;
+    const unpaid=c.workAreas.flatMap(w=>w.invoices.filter(i=>i.status==='unpaid')).length;
+    const openT=c.workAreas.flatMap(w=>w.tasks.filter(t=>!t.done)).length;
+    const statusColor=c.eng==='active'?'green':c.eng==='paused'?'gray':'amber';
+    const statusLabel=c.eng==='active'?'Active':c.eng==='paused'?'Paused':'Prospect';
+    return `<div class="cl-row" onclick="openCP(${c.id})" role="button" tabindex="0">
+      <div class="cl-av" style="background:${c.bg};color:${c.tc}">${c.init}</div>
+      <div style="flex:1;min-width:140px">
+        <div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52;letter-spacing:-.02em">${c.name}</div>
+        <div style="font-size:12px;color:#7A9E99">${c.contact}</div>
+      </div>
+      <div style="width:100px;font-size:12.5px;color:#6A8E89" class="ht">${c.type}</div>
+      <div style="width:90px"><span class="st ${statusColor}" style="font-size:10px">${statusLabel}</span></div>
+      <div style="width:100px;text-align:center" class="ht" style="font-size:13px;font-weight:800;color:${openT?'#0B4F52':'#C0D4D0'}">${openT}</div>
+      <div style="width:100px;text-align:center" class="ht" style="font-size:13px;font-weight:800;color:${pend?'#96590F':'#C0D4D0'}">${pend}</div>
+      <div style="width:100px;text-align:center" class="ht" style="font-size:13px;font-weight:800;color:${unpaid?'#623EA0':'#C0D4D0'}">${unpaid}</div>
+      <div style="width:40px;display:flex;justify-content:flex-end"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C0D4D0" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </div>`;
+  }).join('');
+  const addRow=`<div class="cl-add-row" onclick="openMod()">
+    <div style="width:40px;height:40px;border-radius:11px;background:#EBF0EE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A9E99" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+    <div class="ht" style="font-size:13.5px;font-weight:700">Add new client</div>
+  </div>`;
+  g.innerHTML=header+rows+addRow;
+}
+function filterCG(v){renderCG(v);}
+/* ══ TENANT MANAGEMENT (SUPERADMIN) ══ */
+async function fetchTenants() {
+  try {
+    const res = await apiFetch('/admin/tenants');
+    if (!res.ok) throw new Error('Failed to fetch tenants');
+    const json = await res.json();
+    DATA.tenants = json.data || [];
+  } catch (err) {
+    console.error('Error fetching tenants:', err);
+    DATA.tenants = [];
+  }
+}
+
+function apiTenantToData(t, idx) {
+  const [bg, tc] = BALS[(idx || 0) % BALS.length].split(':');
+  const inits = t.name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || 'TN';
+  return {
+    id: t.id,
+    name: t.name,
+    slug: t.slug,
+    init: inits,
+    bg: bg,
+    tc: tc,
+    plan: t.plan || 'free',
+    status: t.status || 'active',
+    ownerEmail: t.owner_email || '—',
+    ownerName: t.owner_name || '—',
+    userCount: t.user_count || 0,
+    createdAt: t.created_at,
+    updatedAt: t.updated_at
+  };
+}
+
+function renderTenants(filter) {
+  const list = filter ? DATA.tenants.filter(t => t.name.toLowerCase().includes(filter.toLowerCase())) : DATA.tenants;
+  const g = document.getElementById('cg');
+  const header = `<div class="cl-header">
+    <div style="width:40px"></div>
+    <div style="flex:1;min-width:140px">Tenant</div>
+    <div style="width:100px">Plan</div>
+    <div style="width:90px">Status</div>
+    <div style="width:100px;text-align:center">Users</div>
+    <div style="width:160px">Owner</div>
+    <div style="width:40px"></div>
+  </div>`;
+  const rows = list.map((t, idx) => {
+    const tData = apiTenantToData(t, idx);
+    const statusColor = tData.status === 'active' ? 'green' : tData.status === 'suspended' ? 'red' : 'amber';
+    const statusLabel = tData.status === 'active' ? 'Active' : tData.status === 'suspended' ? 'Suspended' : 'Pending';
+    return `<div class="cl-row" onclick="openTenantProfile(${tData.id})" role="button" tabindex="0">
+      <div class="cl-av" style="background:${tData.bg};color:${tData.tc}">${tData.init}</div>
+      <div style="flex:1;min-width:140px">
+        <div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52;letter-spacing:-.02em">${tData.name}</div>
+        <div style="font-size:12px;color:#7A9E99">${tData.slug}</div>
+      </div>
+      <div style="width:100px;font-size:12.5px;color:#6A8E89" class="ht">${tData.plan}</div>
+      <div style="width:90px"><span class="st ${statusColor}" style="font-size:10px">${statusLabel}</span></div>
+      <div style="width:100px;text-align:center" class="ht" style="font-size:13px;font-weight:800;color:#0B4F52">${tData.userCount}</div>
+      <div style="width:160px;font-size:12px;color:#7A9E99">${tData.ownerName}<br><span style="font-size:11px;color:#9AB5B0">${tData.ownerEmail}</span></div>
+      <div style="width:40px;display:flex;justify-content:flex-end"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C0D4D0" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </div>`;
+  }).join('');
+  const addRow = `<div class="cl-add-row" onclick="openTenantModal()">
+    <div style="width:40px;height:40px;border-radius:11px;background:#EBF0EE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A9E99" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+    <div class="ht" style="font-size:13.5px;font-weight:700">Add new tenant</div>
+  </div>`;
+  g.innerHTML = header + rows + addRow;
+}
+
+function showCG(){
+  document.getElementById('cg-view').style.display='';
+  document.getElementById('cp-view').style.display='none';
+  SC=null;SWA=null;STAB='overview';
+  const url=new URL(window.location.href);
+  if(url.searchParams.has('client')){url.searchParams.delete('client');history.pushState({},'',url);}
+  // Show tenants for superadmin, clients for others
+  if (CURRENT_USER && isSuperadmin()) {
+    renderTenants();
+  } else {
+    renderCG();
+  }
+}
+
+/* ══ CLIENT PROFILE (WORKSPACE) ══ */
+async function openCP(id){
+  const cv=document.getElementById('view-clients');
+  if(!cv.classList.contains('active')){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+    cv.classList.add('active');
+    document.getElementById('nav-clients').classList.add('active');
+    document.getElementById('pt').textContent='Clients';
+    document.getElementById('tba').innerHTML=`<button onclick="openMod()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add client</button>`;
+  }
+  SC=DATA.clients.find(c=>c.id===id);
+  STAB='overview'; SWA=null;
+  document.getElementById('cg-view').style.display='none';
+  document.getElementById('cp-view').style.display='';
+  const url=new URL(window.location.href);
+  if(!url.searchParams.has('client')||url.searchParams.get('client')!==String(id)){
+    url.searchParams.set('client',id);
+    history.pushState({},'',url);
+  }
+  if(SC) {
+    document.getElementById('cp-view').innerHTML='<div style="padding:40px;text-align:center;color:#8E9E9E">Loading workspace…</div>';
+    await loadClientWorkspace(id);
+  }
+  renderCP();
+  lucide.createIcons();
+}
+
+function renderCP(){
+  const c=SC; if(!c)return;
+  const pend=c.workAreas.flatMap(w=>w.approvals.filter(a=>a.status==='waiting')).length;
+  const unpaid=c.workAreas.flatMap(w=>w.invoices.filter(i=>i.status==='unpaid')).length;
+  const openT=c.workAreas.flatMap(w=>w.tasks.filter(t=>!t.done)).length;
+  const pv=document.getElementById('cp-view');
+  // Update topbar breadcrumb
+  document.getElementById('pt').textContent='Clients';
+  const ptSub=document.getElementById('pt-sub');
+  ptSub.textContent='/ '+c.name;ptSub.style.display='';
+  document.getElementById('tba').innerHTML=`
+    <button onclick="copyPortalLink(${c.id})" class="tb-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share portal</button>
+    <input type="file" id="cp-file-${c.id}" style="display:none" onchange="handleCPFileUpload(${c.id},this)"><button onclick="document.getElementById('cp-file-'+${c.id}).click()" class="tb-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>
+    <button onclick="quickAddTask(${c.id})" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add task</button>`;
+  pv.innerHTML=`
+    <div style="margin-bottom:6px">
+      <button onclick="showCG()" style="display:inline-flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12px;font-weight:600;color:#7A9E99;padding:0 0 16px;transition:color .1s" onmouseenter="this.style.color='#0B4F52'" onmouseleave="this.style.color='#7A9E99'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Back to all clients
+      </button>
+    </div>
+    <!-- Clean client workspace header -->
+    <div style="border:1px solid #E2EBE9;border-radius:16px;overflow:hidden;margin-bottom:24px;box-shadow:0 1px 3px rgba(15,61,62,.04),0 4px 16px rgba(15,61,62,.05)">
+      <!-- Gradient strip -->
+      <div style="height:52px;background:linear-gradient(135deg,${c.bg} 0%,${c.tc} 100%);position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,61,62,.75) 0%,rgba(31,138,112,.25) 100%)"></div>
+        <div style="position:absolute;top:-10px;right:-10px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+      </div>
+      <!-- Header body -->
+      <div style="background:#fff;padding:18px 24px 20px">
+        <!-- Avatar + Name + Stats row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:48px;height:48px;border-radius:12px;border:2px solid #fff;box-shadow:0 2px 10px rgba(15,61,62,.12);display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:16px;font-weight:800;flex-shrink:0;background:${c.bg};color:${c.tc}">${c.init}</div>
+            <div>
+              <div class="ht" style="font-size:18px;font-weight:800;color:#0B4F52;letter-spacing:-.025em;margin-bottom:3px">${c.name}</div>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <span class="st teal" style="font-size:10px">${c.type}</span>
+                <span class="st green" style="font-size:10px">${c.eng}</span>
+                <span class="st ${c.portal.on?'green':'gray'}" style="font-size:10px">${c.portal.on?'Portal active':'No portal'}</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="padding:10px 14px;background:#F6F9F8;border:1px solid #E0EBE7;border-radius:10px;text-align:center;min-width:56px"><div class="ht" style="font-size:18px;font-weight:900;color:${openT?'#0A2E2F':'#C2D4CE'};letter-spacing:-.03em">${openT}</div><div style="font-size:9px;color:#8AADA8;margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Tasks</div></div>
+            <div style="padding:10px 14px;background:#F6F9F8;border:1px solid #E0EBE7;border-radius:10px;text-align:center;min-width:56px"><div class="ht" style="font-size:18px;font-weight:900;color:${pend?'#8E5510':'#C2D4CE'};letter-spacing:-.03em">${pend}</div><div style="font-size:9px;color:#8AADA8;margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Pending</div></div>
+            <div style="padding:10px 14px;background:#F6F9F8;border:1px solid #E0EBE7;border-radius:10px;text-align:center;min-width:56px"><div class="ht" style="font-size:18px;font-weight:900;color:${unpaid?'#5E3B9E':'#C2D4CE'};letter-spacing:-.03em">${unpaid}</div><div style="font-size:9px;color:#8AADA8;margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Unpaid</div></div>
+          </div>
+        </div>
+        <!-- Contact info row -->
+        <div style="display:flex;align-items:center;gap:16px;padding-top:14px;border-top:1px solid #EBF0EE;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:7px;font-size:13px;color:#6A8E89">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            ${c.contact}
+          </div>
+          <a href="mailto:${c.email}" style="display:flex;align-items:center;gap:7px;font-size:13px;color:#17A39B;text-decoration:none">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            ${c.email}
+          </a>
+          <div style="flex:1"></div>
+          <div style="display:flex;gap:8px">
+            <button onclick="editC(${c.id})" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+            ${c.portal.on?`<a href="/portal/?client=${c.id}" target="_blank" class="tb-btn" style="text-decoration:none;font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Open portal</a>`:''}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      ${['Overview','Work Areas','Deliverables','Files','Feedback & Approvals','Invoices','Payments','Activity','Contacts','Portal Settings'].map(t=>{const k=t.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-');return `<div class="tab ${STAB===k?'active':''}" onclick="switchCT('${k}')">${t}</div>`;}).join('')}
+    </div>
+    <div id="ct">${renderCT(c)}</div>`;
+}
+
+function switchCT(t){STAB=t;SWA=null;document.getElementById('ct').innerHTML=renderCT(SC);lucide.createIcons();}
+
+function renderCT(c){
+  if(STAB==='overview')return renderCTOverview(c);
+  if(STAB==='work-areas')return SWA?renderWADrill(c):renderWAList(c);
+  if(STAB==='deliverables')return renderCTDeliverables(c);
+  if(STAB==='files')return renderCTFiles(c);
+  if(STAB==='feedback---approvals')return renderCTFeedback(c);
+  if(STAB==='invoices')return renderCTInvoices(c);
+  if(STAB==='payments')return renderCTPayments(c);
+  if(STAB==='activity')return renderCTActivity(c);
+  if(STAB==='contacts')return renderCTContacts(c);
+  if(STAB==='portal-settings')return renderCTPortal(c);
+  return '';
+}
+function renderCTDeliverables(c){
+  const all=c.workAreas.flatMap(w=>w.files.filter(f=>f.vis==='shared').map(f=>({...f,wa:w.name})));
+  const empty=emp('No deliverables','Upload and share files with this client to get started.','package');
+  const rows=all.map(f=>{const ic=IC[f.type]||IC.doc;const sig=f.signing==='signed'?'<span class="st green" style="font-size:10px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px">Awaiting sig.</span>':'';return `<div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;background:#fff;border:1px solid #E8EFEC;box-shadow:0 1px 4px rgba(15,61,62,.04)"><div style="width:32px;height:32px;border-radius:9px;background:${ic.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ic.i}" style="width:14px;height:14px;color:${ic.tc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:700;color:#0B4F52">${f.n}</div><div style="font-size:11px;color:#7A9E99;margin-top:2px">${f.sz} · ${f.wa} · ${f.date}</div></div>${sig?sig+'&nbsp;':''}<span class="st green" style="font-size:10px">Shared</span><button class="tb-btn" style="font-size:11px;padding:5px 11px;margin-left:8px" onclick="toast('Downloading')">Download</button></div>`;}).join('');
+  return `<div style="max-width:680px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><span class="slbl" style="margin-bottom:0">${all.length} shared with client</span><input type="file" id="del-file-${c.id}" style="display:none" onchange="handleDelFileUpload(${c.id},this)"><button onclick="document.getElementById('del-file-'+${c.id}).click()" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button></div>${all.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):empty}</div>`;
+}
+async function handleDelFileUpload(cid,input){
+  const file=input.files[0];if(!file)return;
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c||!c.workAreas.length){toast('No work area');return;}
+  const waApiId=c.workAreas[0].apiId;
+  try{
+    toast('Uploading file…');
+    const uploadData=await uploadFileBlob(file);
+    const name=file.name;const type=name.split('.').pop().toUpperCase();const size=(file.size/(1024*1024)).toFixed(1)+' MB';
+    const res=await apiFetch('/files',{method:'POST',body:JSON.stringify({workAreaId:waApiId,name,type,size,visibility:'shared',uploaderName:CURRENT_USER?CURRENT_USER.name:'You',url:uploadData.url||''})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Upload failed');return;}
+    const f=json.data;
+    c.workAreas[0].files.push({apiId:f.id,n:f.name,type:f.type.toLowerCase(),sz:f.size||'—',vis:'shared',uploader:f.uploaderName||'—',date:'now',url:f.url||''});
+    toast('File uploaded');renderCP();lucide.createIcons();
+  }catch(err){toast(err.message||'Upload failed');}
+  input.value='';
+}
+
+function renderCTOverview(c){
+  const pend=c.workAreas.flatMap(w=>w.approvals.filter(a=>a.status==='waiting'));
+  const unpaid=c.workAreas.flatMap(w=>w.invoices.filter(i=>i.status==='unpaid'));
+  const openT=c.workAreas.flatMap(w=>w.tasks.filter(t=>!t.done));
+  const recentAct=buildActivity(c).slice(0,3);
+  const nextAction=c.nextAction;
+  return `<div style="max-width:600px;display:flex;flex-direction:column;gap:16px">
+    ${nextAction?`<div style="padding:16px 20px;border-radius:14px;background:#F0F8F5;border:1px solid #C8E8DC;display:flex;align-items:center;gap:12px"><div style="width:32px;height:32px;border-radius:9px;background:#D4EDE5;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="arrow-right" style="width:14px;height:14px;color:#17A39B"></i></div><div style="flex:1;min-width:0"><div style="font-size:11px;color:#5A9A86;font-family:'General Sans',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Next action</div><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52">${nextAction}</div></div></div>`:''}
+    <div class="card" style="overflow:hidden">
+      <div style="padding:15px 20px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">Pending approvals</span>${pend.length?`<span class="st amber" style="font-size:10px">${pend.length} waiting</span>`:''}</div>
+      <div style="padding:0 20px">${pend.length?pend.map(a=>'<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #F5F5F3"><div style="width:7px;height:7px;border-radius:50%;background:#A0621A;flex-shrink:0"></div><span style="font-size:13px;color:#121212;flex:1">'+a.item+'</span><span class="st amber" style="font-size:10px">Waiting</span></div>').join(''):'<div style="padding:16px 0;text-align:center;font-size:13px;color:#B8B8B4">All clear — no pending approvals</div>'}</div>
+    </div>
+    ${unpaid.length?`<div class="card" style="overflow:hidden"><div style="padding:15px 20px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">Unpaid invoices</span><span class="st purple" style="font-size:10px">${unpaid.length} outstanding</span></div><div style="padding:0 20px">${unpaid.map(i=>'<div class="ir"><div style="flex:1;min-width:0"><div class="iname">'+i.id+'</div><div class="imeta">'+i.desc+' · Due '+i.date+'</div></div><span class="ht" style="font-weight:800;color:#121212">'+i.amt+'</span></div>').join('')}</div></div>`:''}
+    <div class="card" style="overflow:hidden">
+      <div style="padding:15px 20px;border-bottom:1px solid #EEF2F2"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">Recent activity</span></div>
+      <div style="padding:0 20px">${recentAct.map(a=>'<div class="act"><div class="adot" style="background:'+a.bg+'"><i data-lucide="'+a.i+'" style="width:11px;height:11px;color:'+a.tc+'"></i></div><div style="flex:1"><div class="atext" style="font-size:12.5px">'+a.t+'</div><div style="font-size:11px;color:#8E9E9E;margin-top:1px">'+a.sub+'</div></div><div class="atime">'+a.ts+'</div></div>').join('')}</div>
+    </div>
+  </div>`;
+}
+
+function renderWAList(c){
+  const empty=emp('No work areas','Add a project, campaign, or engagement.','folder');
+  const addBtn=`<button onclick="createWorkArea(${c.id})" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:1.5px dashed #D8D8D5;border-radius:10px;background:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#8E9E9E;transition:all .12s;margin-top:12px" onmouseenter="this.style.borderColor='#B0B0AD';this.style.color='#555552'" onmouseleave="this.style.borderColor='#D8D8D5';this.style.color='#8E9E9E'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add work area</button>`;
+  if(!c.workAreas.length)return empty+addBtn;
+  return `<div style="max-width:680px"><div class="card" style="overflow:hidden;margin-bottom:12px">${c.workAreas.map(w=>`<div class="wa-row" onclick="SWA=DATA.clients.find(x=>x.id===${c.id}).workAreas.find(x=>x.id==='${w.id}');SWATAB='tasks';document.getElementById('ct').innerHTML=renderWADrill(SC);lucide.createIcons()"><div class="wa-ico" style="background:${w.ibg}"><i data-lucide="${w.icon}" style="width:14px;height:14px;color:${w.itc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:700;color:#121212">${w.name}</div><div style="font-size:11.5px;color:#8E9E9E;margin-top:2px">${w.type} · ${w.tasks.length} tasks · ${w.files.length} files</div><div class="prog" style="max-width:160px;margin-top:6px"><div class="prog-f" style="width:${w.progress}%"></div></div></div><span class="st ${w.status==='active'?'amber':'green'}" style="font-size:10px">${w.status==='active'?'In progress':'Complete'}</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C8C8C4" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg></div>`).join('')}</div>${addBtn}</div>`;
+}
+async function createWorkArea(cid){
+  const name = prompt('Work area name:');
+  if(!name) return;
+  try {
+    const res = await apiFetch('/work-areas', {method:'POST', body:JSON.stringify({clientId:cid, name, type:'general'})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to create work area');return;}
+    const client = DATA.clients.find(c=>c.id===cid);
+    if(client){
+      const wa = apiWorkAreaToData(json.data, [], [], [], []);
+      client.workAreas.push(wa);
+      document.getElementById('ct').innerHTML=renderWAList(SC);
+      lucide.createIcons();
+    }
+    toast('Work area created');
+  } catch(err){toast('Failed to create work area');}
+}
+
+function renderWADrill(c){
+  const wa=SWA; if(!wa)return renderWAList(c);
+  return `<div style="max-width:680px"><button onclick="SWA=null;document.getElementById('ct').innerHTML=renderWAList(SC);lucide.createIcons();" style="display:flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#8E9E9E;padding:0;margin-bottom:16px;transition:color .1s" onmouseenter="this.style.color='#121212'" onmouseleave="this.style.color='#8E9E9E'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Work areas</button>
+    <div class="card" style="overflow:hidden">
+      <div style="padding:16px 20px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;gap:10px">
+        <div class="wa-ico" style="background:${wa.ibg};width:34px;height:34px;border-radius:9px"><i data-lucide="${wa.icon}" style="width:14px;height:14px;color:${wa.itc}"></i></div>
+        <div style="flex:1"><div class="ht" style="font-size:14px;font-weight:800;color:#121212">${wa.name}</div><div style="font-size:11.5px;color:#8E9E9E">${wa.type}</div></div>
+        <span class="st ${wa.status==='active'?'amber':'green'}" style="font-size:10px">${wa.status==='active'?'In progress':'Complete'}</span>
+      </div>
+      <div style="padding:0 20px">
+        <div class="tab-bar" style="padding-top:12px;margin-bottom:16px">
+          ${['Overview','Tasks','Deliverables','Files','Feedback','Approvals','Invoices','Activity'].map(t=>{const k=t.toLowerCase();return `<div class="tab ${SWATAB===k?'active':''}" onclick="SWATAB='${k}';document.getElementById('ct').innerHTML=renderWADrill(SC);lucide.createIcons()">${t}</div>`;}).join('')}
+        </div>
+      </div>
+      <div style="padding:4px 20px 20px">${renderWATab(wa)}</div>
+    </div>
+  </div>`;
+}
+
+function renderWATab(wa){
+  if(SWATAB==='overview')return renderWAOverview(wa);
+  if(SWATAB==='tasks')return renderWATasks(wa);
+  if(SWATAB==='deliverables')return renderWADeliverables(wa);
+  if(SWATAB==='files')return renderWAFiles(wa);
+  if(SWATAB==='feedback')return renderWAFeedback(wa);
+  if(SWATAB==='approvals')return renderWAApprovals(wa);
+  if(SWATAB==='invoices')return renderWAInvoices(wa);
+  if(SWATAB==='activity')return renderWAActivityTab(wa);
+  return '';
+}
+
+function renderWAOverview(wa){
+  return `<div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8E9E9E">Type</span><span class="ht" style="font-weight:700;color:#121212">${wa.type}</span></div><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8E9E9E">Status</span><span class="st ${wa.status==='active'?'amber':'green'}" style="font-size:10px">${wa.status==='active'?'In progress':'Complete'}</span></div><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8E9E9E">Progress</span><span class="ht" style="font-weight:700;color:#121212">${wa.progress}%</span></div><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8E9E9E">Tasks</span><span class="ht" style="font-weight:700;color:#121212">${wa.tasks.filter(t=>!t.done).length} open / ${wa.tasks.length} total</span></div><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8E9E9E">Approvals</span><span class="ht" style="font-weight:700;color:#121212">${wa.approvals.filter(a=>a.status==='waiting').length} waiting</span></div><div><div class="prog" style="height:6px;margin-top:10px"><div class="prog-f" style="width:${wa.progress}%"></div></div></div></div>`;
+}
+
+function renderWATasks(wa){
+  const STATUS_COL={todo:'gray','in-progress':'blue',review:'amber',completed:'green'};
+  const open=wa.tasks.filter(t=>!t.done);
+  const done=wa.tasks.filter(t=>t.done);
+  const openH=open.map((t,i)=>{
+    const idx=wa.tasks.indexOf(t);
+    return '<div class="tr" style="cursor:pointer" onclick="handleTaskClick('+wa.apiId+','+t.apiId+','+idx+',true)"><div class="tck"></div><div class="tt">'+t.t+'</div><span class="st '+(STATUS_COL[t.status]||'gray')+'" style="font-size:10px;margin-right:6px">'+t.status+'</span><div class="ta">'+t.a+'</div></div>';
+  }).join('');
+  const doneH=done.map((t,i)=>{
+    const idx=wa.tasks.indexOf(t);
+    return '<div class="tr" style="cursor:pointer;opacity:.6" onclick="handleTaskClick('+wa.apiId+','+t.apiId+','+idx+',false)"><div class="tck done"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="tt done">'+t.t+'</div><div class="ta">'+t.a+'</div></div>';
+  }).join('');
+  const addInput = `<div style="display:flex;gap:8px;margin-top:14px"><input id="new-task-${wa.apiId}" type="text" class="field" placeholder="New task…" style="flex:1;font-size:13px;padding:8px 12px;height:auto" onkeydown="if(event.key==='Enter')createTask(${wa.apiId})"><button class="tb-btn pri" style="padding:8px 14px" onclick="createTask(${wa.apiId})">Add</button></div>`;
+  return (open.length?'<div class="slbl">Open ('+open.length+')</div><div>'+openH+'</div>':'')+(done.length?'<div class="slbl" style="margin-top:14px">Done ('+done.length+')</div><div>'+doneH+'</div>':'')+addInput;
+}
+async function createTask(waApiId){
+  const el = document.getElementById('new-task-'+waApiId);
+  if(!el)return;
+  const text = el.value.trim();
+  if(!text)return;
+  try {
+    const res = await apiFetch('/tasks', {method:'POST', body:JSON.stringify({workAreaId:waApiId, text, status:'todo', priority:'medium'})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to add task');return;}
+    const t = json.data;
+    if(SWA){
+      SWA.tasks.push({apiId:t.id, t:t.text, done:t.done, a:t.assignee||'—', status:t.status, p:t.priority});
+      document.getElementById('ct').innerHTML=renderWADrill(SC);
+      lucide.createIcons();
+    }
+    toast('Task added');
+  } catch(err){toast('Failed to add task');}
+}
+async function handleTaskClick(waApiId, taskApiId, taskIdx, markDone){
+  const ok = await toggleTask(waApiId, taskApiId, markDone);
+  if(!ok) return;
+  if(SWA && SWA.tasks[taskIdx]){ SWA.tasks[taskIdx].done = markDone; }
+  document.getElementById('ct').innerHTML=renderWADrill(SC);
+  lucide.createIcons();
+}
+
+function renderWADeliverables(wa){
+  const shared=wa.files.filter(f=>f.vis==='shared');
+  const rows=shared.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px">Awaiting signature</span>':'';return `<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;background:#fff;border:1px solid #E2EBE9"><div style="width:30px;height:30px;border-radius:7px;background:${ic.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ic.i}" style="width:13px;height:13px;color:${ic.tc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:600;color:#121212">${f.n}</div><div style="font-size:11px;color:#8E9E9E">${f.sz} · ${f.uploader} · ${f.date}</div></div>${sigBadge?sigBadge+'&nbsp;':'&nbsp;'}<button class="tb-btn" style="font-size:11px;padding:4px 10px" onclick="toast('Downloading')">Download</button></div>`;}).join('');
+  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="slbl" style="margin-bottom:0">${shared.length} shared with client</div><button onclick="toast('File picker opening…')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button></div>${shared.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):emp('No deliverables','Upload and share files with client here.','file')}`;
+}
+
+function renderWAFiles(wa){
+  const fileRows=wa.files.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px;margin-left:4px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px;margin-left:4px">Awaiting signature</span>':'';return `<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;background:#fff;border:1px solid #E2EBE9"><div style="width:30px;height:30px;border-radius:7px;background:${ic.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ic.i}" style="width:13px;height:13px;color:${ic.tc}"></i></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:4px"><span class="ht" style="font-size:13px;font-weight:600;color:#121212">${f.n}</span>${sigBadge}</div><div style="font-size:11px;color:#8E9E9E">${f.sz} · Uploaded by ${f.uploader} · ${f.date}</div></div><span class="st ${f.vis==='shared'?'green':'gray'}" style="font-size:10px;margin-right:4px">${f.vis==='shared'?'Shared':'Internal'}</span><button class="tb-btn" style="font-size:11px;padding:4px 9px" onclick="toast('Downloading')">↓</button></div>`;}).join('');
+  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="slbl" style="margin-bottom:0">${wa.files.length} file${wa.files.length!==1?'s':''}</div><input type="file" id="wa-file-${wa.apiId}" style="display:none" onchange="handleFileUpload(${wa.apiId},this)"><button onclick="document.getElementById('wa-file-'+${wa.apiId}).click()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s" onmouseenter="this.style.borderColor='#B8CECC'" onmouseleave="this.style.borderColor='#EEF2F2'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload</button></div>${wa.files.length?('<div style="display:flex;flex-direction:column;gap:8px">'+fileRows+'</div>'):emp('No files','Upload files to this work area.','folder')}`;
+}
+async function uploadFileBlob(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result.split(',')[1];
+      try {
+        const res = await apiFetch('/upload', { method: 'POST', body: JSON.stringify({ name: file.name, data: base64, contentType: file.type || 'application/octet-stream' }) });
+        const json = await res.json();
+        if (!res.ok) { reject(new Error(json.error || 'Upload failed')); return; }
+        resolve(json.data || {});
+      } catch (e) { reject(e); }
+    };
+    reader.onerror = () => reject(new Error('Failed to read file'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleFileUpload(waApiId, input){
+  const file = input.files[0];
+  if(!file)return;
+  try {
+    toast('Uploading file…');
+    const uploadData = await uploadFileBlob(file);
+    const name = file.name;
+    const type = name.split('.').pop().toUpperCase();
+    const size = (file.size / (1024*1024)).toFixed(1) + ' MB';
+    const res = await apiFetch('/files', {method:'POST', body:JSON.stringify({workAreaId:waApiId, name, type, size, visibility:'internal', uploaderName:CURRENT_USER ? CURRENT_USER.name : 'You', url: uploadData.url || ''})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Upload failed');return;}
+    const f = json.data;
+    if(SWA){
+      SWA.files.push({apiId:f.id, n:f.name, type:f.type.toLowerCase(), sz:f.size||'—', vis:f.visibility, uploader:f.uploaderName||'—', date:'now', url: f.url || ''});
+      document.getElementById('ct').innerHTML=renderWADrill(SC);
+      lucide.createIcons();
+    }
+    toast('File uploaded');
+  } catch(err){toast(err.message || 'Upload failed');}
+  input.value='';
+}
+
+function renderWAFeedback(wa){
+  const existing = wa.feedback.length ? `<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">${wa.feedback.map(f=>`<div style="display:flex;gap:10px"><div style="width:28px;height:28px;border-radius:8px;flex-shrink:0;background:${f.bg};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:10px;font-weight:800;color:${f.tc}">${f.init}</div><div style="flex:1;background:#F8F7F4;border-radius:10px;border:1px solid #E2EBE9;padding:11px 13px"><div style="font-size:10.5px;color:#8E9E9E;margin-bottom:4px">On: ${f.ref}</div><p style="font-size:13px;color:#121212">${f.txt}</p><p style="font-size:10.5px;color:#8E9E9E;margin-top:5px">${f.from} · ${f.time}</p></div></div>`).join('')}</div>` : '';
+  const addBox = `<div style="display:flex;gap:8px"><input id="new-comment-${wa.apiId}" type="text" class="field" placeholder="Add a comment…" style="flex:1;font-size:13px;padding:8px 12px;height:auto" onkeydown="if(event.key==='Enter')createComment(${wa.apiId})"><button class="tb-btn pri" style="padding:8px 14px" onclick="createComment(${wa.apiId})">Post</button></div>`;
+  return existing || addBox ? existing + addBox : emp('No feedback','Client feedback tied to this work will appear here.','message-circle');
+}
+async function createComment(waApiId){
+  const el = document.getElementById('new-comment-'+waApiId);
+  if(!el)return;
+  const text = el.value.trim();
+  if(!text)return;
+  try {
+    const initials = CURRENT_USER ? CURRENT_USER.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() : 'U';
+    const res = await apiFetch('/comments', {method:'POST', body:JSON.stringify({workAreaId:waApiId, authorName:CURRENT_USER?CURRENT_USER.name:'You', authorInitials:initials, authorBg:'#E4F2F0', authorTc:'#0B4F52', text})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to post comment');return;}
+    const c = json.data;
+    if(SWA){
+      SWA.feedback.push({from:c.authorName, init:c.authorInitials||'??', bg:c.authorBg||'#EEF2F2', tc:c.authorTc||'#0B4F52', txt:c.text, time:'now', ref:c.reference||''});
+      document.getElementById('ct').innerHTML=renderWADrill(SC);
+      lucide.createIcons();
+    }
+    toast('Comment posted');
+  } catch(err){toast('Failed to post comment');}
+}
+
+function renderWAApprovals(wa){
+  const STATUS={waiting:{cls:'amber',label:'Awaiting approval',icon:'clock',ibg:'#FEF3E2',itc:'#A0621A'},approved:{cls:'green',label:'Approved',icon:'check',ibg:'#EAF2EE',itc:'#2D6A4F'},'revision-requested':{cls:'red',label:'Revision requested',icon:'rotate-ccw',ibg:'#FDECEA',itc:'#B91C1C'},'awaiting-signature':{cls:'amber',label:'Awaiting signature',icon:'pen-line',ibg:'#FEF3E2',itc:'#A0621A'},signed:{cls:'green',label:'Signed',icon:'file-check',ibg:'#EAF2EE',itc:'#2D6A4F'}};
+  const list = wa.approvals.length ? `<div class="card" style="padding:0 16px;margin-bottom:14px">${wa.approvals.map((a,idx)=>{const s=STATUS[a.status]||STATUS.waiting;const btn=a.status==='waiting'?`<button class="tb-btn" style="font-size:11px;padding:4px 10px" onclick="updateApproval(${a.apiId},'approved',${idx})">Approve</button><button class="tb-btn" style="font-size:11px;padding:4px 10px;margin-left:4px" onclick="updateApproval(${a.apiId},'revision-requested',${idx})">Request revision</button>`:'';return `<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #F5F5F3"><div style="width:28px;height:28px;border-radius:7px;background:${s.ibg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${s.icon}" style="width:12px;height:12px;color:${s.itc}"></i></div><span class="ht" style="flex:1;font-size:13px;font-weight:600;color:#121212">${a.item}</span><span class="st ${s.cls}" style="font-size:10px;margin-right:6px">${s.label}</span>${btn}</div>`;}).join('')}</div>` : '';
+  const addBox = `<div style="display:flex;gap:8px"><input id="new-approval-${wa.apiId}" type="text" class="field" placeholder="Request approval for…" style="flex:1;font-size:13px;padding:8px 12px;height:auto" onkeydown="if(event.key==='Enter')createApproval(${wa.apiId})"><button class="tb-btn pri" style="padding:8px 14px" onclick="createApproval(${wa.apiId})">Request</button></div>`;
+  return list + addBox;
+}
+async function createApproval(waApiId){
+  const el = document.getElementById('new-approval-'+waApiId);
+  if(!el)return;
+  const item = el.value.trim();
+  if(!item)return;
+  try {
+    const res = await apiFetch('/approvals', {method:'POST', body:JSON.stringify({workAreaId:waApiId, item, status:'waiting'})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to request approval');return;}
+    const a = json.data;
+    if(SWA){
+      SWA.approvals.push({apiId:a.id, item:a.item, status:a.status});
+      document.getElementById('ct').innerHTML=renderWADrill(SC);
+      lucide.createIcons();
+    }
+    toast('Approval requested');
+  } catch(err){toast('Failed to request approval');}
+}
+async function updateApproval(apiId, status, idx){
+  try {
+    const res = await apiFetch(`/approvals/${apiId}`, { method: 'PATCH', body: JSON.stringify({ status }) });
+    if (!res.ok) throw new Error('Failed to update approval');
+    if(SWA && SWA.approvals[idx]){ SWA.approvals[idx].status = status; }
+    document.getElementById('ct').innerHTML=renderWADrill(SC);
+    lucide.createIcons();
+  } catch (err) {
+    toast('Failed to update approval');
+  }
+}
+
+function renderWAInvoices(wa){
+  if(!wa.invoices.length)return emp('No invoices','Invoices for this work area appear here.','file-text');
+  return `<div class="card" style="padding:0 16px">${wa.invoices.map(inv=>`<div class="ir"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${inv.status==='paid'?'#EAF2EE':'#F5F0FF'};display:flex;align-items:center;justify-content:center"><i data-lucide="${inv.status==='paid'?'check':'clock'}" style="width:12px;height:12px;color:${inv.status==='paid'?'#2D6A4F':'#6B3FA0'}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id}</div><div class="imeta">${inv.desc} · Due ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span><span class="st ${inv.status==='paid'?'green':'purple'}" style="font-size:10px">${inv.status==='paid'?'Paid':'Unpaid'}</span></div>`).join('')}</div>`;
+}
+
+function buildActivity(c){
+  const acts=[];
+  (c.workAreas||[]).forEach(wa=>{
+    wa.feedback.forEach(f=>acts.push({i:'message-circle',bg:'#FEF3E2',tc:'#A0621A',t:`Feedback on <strong>${f.ref||wa.name}</strong>`,sub:`${c.name} · ${f.from}`,ts:f.time}));
+    wa.approvals.forEach(a=>{
+      if(a.status==='approved') acts.push({i:'check',bg:'#EAF2EE',tc:'#2D6A4F',t:`<strong>${a.item}</strong> approved`,sub:c.name,ts:'recent'});
+      else if(a.status==='waiting') acts.push({i:'clock',bg:'#FEF3E2',tc:'#A0621A',t:`<strong>${a.item}</strong> awaiting approval`,sub:c.name,ts:'recent'});
+    });
+    wa.tasks.filter(t=>t.done).forEach(t=>acts.push({i:'check-square',bg:'#EAF2EE',tc:'#2D6A4F',t:`<strong>${t.t}</strong> completed`,sub:`${c.name} · ${t.a}`,ts:'recent'}));
+    wa.files.forEach(f=>acts.push({i:'upload',bg:'#EEF2F2',tc:'#6B7C7D',t:`<strong>${f.n}</strong> uploaded`,sub:`${c.name} · ${f.uploader}`,ts:f.date}));
+  });
+  return acts.slice(0,6);
+}
+function renderWAActivityTab(wa){
+  const acts=SC?buildActivity(SC).filter(a=>wa.feedback.some(f=>a.t.includes(f.ref))||wa.approvals.some(ap=>a.t.includes(ap.item))||wa.tasks.some(t=>a.t.includes(t.t))||wa.files.some(f=>a.t.includes(f.n))):[];
+  if(!acts.length)return emp('No activity','Events for this work area appear here.','activity');
+  return `<div class="card" style="padding:0 16px">${acts.map(a=>`<div class="act"><div class="adot" style="background:${a.bg}"><i data-lucide="${a.i}" style="width:11px;height:11px;color:${a.tc}"></i></div><div style="flex:1"><div class="atext">${a.t}</div><div style="font-size:11px;color:#8E9E9E;margin-top:1px">${a.sub}</div></div><div class="atime">${a.ts}</div></div>`).join('')}</div>`;
+}
+
+function renderCTFiles(c){
+  const files=c.workAreas.flatMap(w=>w.files.map(f=>({...f,wa:w.name})));
+  const rows=files.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px;margin-right:4px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px;margin-right:4px">Awaiting signature</span>':'';return `<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;background:#fff;border:1px solid #E2EBE9"><div style="width:30px;height:30px;border-radius:7px;background:${ic.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ic.i}" style="width:13px;height:13px;color:${ic.tc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:600;color:#121212">${f.n}</div><div style="font-size:11px;color:#8E9E9E">${f.sz} · ${f.wa} · Uploaded by ${f.uploader} · ${f.date}</div></div>${sigBadge}<span class="st ${f.vis==='shared'?'green':'gray'}" style="font-size:10px">${f.vis==='shared'?'Shared':'Internal'}</span></div>`;}).join('');
+  return `<div style="max-width:680px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="slbl" style="margin-bottom:0">${files.length} files across all work areas</div><button onclick="toast('File picker opening…')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button></div>${files.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):emp('No files yet','Upload files to a work area.','folder')}</div>`;
+}
+
+function renderCTFeedback(c){
+  const all=c.workAreas.flatMap(w=>w.feedback.map(f=>({...f,wa:w.name})));
+  const appr=c.workAreas.flatMap(w=>w.approvals.map(a=>({...a,wa:w.name})));
+  return `<div style="max-width:680px"><div class="slbl">Feedback</div><div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">${all.map(f=>`<div style="display:flex;gap:10px"><div style="width:28px;height:28px;border-radius:8px;flex-shrink:0;background:${f.bg};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:10px;font-weight:800;color:${f.tc}">${f.init}</div><div style="flex:1;background:#F8F7F4;border-radius:10px;border:1px solid #E2EBE9;padding:11px 13px"><div style="font-size:10.5px;color:#8E9E9E;margin-bottom:4px">${f.wa} · On: ${f.ref}</div><p style="font-size:13px;color:#121212">${f.txt}</p><p style="font-size:10.5px;color:#8E9E9E;margin-top:5px">${f.from} · ${f.time}</p></div></div>`).join('')}</div><div class="slbl">Approvals</div><div class="card" style="padding:0 18px">${appr.map(a=>`<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #F5F5F3"><div style="width:28px;height:28px;border-radius:7px;background:${a.status==='approved'?'#EAF2EE':'#FEF3E2'};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${a.status==='approved'?'check':'clock'}" style="width:12px;height:12px;color:${a.status==='approved'?'#2D6A4F':'#A0621A'}"></i></div><div style="flex:1;min-width:0"><span class="ht" style="font-size:13px;font-weight:600;color:#121212">${a.item}</span><div style="font-size:11px;color:#8E9E9E">${a.wa}</div></div><span class="st ${a.status==='approved'?'green':'amber'}" style="font-size:10px">${a.status==='approved'?'Approved':'Waiting'}</span></div>`).join('')}</div></div>`;
+}
+
+function renderCTInvoices(c){
+  const all=c.workAreas.flatMap(w=>w.invoices.map(i=>({...i,wa:w.name})));
+  if(!all.length)return emp('No invoices','Create an invoice for this client.','file-text');
+  const total=all.filter(i=>i.status==='unpaid').reduce((s,i)=>s+parseFloat(i.amt.replace(/[^0-9.]/g,'')||0),0);
+  return `<div style="max-width:640px">${total>0?`<div style="padding:14px 18px;border-radius:12px;background:#FFF5F0;border:1px solid #FFD4BA;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between"><div><div class="ht" style="font-size:13px;font-weight:700;color:#121212">Outstanding balance</div><div style="font-size:12px;color:#CC5A25;margin-top:2px">${all.filter(i=>i.status==='unpaid').length} unpaid</div></div><div class="ht" style="font-size:20px;font-weight:900;color:#A0621A">$${total.toLocaleString()}</div></div>`:''}<div class="card" style="padding:0 18px">${all.map(inv=>`<div class="ir"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${inv.status==='paid'?'#EAF2EE':'#F5F0FF'};display:flex;align-items:center;justify-content:center"><i data-lucide="${inv.status==='paid'?'check':'clock'}" style="width:12px;height:12px;color:${inv.status==='paid'?'#2D6A4F':'#6B3FA0'}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id}</div><div class="imeta">${inv.desc} · ${inv.wa} · ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span><span class="st ${inv.status==='paid'?'green':'purple'}" style="font-size:10px">${inv.status==='paid'?'Paid':'Unpaid'}</span></div>`).join('')}</div></div>`;
+}
+
+function renderCTPayments(c){
+  const paid=c.workAreas.flatMap(w=>w.invoices.filter(i=>i.status==='paid'));
+  return `<div style="max-width:640px"><div class="slbl">Received payments</div><div class="card" style="padding:0 18px;margin-bottom:14px">${paid.length?paid.map(inv=>`<div class="ir"><div style="width:28px;height:28px;border-radius:7px;background:#EAF2EE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="check" style="width:12px;height:12px;color:#2D6A4F"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id}</div><div class="imeta">${inv.desc}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#2D6A4F">${inv.amt}</span></div>`).join(''):emp('No payments received yet','Paid invoices will appear here.','credit-card')}</div></div>`;
+}
+
+function renderCTActivity(c){
+  const acts=buildActivity(c);
+  if(!acts.length)return emp('No activity yet','Events appear as you work with clients.','activity');
+  return `<div style="max-width:640px"><div class="card" style="padding:0 20px">${acts.map(a=>`<div class="act"><div class="adot" style="background:${a.bg}"><i data-lucide="${a.i}" style="width:11px;height:11px;color:${a.tc}"></i></div><div style="flex:1"><div class="atext">${a.t}</div><div style="font-size:11px;color:#8E9E9E;margin-top:1px">${a.sub}</div></div><div class="atime">${a.ts}</div></div>`).join('')}</div></div>`;
+}
+
+function renderCTContacts(c){
+  return `<div style="max-width:480px"><div class="card" style="padding:22px"><div class="ht" style="font-size:12.5px;font-weight:700;color:#121212;margin-bottom:16px">Primary contact</div><div style="display:flex;flex-direction:column;gap:12px"><div><label class="flbl">Name</label><input type="text" class="field" value="${c.contact}" oninput="SC.contact=this.value"></div><div><label class="flbl">Email</label><input type="email" class="field" value="${c.email}" oninput="SC.email=this.value"></div><div style="display:flex;gap:10px;margin-top:4px"><button onclick="toast('Contact saved')" class="tb-btn pri">Save</button></div></div></div></div>`;
+}
+
+function renderCTPortal(c){
+  const p=c.portal;
+  const accentLight=p.primary+'22';
+  return `<div style="max-width:620px">
+
+    <!-- ── Status card ── -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-radius:16px;background:${p.on?'#E4F3EC':'#F6F9F8'};border:1px solid ${p.on?'#B0D9C4':'#DCE5E6'};margin-bottom:24px;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:36px;height:36px;border-radius:10px;background:${p.on?'#C2E8D4':'#E2EDE9'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${p.on?'#1A6B50':'#6B9E99'}" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/>${p.on?'<path d="M9 12l2 2 4-4"/>':'<line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'}</svg>
+        </div>
+        <div>
+          <div class="ht" style="font-size:13.5px;font-weight:800;color:${p.on?'#0C3A30':'#0A2E2F'};letter-spacing:-.01em;margin-bottom:2px">Client Portal${p.on?' — Active':''}</div>
+          <div style="font-size:12.5px;color:${p.on?'#2D6A4F':'#6B9E99'}">${p.on?p.url:'Disabled — enable to give '+c.name+' a branded login'}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        ${p.on?`<a href="/portal/" target="_blank" class="tb-btn" style="text-decoration:none;font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Open</a>`:''}
+        <div style="display:flex;align-items:center;gap:7px">
+          <div class="tog ${p.on?'on':''}" onclick="toggleP(${c.id})"><div class="tog-th"></div></div>
+          <span class="ht" style="font-size:12px;font-weight:700;color:${p.on?'#1A6B50':'#8AADA8'}">${p.on?'On':'Off'}</span>
+        </div>
+      </div>
+    </div>
+
+    ${p.on?`
+    <!-- ── Share link ── -->
+    <div style="margin-bottom:26px">
+      <div class="slbl" style="margin-bottom:10px">Portal link</div>
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fff;border-radius:11px;border:1px solid #DCE5E6;box-shadow:0 1px 3px rgba(15,61,62,.04)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8AADA8" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <div class="ht" style="flex:1;font-size:13px;font-weight:600;color:#3550C4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.url}</div>
+        <button class="tb-btn" style="font-size:11.5px;padding:5px 11px" onclick="toast('Link copied!')">Copy link</button>
+      </div>
+    </div>
+
+    <!-- ── Branding ── -->
+    <div class="slbl" style="margin-bottom:14px">Portal branding</div>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px">
+
+      <!-- Logo + Banner in a side-by-side row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+        <!-- Logo -->
+        <div>
+          <div style="font-size:11px;font-family:'General Sans',sans-serif;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Client logo</div>
+          <div onclick="toast('File picker opens in production')" style="height:100px;border:1.5px dashed #CCDDD9;border-radius:14px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;cursor:pointer;transition:all .14s;position:relative;overflow:hidden" onmouseenter="this.style.borderColor='#7A9E99';this.style.background='#F5FAF7'" onmouseleave="this.style.borderColor='#CCDDD9';this.style.background='#fff'">
+            <div style="width:40px;height:40px;border-radius:10px;background:#E4EFE9;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:13px;font-weight:800;color:#0B4F52">${c.init}</div>
+            <div style="display:flex;align-items:center;gap:5px">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#7A9E99" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span style="font-size:11.5px;color:#6B9E99;font-family:'General Sans',sans-serif;font-weight:600">Upload logo</span>
+            </div>
+          </div>
+          <div style="font-size:10.5px;color:#8AADA8;margin-top:5px;text-align:center">PNG or SVG · transparent bg ideal</div>
+        </div>
+
+        <!-- Banner -->
+        <div>
+          <div style="font-size:11px;font-family:'General Sans',sans-serif;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Header banner</div>
+          <div onclick="toast('File picker opens in production')" style="height:100px;border:1.5px dashed #CCDDD9;border-radius:14px;background:linear-gradient(135deg,${p.primary}18 0%,${p.primary}08 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;cursor:pointer;transition:all .14s;overflow:hidden" onmouseenter="this.style.borderColor='#7A9E99'" onmouseleave="this.style.borderColor='#CCDDD9'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A9E99" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span style="font-size:11.5px;color:#6B9E99;font-family:'General Sans',sans-serif;font-weight:600">Upload banner</span>
+          </div>
+          <div style="font-size:10.5px;color:#8AADA8;margin-top:5px;text-align:center">1440 × 320px recommended</div>
+        </div>
+      </div>
+
+      <!-- Brand color -->
+      <div style="padding:18px 20px;background:#fff;border-radius:14px;border:1px solid #E2EBE9;box-shadow:0 1px 3px rgba(15,61,62,.04)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div>
+            <div style="font-size:11px;font-family:'General Sans',sans-serif;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Brand colour</div>
+            <div style="font-size:12px;color:#8AADA8">Used for buttons, highlights, and accents in the portal</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;background:#F6F9F8;border:1px solid #DCE5E6">
+            <div style="width:14px;height:14px;border-radius:4px;background:${p.primary};flex-shrink:0"></div>
+            <span class="ht" style="font-size:11.5px;font-weight:700;color:#0B4F52">${p.primary}</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          ${PCOLS.map(col=>`<div title="${col}" style="width:30px;height:30px;border-radius:50%;background:${col};cursor:pointer;border:2.5px solid ${p.primary===col?'#0B4F52':'transparent'};box-shadow:${p.primary===col?'0 0 0 2px #fff, 0 0 0 4px #0B4F52':'0 1px 3px rgba(0,0,0,.15)'};transition:all .15s;flex-shrink:0" onclick="setPC(${c.id},this,'${col}')"></div>`).join('')}
+          <label style="width:30px;height:30px;border-radius:50%;cursor:pointer;overflow:hidden;flex-shrink:0;position:relative;border:1.5px dashed #CCDDD9;display:flex;align-items:center;justify-content:center;transition:border-color .12s" onmouseenter="this.style.borderColor='#7A9E99'" onmouseleave="this.style.borderColor='#CCDDD9'">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8AADA8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <input type="color" value="${p.primary}" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%" onchange="setPC(${c.id},null,this.value)">
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save -->
+    <button class="tb-btn pri" style="padding:9px 20px" onclick="toast('Portal branding saved')">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save branding
+    </button>
+
+    `:`
+    <!-- Portal off state -->
+    <div style="padding:40px 32px;text-align:center;background:#fff;border-radius:18px;border:1px solid #E2EBE9;box-shadow:0 1px 3px rgba(15,61,62,.04),0 4px 16px rgba(15,61,62,.04)">
+      <div style="width:56px;height:56px;border-radius:16px;background:#EDF2F0;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7A9E99" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="ht" style="font-size:15px;font-weight:800;color:#0A2E2F;margin-bottom:7px;letter-spacing:-.02em">${c.name} has no portal yet</div>
+      <div style="font-size:13px;color:#7A9E99;line-height:1.65;max-width:280px;margin:0 auto 20px">Enable the client portal to give ${c.name} a branded login where they can review work, approve deliverables, and view invoices.</div>
+      <button onclick="toggleP(${c.id})" class="tb-btn pri" style="padding:9px 20px">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Enable portal
+      </button>
+    </div>
+    `}
+  </div>`;
+}
+
+/* ══ DELIVERABLES + CONTRACTS ══ */
+function renderDeliverables(){
+  const all=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.files.filter(f=>f.vis==='shared').map(f=>({...f,cname:c.name,wa:w.name,cid:c.id}))));
+  const el=document.getElementById('deliverables-list');if(!el)return;
+  if(!all.length){el.innerHTML='<div class="emp"><div class="emp-ico"><i data-lucide="file" style="width:20px;height:20px;color:#B0B0AD"></i></div><div class="emp-t">No deliverables yet</div><div class="emp-b">Files shared with clients appear here.</div></div>';lucide.createIcons();return;}
+  const hdr='<div style="padding:12px 18px 10px;border-bottom:1px solid #EAF0EC;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#0B4F52">'+all.length+' shared with clients</span></div>';
+  const rows=all.map(f=>{const ic=IC[f.type]||IC.doc;const sig=f.signing==='signed'?'<span class="st green" style="font-size:10px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px">Awaiting sig.</span>':'';return '<div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid #EAF0EC;cursor:pointer" onclick="openCP('+f.cid+')"><div style="width:28px;height:28px;border-radius:7px;background:'+ic.bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+ic.i+'" style="width:12px;height:12px;color:'+ic.tc+'"></i></div><div style="flex:1;min-width:0;margin-left:8px"><div class="ht" style="font-size:13px;font-weight:600;color:#0B4F52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+f.n+'</div><div style="font-size:11px;color:#7A9E99;margin-top:1px">'+f.cname+' · '+f.wa+' · '+f.date+'</div></div>'+sig+'<span class="st green" style="font-size:10px;margin-left:4px">Shared</span></div>';}).join('');
+  el.innerHTML=hdr+'<div>'+rows+'</div>';
+  lucide.createIcons();
+}
+
+function renderContracts(){
+  const contracts=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.files.filter(f=>f.type==='sig').map(f=>({...f,cname:c.name,wa:w.name,cid:c.id}))));
+  const el=document.getElementById('contracts-list');if(!el)return;
+  const empty='<div class="emp"><div class="emp-ico"><i data-lucide="file-text" style="width:20px;height:20px;color:#B0B0AD"></i></div><div class="emp-t">No contracts yet</div><div class="emp-b">Uploaded contracts and signed agreements appear here.</div></div>';
+  if(!contracts.length){el.innerHTML=empty;lucide.createIcons();return;}
+  const hdr='<div style="padding:12px 18px 10px;border-bottom:1px solid #EAF0EC;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#0B4F52">'+contracts.length+' agreements</span><input type="file" id="contract-file" style="display:none" onchange="handleContractUpload(this)"><button onclick="document.getElementById(\'contract-file\').click()" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> New contract</button></div>';
+  const rows=contracts.map(f=>{const signed=f.signing==='signed';const awaiting=f.signing==='awaiting-signature';return '<div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EAF0EC;cursor:pointer" onclick="openCP('+f.cid+')"><div style="width:30px;height:30px;border-radius:8px;background:'+(signed?'#E4F3EC':awaiting?'#FFF3E6':'#F0F0EE')+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+(signed?'file-check':awaiting?'pen-line':'file-text')+'" style="width:13px;height:13px;color:'+(signed?'#17A39B':awaiting?'#CC6B1A':'#7A9E99')+'"></i></div><div style="flex:1;min-width:0;margin-left:8px"><div class="ht" style="font-size:13px;font-weight:600;color:#0B4F52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+f.n+'</div><div style="font-size:11px;color:#7A9E99;margin-top:1px">'+f.cname+' · '+f.wa+'</div></div><span style="font-size:11px;color:#8E9E9E;margin-right:10px">'+f.date+'</span><span class="st '+(signed?'green':awaiting?'amber':'gray')+'" style="font-size:10px">'+(signed?'Signed':awaiting?'Awaiting sig.':'Draft')+'</span></div>';}).join('');
+  el.innerHTML=hdr+'<div>'+rows+'</div>';
+  lucide.createIcons();
+}
+async function handleContractUpload(input){
+  const file=input.files[0];if(!file)return;
+  if(!DATA.clients.length||!DATA.clients[0].workAreas.length){toast('No work area available');return;}
+  const waApiId=DATA.clients[0].workAreas[0].apiId;
+  try{
+    toast('Uploading file…');
+    const uploadData=await uploadFileBlob(file);
+    const name=file.name;const size=(file.size/(1024*1024)).toFixed(1)+' MB';
+    const res=await apiFetch('/files',{method:'POST',body:JSON.stringify({workAreaId:waApiId,name,type:'SIG',size,visibility:'shared',uploaderName:CURRENT_USER?CURRENT_USER.name:'You',url:uploadData.url||''})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Upload failed');return;}
+    const f=json.data;
+    DATA.clients[0].workAreas[0].files.push({apiId:f.id,n:f.name,type:'sig',sz:f.size||'—',vis:'shared',uploader:f.uploaderName||'—',date:'now',url:f.url||''});
+    toast('Contract uploaded');renderContracts();lucide.createIcons();
+  }catch(err){toast(err.message||'Upload failed');}
+  input.value='';
+}
+
+/* ══ GLOBAL VIEWS ══ */
+function renderTasks(){
+  const all=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.tasks.map(t=>({...t,cname:c.name,wa:w.name}))));
+  const STATUS_COL={todo:'gray','in-progress':'blue',review:'amber',completed:'green'};
+  const open=all.filter(t=>!t.done);const done=all.filter(t=>t.done);
+  const eo=document.getElementById('tasks-open');const ed=document.getElementById('tasks-done');
+  if(eo)eo.innerHTML=open.map(t=>`<div class="tr" style="padding:11px 0"><div class="tck"></div><div class="tt" style="flex:1">${t.t}</div><span class="st ${STATUS_COL[t.status]||'gray'}" style="font-size:10px;margin-right:6px">${t.status}</span><div class="ta">${t.cname}</div></div>`).join('');
+  if(ed)ed.innerHTML=done.map(t=>`<div class="tr"><div class="tck done"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="tt done" style="flex:1">${t.t}</div><div class="ta">${t.cname}</div></div>`).join('');
+  lucide.createIcons();
+}
+
+function filterTasks(){}
+
+function renderFiles(){
+  const all=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.files.map(f=>({...f,cname:c.name,wa:w.name}))));
+  const el=document.getElementById('files-list');if(!el)return;
+  const hdr='<div style="padding:12px 16px 10px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">'+all.length+' files</span><button onclick="toast(\'File picker opening…\')" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload</button></div>';
+  // Desktop table
+  const thStyle='font-family:\'General Sans\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8E9E9E;padding:8px 16px;text-align:left;border-bottom:1px solid #E2EBE9';
+  const tableRows=all.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px;margin-left:5px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px;margin-left:5px">Awaiting signature</span>':'';return '<tr onmouseenter="this.style.background=\'#FBFBFA\'" onmouseleave="this.style.background=\'\'"><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;vertical-align:middle"><div style="display:flex;align-items:center;gap:8px"><div style="width:26px;height:26px;border-radius:6px;background:'+ic.bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+ic.i+'" style="width:12px;height:12px;color:'+ic.tc+'"></i></div><span class="ht" style="font-size:13px;font-weight:600;color:#121212;white-space:nowrap">'+f.n+'</span>'+sigBadge+'</div></td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#6B7C7D">'+f.cname+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#6B7C7D">'+f.wa+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#8E9E9E">'+(f.uploader||'—')+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#8E9E9E">'+f.date+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2"><span class="st '+(f.vis==='shared'?'green':'gray')+'" style="font-size:10px">'+(f.vis==='shared'?'Shared':'Internal')+'</span></td></tr>';}).join('');
+  const desktopTable='<div class="files-table-wrap card" style="overflow:hidden">'+hdr+'<table style="width:100%;border-collapse:collapse"><thead><tr><th style="'+thStyle+'">File</th><th style="'+thStyle+'">Client</th><th style="'+thStyle+'">Work area</th><th style="'+thStyle+'">Uploaded by</th><th style="'+thStyle+'">Date</th><th style="'+thStyle+'">Visibility</th></tr></thead><tbody>'+tableRows+'</tbody></table></div>';
+  // Mobile card list
+  const cardRows=all.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px">Awaiting sig.</span>':'';return '<div style="background:#fff;border:1px solid #E2EBE9;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;background:'+ic.bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+ic.i+'" style="width:14px;height:14px;color:'+ic.tc+'"></i></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span class="ht" style="font-size:13px;font-weight:600;color:#121212;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px">'+f.n+'</span>'+sigBadge+'</div><div style="font-size:11px;color:#8E9E9E;margin-top:2px">'+f.cname+' · '+f.wa+'</div></div><span class="st '+(f.vis==='shared'?'green':'gray')+'" style="font-size:10px;flex-shrink:0">'+(f.vis==='shared'?'Shared':'Internal')+'</span></div>';}).join('');
+  const mobileCards='<div class="files-card-list" style="display:none"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">'+all.length+' files</span><button onclick="toast(\'File picker opening…\')" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload</button></div>'+cardRows+'</div>';
+  el.innerHTML=desktopTable+mobileCards;
+  lucide.createIcons();
+}
+
+function openInvModal(){SHOW_INV_FORM=true;renderInv();}
+function closeInvForm(){SHOW_INV_FORM=false;renderInv();}
+async function saveInvoice(){
+  const clientId = Number(document.getElementById('inv-client').value);
+  const projectId = Number(document.getElementById('inv-project').value);
+  const amount = Number(document.getElementById('inv-amount').value);
+  const dueDate = document.getElementById('inv-due').value;
+  const desc = document.getElementById('inv-desc').value.trim();
+  if(!clientId||!projectId||!amount||!dueDate){toast('Please fill all required fields');return;}
+  try {
+    const lineItems = desc ? [{desc, qty:1, rate:amount}] : [];
+    const res = await apiFetch('/invoices', {method:'POST', body:JSON.stringify({clientId, projectId, amount, currency:'NGN', dueDate, status:'pending', lineItems})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to create invoice');return;}
+    INVOICES.push(json.data);
+    SHOW_INV_FORM=false;
+    renderInv();
+    toast('Invoice created');
+  } catch(err){toast('Failed to create invoice');}
+}
+function renderInv(){
+  const el=document.getElementById('inv-list');if(!el)return;
+  if(SHOW_INV_FORM){
+    const clientOpts = DATA.clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+    const projectOpts = PROJECTS.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+    el.innerHTML=`<div class="card" style="padding:22px 24px;margin-bottom:14px"><div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52;margin-bottom:16px">New invoice</div><div style="display:flex;flex-direction:column;gap:14px"><div><label class="flbl">Client</label><select class="field" id="inv-client">${clientOpts}</select></div><div><label class="flbl">Project</label><select class="field" id="inv-project">${projectOpts}</select></div><div><label class="flbl">Amount (NGN)</label><input type="number" class="field" id="inv-amount" placeholder="500000"></div><div><label class="flbl">Due date</label><input type="date" class="field" id="inv-due"></div><div><label class="flbl">Description</label><input type="text" class="field" id="inv-desc" placeholder="Website design phase 1"></div><div style="display:flex;gap:10px"><button class="tb-btn" onclick="closeInvForm()">Cancel</button><button class="tb-btn pri" onclick="saveInvoice()">Create invoice</button></div></div></div>`;
+    lucide.createIcons();
+    return;
+  }
+  const all=INVOICES.length?INVOICES.map(inv=>{
+    const client=DATA.clients.find(c=>c.id===inv.clientId);
+    return {...apiInvoiceToData(inv),cname:client?client.name:'',cid:inv.clientId};
+  }):DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.invoices.map(i=>({...i,cname:c.name,wa:w.name,cid:c.id}))));
+  el.innerHTML=all.map(inv=>`<div class="ir" style="cursor:pointer" onclick="openCP(${inv.cid})"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${inv.status==='paid'?'#EAF2EE':'#F5F0FF'};display:flex;align-items:center;justify-content:center"><i data-lucide="${inv.status==='paid'?'check':'clock'}" style="width:12px;height:12px;color:${inv.status==='paid'?'#2D6A4F':'#6B3FA0'}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id} <span style="font-weight:400;color:#8E9E9E;font-family:'Inter',sans-serif">· ${inv.cname}</span></div><div class="imeta">${inv.desc} · Due ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span><span class="st ${inv.status==='paid'?'green':'purple'}" style="font-size:10px">${inv.status==='paid'?'Paid':'Unpaid'}</span></div>`).join('');
+  // Update invoice stats
+  const rev=computeRevenue('month');
+  const sp=document.getElementById('inv-stat-paid');if(sp)sp.textContent=formatCurrency(rev.collected,'NGN');
+  const spp=document.getElementById('inv-stat-pending');if(spp)spp.textContent=formatCurrency(rev.pending,'NGN');
+  const spo=document.getElementById('inv-stat-overdue');if(spo)spo.textContent=formatCurrency(rev.overdue,'NGN');
+  const ub=document.getElementById('inv-unpaid-badge');
+  if(ub){const uCount=all.filter(i=>i.status!=='paid').length;ub.textContent=uCount?`${uCount} unpaid`:'All paid';ub.className=`st ${uCount?'purple':'green'}`;ub.style.fontSize='10px';}
+  lucide.createIcons();
+}
+
+function computePayStats(win){
+  const rev=computeRevenue(win);
+  return {
+    collected:formatCurrency(rev.collected,'NGN'),
+    pending:formatCurrency(rev.pending,'NGN'),
+    overdue:formatCurrency(rev.overdue,'NGN')
+  };
+}
+function switchPayWin(win,btn){
+  const d=computePayStats(win);
+  const pc=document.getElementById('pay-collected');
+  const pp=document.getElementById('pay-pending');
+  const po=document.getElementById('pay-overdue');
+  if(pc)pc.textContent=d.collected;
+  if(pp)pp.textContent=d.pending;
+  if(po)po.textContent=d.overdue;
+  document.querySelectorAll('.pay-win-btn').forEach(b=>{b.style.background='transparent';b.style.color='rgba(255,255,255,.5)';b.style.boxShadow='none';});
+  if(btn){btn.style.background='rgba(255,255,255,.2)';btn.style.color='#fff';btn.style.boxShadow='none';}
+}
+function openPayModal(){SHOW_PAY_FORM=true;renderPay();}
+function closePayForm(){SHOW_PAY_FORM=false;renderPay();}
+async function savePayment(){
+  const invoiceId = Number(document.getElementById('pay-inv').value);
+  const amount = Number(document.getElementById('pay-amt').value);
+  const method = document.getElementById('pay-method').value.trim() || 'Bank transfer';
+  const note = document.getElementById('pay-note').value.trim();
+  if(!invoiceId||!amount){toast('Please fill required fields');return;}
+  try {
+    const res = await apiFetch('/payments', {method:'POST', body:JSON.stringify({invoiceId, amount, currency:'NGN', method, note})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Failed to record payment');return;}
+    PAYMENTS.push(json.data);
+    SHOW_PAY_FORM=false;
+    renderPay();
+    toast('Payment recorded');
+  } catch(err){toast('Failed to record payment');}
+}
+function renderPay(){
+  const el=document.getElementById('pay-list');if(!el)return;
+  if(SHOW_PAY_FORM){
+    const invOpts = INVOICES.map(inv=>`<option value="${inv.id}">INV-${String(inv.id).padStart(3,'0')} — ${formatCurrency(inv.amount, inv.currency||'NGN')}</option>`).join('');
+    el.innerHTML=`<div class="card" style="padding:22px 24px;margin-bottom:14px"><div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52;margin-bottom:16px">Record payment</div><div style="display:flex;flex-direction:column;gap:14px"><div><label class="flbl">Invoice</label><select class="field" id="pay-inv">${invOpts}</select></div><div><label class="flbl">Amount paid (NGN)</label><input type="number" class="field" id="pay-amt" placeholder="500000"></div><div><label class="flbl">Method</label><input type="text" class="field" id="pay-method" placeholder="Bank transfer"></div><div><label class="flbl">Note</label><input type="text" class="field" id="pay-note" placeholder="Reference"></div><div style="display:flex;gap:10px"><button class="tb-btn" onclick="closePayForm()">Cancel</button><button class="tb-btn pri" onclick="savePayment()">Record payment</button></div></div></div>`;
+    lucide.createIcons();
+    return;
+  }
+  let paid;
+  if (PAYMENTS.length && INVOICES.length) {
+    paid = PAYMENTS.map(pay => {
+      const inv = INVOICES.find(i => i.id === pay.invoiceId);
+      const client = inv ? DATA.clients.find(c => c.id === inv.clientId) : null;
+      return {
+        id: inv ? 'INV-' + String(inv.id).padStart(3, '0') : '—',
+        cname: client ? client.name : '',
+        desc: (inv && inv.lineItems && inv.lineItems[0] && inv.lineItems[0].desc) || 'Payment',
+        date: pay.createdAt ? new Date(pay.createdAt).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' }) : '—',
+        amt: formatCurrency(pay.amount, pay.currency),
+      };
+    });
+  } else {
+    paid = DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.invoices.filter(i=>i.status==='paid').map(i=>({...i,cname:c.name}))));
+  }
+  el.innerHTML=paid.map(inv=>`<div class="ir"><div style="width:28px;height:28px;border-radius:7px;background:#EAF2EE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="check" style="width:11px;height:11px;color:#2D6A4F"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id} <span style="font-weight:400;color:#8E9E9E;font-family:'Inter',sans-serif">· ${inv.cname}</span></div><div class="imeta">${inv.desc} · ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#2D6A4F">${inv.amt}</span></div>`).join('');
+  lucide.createIcons();
+}
+
+function renderActivity(){
+  const el=document.getElementById('act-all');if(!el)return;
+  const acts=DATA.clients.flatMap(c=>buildActivity(c));
+  if(!acts.length){ el.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No recent activity.</div>`; return; }
+  el.innerHTML=acts.map(a=>`<div class="act"><div class="adot" style="background:${a.bg}"><i data-lucide="${a.i}" style="width:12px;height:12px;color:${a.tc}"></i></div><div style="flex:1"><div class="atext">${a.t}</div><div style="font-size:11px;color:#7A9E99;margin-top:2px">${a.sub}</div></div><div class="atime">${a.ts}</div></div>`).join('');
+  lucide.createIcons();
+}
+
+async function renderEarlyAccess(){
+  const el=document.getElementById('ea-view-content');
+  if(!el)return;
+  el.innerHTML='<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">Loading signups...</div>';
+  try{
+    const res=await apiFetch('/early-access/export');
+    if(!res.ok)throw new Error('Failed to load');
+    const csv=await res.text();
+    const lines=csv.trim().split('\r\n');
+    const parseCSVRow=row=>{const res=[];let cur='',inQ=false;for(let i=0;i<row.length;i++){const c=row[i];if(c=='"'&&!inQ){inQ=true;}else if(c=='"'&&inQ&&row[i+1]=='"'){cur+='"';i++;}else if(c=='"'&&inQ){inQ=false;}else if(c==','&&!inQ){res.push(cur);cur='';}else cur+=c;}res.push(cur);return res;};
+    const rows=lines.map(parseCSVRow);
+    const [header,...data]=rows;
+    if(!data.length){el.innerHTML='<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No signups yet.</div>';return;}
+    const bdg=document.getElementById('ea-bdg');
+    if(bdg){bdg.textContent=data.length;bdg.style.display='';}
+    el.innerHTML=`
+      <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="ht" style="font-size:22px;font-weight:900;letter-spacing:-.025em;color:#0A2E2F;margin-bottom:3px">Early Access</div>
+          <div style="font-size:13px;color:#7A9E99">${data.length} signup${data.length===1?'':'s'} collected</div>
+        </div>
+      </div>
+      <div class="card" style="overflow:hidden">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Email</th><th>Name</th><th>Company</th><th>Signed up</th></tr></thead>
+          <tbody>
+            ${data.map((r,i)=>`<tr>
+              <td style="color:#8E9E9E;font-size:12px">${i+1}</td>
+              <td class="ht" style="font-weight:600">${esc(r[1]||'')}</td>
+              <td style="font-size:12.5px;color:#3A3A38">${esc(r[2]||'—')}</td>
+              <td style="font-size:12.5px;color:#3A3A38">${esc(r[3]||'—')}</td>
+              <td style="font-size:12px;color:#8E9E9E">${r[4]?new Date(r[4]).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+    lucide.createIcons();
+  }catch(e){
+    const isAuth=e.message==='Unauthorized';
+    el.innerHTML=`<div style="padding:32px;text-align:center">
+      <div style="font-size:13px;color:${isAuth?'#C0392B':'#8E9E9E'};margin-bottom:${isAuth?'12px':'0'}">${isAuth?'Session expired. Please log in again.':'Could not load signups.'}</div>
+      ${isAuth?'<button class="tb-btn pri" onclick="showAuth()" style="font-size:12px;padding:7px 16px">Log in again</button>':''}
+    </div>`;
+  }
+}
+
+async function downloadEarlyAccessCSV(){
+  try{
+    const res=await apiFetch('/early-access/export');
+    if(!res.ok)throw new Error('Failed');
+    const blob=await res.blob();
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='early-access-signups.csv';
+    a.click();
+    toast('CSV downloaded');
+  }catch{toast('Download failed');}
+}
+
+async function renderTeam(){
+  await loadTeam();
+  const el=document.getElementById('team-list');if(!el)return;
+  if(!DATA.team.length){el.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No team members yet.</div>`;lucide.createIcons();return;}
+  el.innerHTML=DATA.team.map(m=>`<div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #EEF2F2"><div style="width:38px;height:38px;border-radius:50%;background:${m.bg||'#E4F2F0'};color:${m.tc||'#0B4F52'};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:12px;font-weight:800;flex-shrink:0">${m.init}</div><div style="flex:1"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0A2E2F;letter-spacing:-.01em">${m.name||m.email}</div><div style="font-size:12px;color:#7A9E99;margin-top:2px">${m.email}</div></div><span class="st teal" style="font-size:10px">${m.role}</span></div>`).join('');
+  lucide.createIcons();
+}
+async function inviteMember(){
+  const email = prompt('Enter team member email:');
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Please enter a valid email');return;}
+  try {
+    const res = await apiFetch('/team', {method:'POST', body:JSON.stringify({email})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Invite failed');return;}
+    toast('Invite sent');
+    renderTeam();
+  } catch(err){toast('Invite failed');}
+}
+
+function renderSettings(tab){
+  const el=document.getElementById('settings-content');if(!el)return;
+  const tabs={
+    general:`<div class="card" style="padding:26px;margin-bottom:14px"><div style="display:flex;flex-direction:column;gap:18px"><div><label class="flbl">Workspace name</label><input type="text" class="field" id="set-company" value="${CURRENT_USER && CURRENT_USER.company ? CURRENT_USER.company : ''}"></div><div><label class="flbl">Plan</label><div style="padding:14px 16px;background:#F7FAF9;border-radius:10px;border:1px solid #E0E8E4;display:flex;align-items:center;justify-content:space-between"><div><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52">Professional</div><div style="font-size:12px;color:#7A9E99;margin-top:3px">$39/month · 5 seats · 30 clients</div></div><a href="/pricing/" class="ht" style="font-size:12px;font-weight:700;color:#17A39B;text-decoration:none">Manage →</a></div></div><button class="tb-btn pri" style="width:fit-content" onclick="saveSettings()">Save changes</button></div></div><div style="margin-top:12px;text-align:center"><a href="/" class="ht" style="font-size:12px;font-weight:600;color:#7A9E99;text-decoration:none">← Back to marketing site</a></div>`,
+    branding:`<div class="card" style="padding:26px"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-bottom:18px">Workspace branding</div><div style="display:flex;flex-direction:column;gap:18px"><div><label class="flbl">Logo</label><div class="upl" onclick="toast('File picker')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ABDB7" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 9px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div class="ht" style="font-size:12.5px;font-weight:600;color:#6A8E89">Upload logo</div><div style="font-size:11px;color:#9ABDB7;margin-top:3px">PNG or SVG preferred</div></div></div><div><label class="flbl">Primary colour</label><div style="display:flex;gap:8px;flex-wrap:wrap">${PCOLS.map(c=>`<div style="width:28px;height:28px;border-radius:50%;background:${c};cursor:pointer;border:2.5px solid transparent;transition:border-color .12s" onclick="toast('Colour applied')" onmouseenter="this.style.borderColor='#0B4F52'" onmouseleave="this.style.borderColor='transparent'"></div>`).join('')}</div></div><button class="tb-btn pri" style="width:fit-content" onclick="toast('Branding saved')">Save</button></div></div>`,
+    payments:`<div class="card" style="padding:26px"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-bottom:18px">Payment integrations</div><div style="display:flex;flex-direction:column;gap:10px">${[['Stripe','Connected','#1A6B55'],['Paystack','Not connected','#7A9E99'],['Flutterwave','Not connected','#7A9E99'],['Manual transfer','Available','#3550C4']].map(([n,s,c])=>`<div style="padding:16px 18px;border-radius:12px;border:1px solid #E8EFEC;background:#F7FAF9;display:flex;align-items:center;justify-content:space-between"><div class="ht" style="font-size:13px;font-weight:700;color:#0B4F52">${n}</div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:${c};font-weight:600">${s}</span><button class="tb-btn" style="font-size:11.5px;padding:6px 12px" onclick="toast('${n} settings')">${s==='Connected'?'Manage':'Connect'}</button></div></div>`).join('')}</div></div>`,
+    workflow:`<div class="card" style="padding:26px"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-bottom:18px">Custom workflow</div><div style="display:flex;flex-direction:column;gap:16px"><div><label class="flbl">Service categories</label><div style="display:flex;gap:6px;flex-wrap:wrap">${['Strategy','Communications','Media','Editorial','Advisory','Design','Production','Marketing'].map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer" onclick="toast('Edit category')">${s}</span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="toast('Add category')">+ Add</span></div></div><div><label class="flbl">Workflow stages</label><div style="display:flex;gap:6px;flex-wrap:wrap">${['Todo','In progress','Review','Approved','Completed'].map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer">${s}</span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="toast('Add stage')">+ Add</span></div></div><div><label class="flbl">Work area labels</label><div style="display:flex;gap:6px;flex-wrap:wrap">${['Project','Campaign','Retainer','Advisory','Engagement'].map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer">${s}</span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="toast('Add label')">+ Add</span></div></div></div></div>`
+  };
+  el.innerHTML=tabs[tab]||'';
+}
+function settingsTab(name,el){
+  document.querySelectorAll('#view-settings .tab').forEach(t=>{t.classList.remove('active');t.style.borderBottomColor='transparent';});
+  if(el){el.classList.add('active');}
+  renderSettings(name);
+}
+
+/* ══ CLIENT PORTAL HELPERS ══ */
+function copyPortalLink(cid){
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c||!c.portal.on){toast('Portal is not active');return;}
+  const url='https://'+c.portal.url;
+  navigator.clipboard.writeText(url).then(()=>toast('Portal link copied')).catch(()=>toast(url));
+}
+async function handleCPFileUpload(cid,input){
+  const file=input.files[0];if(!file)return;
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c||!c.workAreas.length){toast('No work area to upload to');return;}
+  const waApiId=c.workAreas[0].apiId;
+  try{
+    toast('Uploading file…');
+    const uploadData=await uploadFileBlob(file);
+    const name=file.name;const type=name.split('.').pop().toUpperCase();const size=(file.size/(1024*1024)).toFixed(1)+' MB';
+    const res=await apiFetch('/files',{method:'POST',body:JSON.stringify({workAreaId:waApiId,name,type,size,visibility:'internal',uploaderName:CURRENT_USER?CURRENT_USER.name:'You',url:uploadData.url||''})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Upload failed');return;}
+    const f=json.data;
+    c.workAreas[0].files.push({apiId:f.id,n:f.name,type:f.type.toLowerCase(),sz:f.size||'—',vis:f.visibility,uploader:f.uploaderName||'—',date:'now',url:f.url||''});
+    toast('File uploaded');renderCP();lucide.createIcons();
+  }catch(err){toast(err.message||'Upload failed');}
+  input.value='';
+}
+async function quickAddTask(cid){
+  const text=prompt('Task text:');if(!text)return;
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c||!c.workAreas.length){toast('No work area to add task');return;}
+  const waApiId=c.workAreas[0].apiId;
+  try{
+    const res=await apiFetch('/tasks',{method:'POST',body:JSON.stringify({workAreaId:waApiId,text,status:'todo',priority:'medium'})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Failed to add task');return;}
+    const t=json.data;
+    c.workAreas[0].tasks.push({apiId:t.id,t:t.text,done:t.done,a:t.assignee||'—',status:t.status,p:t.priority});
+    toast('Task added');renderCP();lucide.createIcons();
+  }catch(err){toast('Failed to add task');}
+}
+async function openFileUploadGlobal(){
+  const input=document.createElement('input');input.type='file';input.onchange=async()=>{
+    const file=input.files[0];if(!file)return;
+    if(!DATA.clients.length||!DATA.clients[0].workAreas.length){toast('No work area available');return;}
+    const waApiId=DATA.clients[0].workAreas[0].apiId;
+    try{
+      toast('Uploading file…');
+      const uploadData=await uploadFileBlob(file);
+      const name=file.name;const type=name.split('.').pop().toUpperCase();const size=(file.size/(1024*1024)).toFixed(1)+' MB';
+      const res=await apiFetch('/files',{method:'POST',body:JSON.stringify({workAreaId:waApiId,name,type,size,visibility:'internal',uploaderName:CURRENT_USER?CURRENT_USER.name:'You',url:uploadData.url||''})});
+      const json=await res.json();
+      if(!res.ok){toast(json.error||'Upload failed');return;}
+      const f=json.data;
+      DATA.clients[0].workAreas[0].files.push({apiId:f.id,n:f.name,type:f.type.toLowerCase(),sz:f.size||'—',vis:f.visibility,uploader:f.uploaderName||'—',date:'now',url:f.url||''});
+      toast('File uploaded');renderFiles();lucide.createIcons();
+    }catch(err){toast(err.message||'Upload failed');}
+  };
+  input.click();
+}
+
+/* ══ ADD / EDIT CLIENT ══ */
+function openMod(){ncPortalOn=false;ncEng='active';['nc-name','nc-contact','nc-email'].forEach(id=>{document.getElementById(id).value='';});document.getElementById('nc-svc').value='';document.getElementById('nc-ptog').classList.remove('on');setEng('active');document.getElementById('mod-foot').innerHTML=`<button onclick="closeMod()" class="tb-btn">Cancel</button><button onclick="addClient()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create client</button>`;document.getElementById('mod').classList.add('open');}
+function closeMod(){document.getElementById('mod').classList.remove('open');}
+function toggleNP(){ncPortalOn=!ncPortalOn;document.getElementById('nc-ptog').classList.toggle('on',ncPortalOn);}
+function setEng(v){ncEng=v;['active','prospect','paused'].forEach(s=>{const el=document.getElementById('eng-'+s);if(el){el.style.borderColor=s===v?'#17A39B':'#EEF2F2';el.style.background=s===v?'#EBF5F0':'#fff';}});document.getElementById('nc-eng').value=v;}
+async function addClient(){
+  const name=document.getElementById('nc-name').value.trim();
+  const email=document.getElementById('nc-email').value.trim();
+  const contact=document.getElementById('nc-contact').value.trim()||'—';
+  if(!name){toast('Please enter a client name.');return;}
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Please enter a valid email.');return;}
+  try {
+    const type = document.getElementById('nc-svc').value || 'Service';
+    const res = await apiFetch('/clients', {
+      method: 'POST',
+      body: JSON.stringify({ name, contact, email, type, status: ncEng })
+    });
+    const json = await res.json();
+    if (!res.ok) { toast(json.error || 'Failed to create client'); return; }
+    const newClient = apiClientToData(json.data, DATA.clients.length);
+    newClient.portal.on = ncPortalOn;
+    if(ncPortalOn) newClient.portal.url = `portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}`;
+    DATA.clients.push(newClient);
+    document.getElementById('cl-bdg').textContent = DATA.clients.length;
+    closeMod(); toast(`${name} added.`); openCP(newClient.id);
+  } catch (err) {
+    toast('Network error. Please try again.');
+    console.error(err);
+  }
+}
+function editC(cid){
+  const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
+  document.getElementById('nc-name').value=c.name;
+  document.getElementById('nc-contact').value=c.contact;
+  document.getElementById('nc-email').value=c.email;
+  document.getElementById('nc-svc').value=c.type;
+  ncPortalOn=c.portal.on;ncEng=c.eng;
+  document.getElementById('nc-ptog').classList.toggle('on',ncPortalOn);
+  setEng(c.eng);
+  document.getElementById('mod-foot').innerHTML=`<button onclick="closeMod()" class="tb-btn">Cancel</button><button onclick="saveC(${cid})" class="tb-btn pri">Save changes</button>`;
+  document.getElementById('mod').classList.add('open');
+}
+async function saveC(cid){
+  const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
+  const name=document.getElementById('nc-name').value.trim();
+  const email=document.getElementById('nc-email').value.trim();
+  const contact=document.getElementById('nc-contact').value.trim()||c.contact;
+  if(!name||!email)return;
+  try {
+    const type = document.getElementById('nc-svc').value || c.type;
+    const portalUrl = ncPortalOn ? (`portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}`) : (c.portal.url || '');
+    const res = await apiFetch(`/clients/${cid}`, {
+      method: 'PUT',
+      body: JSON.stringify({ name, contact, email, type, status: document.getElementById('nc-eng').value, portal_on: ncPortalOn, portal_url: portalUrl })
+    });
+    const json = await res.json();
+    if (!res.ok) { toast(json.error || 'Failed to update client'); return; }
+    c.name=name;c.contact=contact;c.email=email;c.type=type;c.eng=document.getElementById('nc-eng').value;c.portal.on=ncPortalOn;
+    if(ncPortalOn)c.portal.url=portalUrl;
+    document.getElementById('mod-foot').innerHTML=`<button onclick="closeMod()" class="tb-btn">Cancel</button><button onclick="addClient()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create client</button>`;
+    closeMod();toast('Client updated.');renderCP();lucide.createIcons();
+  } catch (err) {
+    toast('Network error. Please try again.');
+    console.error(err);
+  }
+}
+
+/* ══ PORTAL HELPERS ══ */
+async function toggleP(cid){
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c)return;
+  const newOn = !c.portal.on;
+  const newUrl = newOn && !c.portal.url ? `portal.vereli.app/${c.name.toLowerCase().replace(/\s+/g,'-')}` : c.portal.url;
+  try {
+    const res = await apiFetch(`/clients/${cid}`, {method:'PATCH', body:JSON.stringify({portal_on:newOn, portal_url:newUrl})});
+    if(!res.ok) throw new Error('Failed to update portal');
+    c.portal.on = newOn;
+    if(newOn) c.portal.url = newUrl;
+    renderCP();lucide.createIcons();
+  } catch(err){toast('Failed to update portal');}
+}
+async function setPC(cid,el,val){
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c)return;
+  try {
+    const res = await apiFetch(`/clients/${cid}`, {method:'PATCH', body:JSON.stringify({portal_on:c.portal.on, portal_url:c.portal.url})});
+    if(!res.ok) throw new Error('Failed to update branding');
+    c.portal.primary=val;
+    renderCP();lucide.createIcons();
+  } catch(err){toast('Failed to update branding');}
+}
+async function saveSettings(){
+  const company = document.getElementById('set-company').value.trim();
+  if(!company){toast('Workspace name is required');return;}
+  try {
+    const res = await apiFetch('/me', {method:'PATCH', body:JSON.stringify({company})});
+    const json = await res.json();
+    if(!res.ok){toast(json.error||'Save failed');return;}
+    if(CURRENT_USER) CURRENT_USER.company = company;
+    updateUserUI(CURRENT_USER);
+    toast('Saved');
+  } catch(err){toast('Save failed');}
+}
+
+/* ══ HELPERS ══ */
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function emp(t,b,i){return `<div class="emp"><div class="emp-ico"><i data-lucide="${i}" style="width:22px;height:22px;color:#9ABDB7"></i></div><div class="emp-t">${t}</div><div class="emp-b">${b}</div></div>`;}
+function toast(msg){const t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#0B4F52;color:#fff;font-family:"General Sans",sans-serif;font-size:13px;font-weight:600;padding:11px 22px;border-radius:12px;z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(15,61,62,.3)';document.body.appendChild(t);requestAnimationFrame(()=>{t.style.opacity='1';});setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),200);},2600);}
+
+/* ══ MOBILE ══ */
+function openSB(){document.getElementById('sidebar').classList.add('open');document.getElementById('mob-ov').classList.add('show');}
+function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('mob-ov').classList.remove('show');}
+
+/* ══ POPSTATE ══ */
+window.addEventListener('popstate',function(){
+  const url=new URL(window.location.href);
+  const cid=url.searchParams.get('client');
+  if(cid&&DATA.clients.length){
+    const id=parseInt(cid,10);
+    if(!isNaN(id)) openCP(id);
+  }else{
+    showCG();
+  }
+});
+
+/* ══ MODAL CLOSE ON OVERLAY ══ */
+document.getElementById('mod').addEventListener('click',function(e){if(e.target===this)closeMod();});
+
+/* ══ INIT ══ */
+document.addEventListener('DOMContentLoaded',function(){
+  checkAuth();
+});
+</script>
+</body>
+</html>

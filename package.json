@@ -1,0 +1,21 @@
+{
+  "name": "vereli",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "node build.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1078.0",
+    "@aws-sdk/s3-request-presigner": "^3.1078.0",
+    "@neondatabase/serverless": "^0.10.4",
+    "bcryptjs": "^3.0.3",
+    "jose": "^5.9.6",
+    "nodemailer": "^9.0.3"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.8"
+  }
+}
