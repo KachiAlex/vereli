@@ -417,6 +417,10 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
       <span class="ni-label">Deliverables</span>
     </div>
+    <div class="ni" id="nav-kanban" onclick="goView('kanban',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="ni-label">Board</span>
+    </div>
     <div class="ni" id="nav-contracts" onclick="goView('contracts',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h6"/></svg>
       <span class="ni-label">Contracts</span>
@@ -554,6 +558,52 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
           </div>
         </div>
         <div class="card" style="overflow:hidden" id="deliverables-list"></div>
+      </div>
+    </div>
+
+    <!-- ════ KANBAN BOARD ════ -->
+    <div class="view" id="view-kanban">
+      <div style="max-width:1200px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+          <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Task Board</div><div style="font-size:13.5px;color:#7A9E99">Drag tasks between columns to update status</div></div>
+          <select id="kanban-client-filter" onchange="renderKanban()" style="height:38px;padding:0 12px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;box-shadow:0 1px 2px rgba(15,61,62,.04)">
+            <option value="">All clients</option>
+          </select>
+        </div>
+        <div id="kanban-board" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;overflow-x:auto">
+          <div class="kanban-col" data-status="todo">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:0 4px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#8E9E9E"></div>
+              <span class="ht" style="font-size:13px;font-weight:700;color:#4A6E6B">To Do</span>
+              <span class="ht" id="kb-count-todo" style="font-size:11px;font-weight:600;color:#8E9E9E;background:#EEF2F2;padding:2px 8px;border-radius:12px">0</span>
+            </div>
+            <div id="kb-col-todo" class="kanban-dropzone" style="display:flex;flex-direction:column;gap:8px;min-height:200px;padding:4px"></div>
+          </div>
+          <div class="kanban-col" data-status="in-progress">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:0 4px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#3B82F6"></div>
+              <span class="ht" style="font-size:13px;font-weight:700;color:#4A6E6B">In Progress</span>
+              <span class="ht" id="kb-count-in-progress" style="font-size:11px;font-weight:600;color:#8E9E9E;background:#EEF2F2;padding:2px 8px;border-radius:12px">0</span>
+            </div>
+            <div id="kb-col-in-progress" class="kanban-dropzone" style="display:flex;flex-direction:column;gap:8px;min-height:200px;padding:4px"></div>
+          </div>
+          <div class="kanban-col" data-status="review">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:0 4px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#F59E0B"></div>
+              <span class="ht" style="font-size:13px;font-weight:700;color:#4A6E6B">Review</span>
+              <span class="ht" id="kb-count-review" style="font-size:11px;font-weight:600;color:#8E9E9E;background:#EEF2F2;padding:2px 8px;border-radius:12px">0</span>
+            </div>
+            <div id="kb-col-review" class="kanban-dropzone" style="display:flex;flex-direction:column;gap:8px;min-height:200px;padding:4px"></div>
+          </div>
+          <div class="kanban-col" data-status="completed">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:0 4px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#10B981"></div>
+              <span class="ht" style="font-size:13px;font-weight:700;color:#4A6E6B">Done</span>
+              <span class="ht" id="kb-count-completed" style="font-size:11px;font-weight:600;color:#8E9E9E;background:#EEF2F2;padding:2px 8px;border-radius:12px">0</span>
+            </div>
+            <div id="kb-col-completed" class="kanban-dropzone" style="display:flex;flex-direction:column;gap:8px;min-height:200px;padding:4px"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1174,6 +1224,7 @@ function goView(name,el){
   if(name==='invoices')renderInv();
   if(name==='payments'){renderPay();switchPayWin('month',document.querySelector('#pay-win-tabs button'));document.getElementById('tba').innerHTML=`<button onclick="openPayModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Record payment</button>`;}
   if(name==='deliverables')renderDeliverables();
+  if(name==='kanban')renderKanban();
   if(name==='contracts')renderContracts();
   if(name==='team')renderTeam();
   if(name==='settings')renderSettings('general');
@@ -2006,6 +2057,78 @@ function renderTasks(){
 
 function filterTasks(){}
 
+function renderKanban(){
+  const filterSelect = document.getElementById('kanban-client-filter');
+  if(filterSelect && filterSelect.options.length <= 1){
+    DATA.clients.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.name;
+      filterSelect.appendChild(opt);
+    });
+  }
+  const clientFilter = filterSelect ? filterSelect.value : '';
+  const allTasks = DATA.clients.flatMap(c => c.workAreas.flatMap(w => w.tasks.map(t => ({...t, clientId: c.id, clientName: c.name, waName: w.name, waId: w.apiId}))));
+  const filtered = clientFilter ? allTasks.filter(t => String(t.clientId) === clientFilter) : allTasks;
+  const STATUS_COL = {todo:'#8E9E9E','in-progress':'#3B82F6',review:'#F59E0B',completed:'#10B981'};
+  const cols = {todo:[],'in-progress':[],review:[],completed:[]};
+  filtered.forEach(t => { const s = t.status || 'todo'; if(cols[s]) cols[s].push(t); else cols.todo.push(t); });
+  ['todo','in-progress','review','completed'].forEach(status => {
+    const col = document.getElementById('kb-col-'+status);
+    const count = document.getElementById('kb-count-'+status);
+    if(count) count.textContent = cols[status].length;
+    if(!col) return;
+    col.innerHTML = cols[status].map(t => `
+      <div class="kb-card" data-task-id="${t.apiId}" data-wa-id="${t.waId}" style="background:#fff;border:1px solid #E2EBE9;border-radius:10px;padding:12px 14px;cursor:grab;transition:box-shadow .15s,transform .15s" onmouseenter="this.style.boxShadow='0 2px 8px rgba(11,79,82,.08)'" onmouseleave="this.style.boxShadow=''">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <span class="st ${t.priority==='high'?'red':t.priority==='medium'?'amber':'gray'}" style="font-size:9px">${t.priority}</span>
+          <span style="font-size:10px;color:#8E9E9E;flex:1;text-align:right">${t.clientName}</span>
+        </div>
+        <div class="ht" style="font-size:13px;font-weight:600;color:#121212;margin-bottom:8px">${t.t}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="width:22px;height:22px;border-radius:50%;background:#DDE8E0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0B4F52">${(t.a||'—').charAt(0).toUpperCase()}</div>
+          <span style="font-size:11px;color:#7A9E99">${t.a||'Unassigned'}</span>
+        </div>
+      </div>
+    `).join('');
+  });
+  setupKanbanDrag();
+}
+
+let KB_DRAGGED = null;
+function setupKanbanDrag(){
+  document.querySelectorAll('.kb-card').forEach(card => {
+    card.draggable = true;
+    card.addEventListener('dragstart', e => { KB_DRAGGED = card; card.style.opacity = '0.5'; e.dataTransfer.effectAllowed = 'move'; });
+    card.addEventListener('dragend', e => { card.style.opacity = '1'; KB_DRAGGED = null; });
+  });
+  document.querySelectorAll('.kanban-dropzone').forEach(zone => {
+    zone.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; zone.style.background = '#F0F7F5'; });
+    zone.addEventListener('dragleave', e => { zone.style.background = ''; });
+    zone.addEventListener('drop', async e => {
+      e.preventDefault();
+      zone.style.background = '';
+      if(!KB_DRAGGED) return;
+      const newStatus = zone.parentElement.dataset.status;
+      const taskId = Number(KB_DRAGGED.dataset.taskId);
+      const waId = Number(KB_DRAGGED.dataset.waId);
+      zone.appendChild(KB_DRAGGED);
+      // Update local data
+      const client = DATA.clients.find(c => c.workAreas.some(w => w.apiId === waId));
+      if(client){
+        const wa = client.workAreas.find(w => w.apiId === waId);
+        const task = wa.tasks.find(t => t.apiId === taskId);
+        if(task) task.status = newStatus;
+      }
+      renderKanban();
+      // Persist to API
+      try {
+        await apiFetch('/tasks/' + taskId, {method:'PATCH', body:JSON.stringify({status:newStatus})});
+      } catch(err){ console.error('Task status update failed:', err); }
+    });
+  });
+}
+
 function renderFiles(){
   const all=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.files.map(f=>({...f,cname:c.name,wa:w.name}))));
   const el=document.getElementById('files-list');if(!el)return;
@@ -2422,6 +2545,10 @@ document.getElementById('mod').addEventListener('click',function(e){if(e.target=
 /* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded',function(){
   checkAuth();
+  // Register service worker for PWA
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js').catch(err=>console.log('SW registration failed:',err));
+  }
 });
 </script>
 </body>

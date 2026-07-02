@@ -1,0 +1,15 @@
+{
+  "name": "Vereli — Client Operations",
+  "short_name": "Vereli",
+  "description": "Client operations workspace for service businesses",
+  "start_url": "/app/",
+  "display": "standalone",
+  "background_color": "#F6F9F8",
+  "theme_color": "#0B4F52",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

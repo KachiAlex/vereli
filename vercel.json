@@ -17,7 +17,11 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data: blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.stripe.com; img-src 'self' data: blob: https://static.kite.ai; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://hooks.stripe.com;"
+        },
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
         },
         {
           "key": "X-Frame-Options",

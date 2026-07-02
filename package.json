@@ -13,7 +13,8 @@
     "@neondatabase/serverless": "^0.10.4",
     "bcryptjs": "^3.0.3",
     "jose": "^5.9.6",
-    "nodemailer": "^9.0.3"
+    "nodemailer": "^9.0.3",
+    "stripe": "^22.3.0"
   },
   "devDependencies": {
     "vitest": "^4.1.8"

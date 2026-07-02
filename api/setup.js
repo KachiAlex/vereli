@@ -35,6 +35,8 @@ export default async function handler(req, res) {
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS tenant_id INTEGER REFERENCES tenants(id) ON DELETE SET NULL`;
     // Update role values: superadmin, admin, manager, member
     await sql`ALTER TABLE users ALTER COLUMN role SET DEFAULT 'member'`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS totp_secret TEXT`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS totp_enabled BOOLEAN NOT NULL DEFAULT false`;
 
     // 3. Create invitations table for team member invites
     await sql`
@@ -129,6 +131,26 @@ export default async function handler(req, res) {
       );
     `;
     await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS tenant_id INTEGER REFERENCES tenants(id) ON DELETE CASCADE`;
+    await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS stripe_payment_intent_id TEXT`;
+    await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending'`;
+
+    // 7b. proposals table
+    await sql`
+      CREATE TABLE IF NOT EXISTS proposals (
+        id SERIAL PRIMARY KEY,
+        tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        client_id INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+        title TEXT NOT NULL,
+        description TEXT,
+        amount NUMERIC NOT NULL,
+        currency TEXT NOT NULL DEFAULT 'USD',
+        status TEXT NOT NULL DEFAULT 'draft',
+        line_items JSONB DEFAULT '[]',
+        valid_until TIMESTAMPTZ,
+        accepted_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
 
     // 8. Update work_areas table with tenant_id
     await sql`
@@ -187,6 +209,7 @@ export default async function handler(req, res) {
         tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
         user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
         work_area_id INTEGER NOT NULL REFERENCES work_areas(id) ON DELETE CASCADE,
+        parent_id INTEGER REFERENCES comments(id) ON DELETE CASCADE,
         author_name TEXT NOT NULL,
         author_initials TEXT,
         author_bg TEXT,
@@ -197,6 +220,7 @@ export default async function handler(req, res) {
       );
     `;
     await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS tenant_id INTEGER REFERENCES tenants(id) ON DELETE CASCADE`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS parent_id INTEGER REFERENCES comments(id) ON DELETE CASCADE`;
 
     // 12. Update approvals table with tenant_id
     await sql`
@@ -234,6 +258,39 @@ export default async function handler(req, res) {
         email TEXT NOT NULL UNIQUE,
         name TEXT,
         company TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
+
+    // 15. Workflows table for automation rules
+    await sql`
+      CREATE TABLE IF NOT EXISTS workflows (
+        id SERIAL PRIMARY KEY,
+        tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        trigger_event TEXT NOT NULL,
+        conditions JSONB DEFAULT '{}',
+        actions JSONB NOT NULL DEFAULT '[]',
+        active BOOLEAN NOT NULL DEFAULT true,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
+
+    // 16. Subscriptions table for recurring billing
+    await sql`
+      CREATE TABLE IF NOT EXISTS subscriptions (
+        id SERIAL PRIMARY KEY,
+        tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        client_id INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        amount NUMERIC NOT NULL,
+        currency TEXT NOT NULL DEFAULT 'USD',
+        interval TEXT NOT NULL DEFAULT 'month',
+        status TEXT NOT NULL DEFAULT 'active',
+        stripe_subscription_id TEXT,
+        start_date TIMESTAMPTZ,
+        end_date TIMESTAMPTZ,
+        next_billing_date TIMESTAMPTZ,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `;
