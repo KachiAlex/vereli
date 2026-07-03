@@ -70,8 +70,13 @@ export default async function handler(req, res) {
       tenantSlug: user.tenant_slug,
     });
 
+    console.log('[login] tokens created | access len:', accessToken?.length, '| refresh len:', refreshToken?.length, '| JWT_SECRET set:', !!process.env.JWT_SECRET);
+
     setCookie(res, 'access_token', accessToken, 900);   // 15 min
     setCookie(res, 'refresh_token', refreshToken, 604800); // 7 days
+
+    const setCookieHeader = res.getHeader('Set-Cookie');
+    console.log('[login] Set-Cookie header:', setCookieHeader ? 'present' : 'MISSING');
 
     sendJson(res, 200, {
       data: {
