@@ -33,12 +33,14 @@ export default async function handler(req, res) {
     `;
 
     if (!user) {
+      console.error(`[login] user not found: ${email.toLowerCase()}`);
       sendJson(res, 401, { error: 'Invalid credentials' });
       return;
     }
 
     const valid = await bcryptjs.compare(password, user.password_hash);
     if (!valid) {
+      console.error(`[login] password mismatch for: ${email.toLowerCase()} | hash starts with: ${(user.password_hash || '').slice(0, 10)}`);
       sendJson(res, 401, { error: 'Invalid credentials' });
       return;
     }
