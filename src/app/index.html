@@ -765,6 +765,7 @@ const IC={pdf:{bg:'#FEF3E2',tc:'#A0621A',i:'file-text'},fig:{bg:'#EEF3FF',tc:'#3
 
 let DATA = { team:[], clients:[], tenants:[] };
 let BRANDING = { logoUrl: '', primary: '' };
+let TENANT_SETTINGS = { categories:[], stages:[], labels:[] };
 
 /* ══ STATE ══ */
 let SC=null,STAB='overview',SWA=null,SWATAB='tasks',ncPortalOn=false,ncEng='active';
@@ -1194,6 +1195,14 @@ async function checkAuth() {
       BRANDING.primary=json.data.primary||'';
     }
     hideAuth();
+    // Load tenant workflow settings
+    try{
+      const tsRes=await apiFetch('/tenant-settings');
+      if(tsRes.ok){
+        const tsJson=await tsRes.json();
+        if(tsJson.data) TENANT_SETTINGS=tsJson.data;
+      }
+    }catch(e){console.warn('Tenant settings load failed',e);}
     // Only prompt if user has no workspace assigned at all
     if(!json.data || (!json.data.tenantId && !json.data.tenantName)){
       showCompMod();
@@ -2350,7 +2359,7 @@ function renderSettings(tab){
     general:`<div class="card" style="padding:26px;margin-bottom:14px"><div style="display:flex;flex-direction:column;gap:18px"><div><label class="flbl">Workspace name</label><input type="text" class="field" id="set-company" value="${CURRENT_USER && CURRENT_USER.company ? CURRENT_USER.company : ''}"></div><div><label class="flbl">Plan</label><div style="padding:14px 16px;background:#F7FAF9;border-radius:10px;border:1px solid #E0E8E4;display:flex;align-items:center;justify-content:space-between"><div><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52">Professional</div><div style="font-size:12px;color:#7A9E99;margin-top:3px">$39/month · 5 seats · 30 clients</div></div><a href="/pricing/" class="ht" style="font-size:12px;font-weight:700;color:#17A39B;text-decoration:none">Manage →</a></div></div><button class="tb-btn pri" style="width:fit-content" onclick="saveSettings()">Save changes</button></div></div><div style="margin-top:12px;text-align:center"><a href="/" class="ht" style="font-size:12px;font-weight:600;color:#7A9E99;text-decoration:none">← Back to marketing site</a></div>`,
     branding:`<div class="card" style="padding:26px"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-bottom:18px">Workspace branding</div><div style="display:flex;flex-direction:column;gap:18px"><div><label class="flbl">Logo</label><input type="file" id="brand-logo-input" accept="image/png,image/svg+xml,image/jpeg" style="display:none" onchange="handleBrandLogoUpload(this)"><div id="brand-logo-drop" onclick="document.getElementById('brand-logo-input').click()" style="height:120px;border:1.5px dashed #CCDDD9;border-radius:14px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;cursor:pointer;transition:all .14s;overflow:hidden;position:relative" onmouseenter="this.style.borderColor='#7A9E99';this.style.background='#F5FAF7'" onmouseleave="this.style.borderColor='#CCDDD9';this.style.background='#fff'">${BRANDING.logoUrl?`<img src="${BRANDING.logoUrl}" style="max-height:90%;max-width:90%;object-fit:contain" alt="Logo">`:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ABDB7" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div class="ht" style="font-size:12.5px;font-weight:600;color:#6A8E89">Upload logo</div><div style="font-size:11px;color:#9ABDB7;margin-top:3px">PNG or SVG preferred</div>`}</div>${BRANDING.logoUrl?`<div style="display:flex;gap:8px;margin-top:4px"><button class="tb-btn" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation();removeBrandLogo()">Remove</button></div>`:''}</div><div><label class="flbl">Primary colour</label><div style="display:flex;gap:8px;flex-wrap:wrap">${PCOLS.map(c=>`<div style="width:28px;height:28px;border-radius:50%;background:${c};cursor:pointer;border:2.5px solid ${BRANDING.primary===c?'#0B4F52':'transparent'};transition:border-color .12s;box-shadow:${BRANDING.primary===c?'0 0 0 2px #fff,0 0 0 4px #0B4F52':'0 1px 3px rgba(0,0,0,.15)'}" onclick="setBrandColor('${c}')" onmouseenter="if(BRANDING.primary!=='${c}')this.style.borderColor='#0B4F52'" onmouseleave="if(BRANDING.primary!=='${c}')this.style.borderColor='transparent'"></div>`).join('')}</div></div><button class="tb-btn pri" style="width:fit-content" onclick="saveBranding()">Save</button></div></div>`,
     payments:`<div class="card" style="padding:26px"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-bottom:18px">Payment integrations</div><div style="display:flex;flex-direction:column;gap:10px">${[['Stripe','Connected','#1A6B55'],['Paystack','Not connected','#7A9E99'],['Flutterwave','Not connected','#7A9E99'],['Manual transfer','Available','#3550C4']].map(([n,s,c])=>`<div style="padding:16px 18px;border-radius:12px;border:1px solid #E8EFEC;background:#F7FAF9;display:flex;align-items:center;justify-content:space-between"><div class="ht" style="font-size:13px;font-weight:700;color:#0B4F52">${n}</div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:${c};font-weight:600">${s}</span><button class="tb-btn" style="font-size:11.5px;padding:6px 12px" onclick="toast('${n} settings')">${s==='Connected'?'Manage':'Connect'}</button></div></div>`).join('')}</div></div>`,
-    workflow:`<div class="card" style="padding:26px"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-bottom:18px">Custom workflow</div><div style="display:flex;flex-direction:column;gap:16px"><div><label class="flbl">Service categories</label><div style="display:flex;gap:6px;flex-wrap:wrap">${['Strategy','Communications','Media','Editorial','Advisory','Design','Production','Marketing'].map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer" onclick="toast('Edit category')">${s}</span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="toast('Add category')">+ Add</span></div></div><div><label class="flbl">Workflow stages</label><div style="display:flex;gap:6px;flex-wrap:wrap">${['Todo','In progress','Review','Approved','Completed'].map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer">${s}</span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="toast('Add stage')">+ Add</span></div></div><div><label class="flbl">Work area labels</label><div style="display:flex;gap:6px;flex-wrap:wrap">${['Project','Campaign','Retainer','Advisory','Engagement'].map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer">${s}</span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="toast('Add label')">+ Add</span></div></div></div></div>`
+    workflow:`<div class="card" style="padding:26px"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-bottom:18px">Custom workflow</div><div style="display:flex;flex-direction:column;gap:16px"><div><label class="flbl">Service categories</label><div style="display:flex;gap:6px;flex-wrap:wrap">${(TENANT_SETTINGS.categories||[]).map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer;position:relative;padding-right:18px" onclick="if(confirm('Remove &quot;${s}&quot;?'))removeWorkflowItem('categories','${s}')">${s}<span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:10px;color:#8AADA8;font-weight:700">×</span></span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="addWorkflowItem('categories')">+ Add</span></div></div><div><label class="flbl">Workflow stages</label><div style="display:flex;gap:6px;flex-wrap:wrap">${(TENANT_SETTINGS.stages||[]).map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer;position:relative;padding-right:18px" onclick="if(confirm('Remove &quot;${s}&quot;?'))removeWorkflowItem('stages','${s}')">${s}<span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:10px;color:#8AADA8;font-weight:700">×</span></span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="addWorkflowItem('stages')">+ Add</span></div></div><div><label class="flbl">Work area labels</label><div style="display:flex;gap:6px;flex-wrap:wrap">${(TENANT_SETTINGS.labels||[]).map(s=>`<span class="st teal" style="font-size:11.5px;cursor:pointer;position:relative;padding-right:18px" onclick="if(confirm('Remove &quot;${s}&quot;?'))removeWorkflowItem('labels','${s}')">${s}<span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:10px;color:#8AADA8;font-weight:700">×</span></span>`).join('')}<span class="st blue" style="font-size:11.5px;cursor:pointer" onclick="addWorkflowItem('labels')">+ Add</span></div></div><button class="tb-btn pri" style="width:fit-content;margin-top:4px" onclick="saveWorkflowSettings()">Save workflow</button></div></div>`
   };
   el.innerHTML=tabs[tab]||'';
 }
@@ -2549,6 +2558,28 @@ async function saveBranding(){
     const res=await apiFetch('/me',{method:'PATCH',body:JSON.stringify(body)});
     if(!res.ok){toast('Save failed');return;}
     toast('Branding saved');
+  }catch(err){toast('Save failed');}
+}
+function addWorkflowItem(list){
+  const val=prompt(`Add new ${list.slice(0,-1)}:`);if(!val||!val.trim())return;
+  const clean=val.trim();
+  if(TENANT_SETTINGS[list].includes(clean)){toast('Already exists');return;}
+  TENANT_SETTINGS[list]=[...TENANT_SETTINGS[list],clean];
+  renderSettings('workflow');
+}
+function removeWorkflowItem(list,val){
+  TENANT_SETTINGS[list]=TENANT_SETTINGS[list].filter(x=>x!==val);
+  renderSettings('workflow');
+}
+async function saveWorkflowSettings(){
+  try{
+    const res=await apiFetch('/tenant-settings',{method:'PATCH',body:JSON.stringify({
+      categories:TENANT_SETTINGS.categories,
+      stages:TENANT_SETTINGS.stages,
+      labels:TENANT_SETTINGS.labels
+    })});
+    if(!res.ok){toast('Save failed');return;}
+    toast('Workflow saved');
   }catch(err){toast('Save failed');}
 }
 
