@@ -413,10 +413,6 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
       <span class="ni-label" id="nav-clients-label">Clients</span>
       <span class="ni-badge-count" id="cl-bdg">0</span>
     </div>
-    <div class="ni" id="nav-tenants" onclick="goView('tenants',this)" style="display:none">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span class="ni-label">Tenants</span>
-    </div>
     <div class="ni" id="nav-deliverables" onclick="goView('deliverables',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
       <span class="ni-label">Deliverables</span>
@@ -834,9 +830,10 @@ function apiClientToData(c, idx) {
 
 async function initFromApi() {
   try {
-    // Superadmins fetch both tenants and clients
+    // If superadmin, fetch tenants instead of clients
     if (CURRENT_USER && isSuperadmin()) {
       await fetchTenants();
+      return;
     }
     const res = await apiFetch('/clients');
     if (!res.ok) throw new Error('Failed to fetch clients');
@@ -1130,16 +1127,16 @@ function updateNavLabels() {
   const clientsBadge = document.getElementById('cl-bdg');
 
   if (clientsLabel) {
-    clientsLabel.textContent = 'Clients';
-  }
-  if (clientsBadge) {
-    clientsBadge.style.display = '';
+    if (isSuperadmin()) {
+      clientsLabel.textContent = 'Tenants';
+    } else {
+      clientsLabel.textContent = 'Clients';
+    }
   }
 
-  // Show/hide Tenants nav for superadmins
-  const tenantsNav = document.getElementById('nav-tenants');
-  if (tenantsNav) {
-    tenantsNav.style.display = isSuperadmin() ? '' : 'none';
+  // Hide badge for superadmin (tenants don't have the same count display)
+  if (clientsBadge && isSuperadmin()) {
+    clientsBadge.style.display = 'none';
   }
 
   // Hide Early Access nav for non-superadmins
@@ -1216,15 +1213,13 @@ async function checkAuth() {
 }
 
 /* ══ NAVIGATION ══ */
-const TITLES={dashboard:'Dashboard',clients:'Clients',deliverables:'Deliverables',contracts:'Contracts',files:'Files',invoices:'Invoices',payments:'Payments',team:'Team','early-access':'Early Access',settings:'Settings',tenants:'Tenants'};
+const TITLES={dashboard:'Dashboard',clients:'Clients',deliverables:'Deliverables',contracts:'Contracts',files:'Files',invoices:'Invoices',payments:'Payments',team:'Team','early-access':'Early Access',settings:'Settings'};
 
 function goView(name,el){
   document.querySelectorAll('.view').forEach(v=>{if(!v.style.cssText.includes('!important'))v.classList.remove('active');});
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   const v=document.getElementById('view-'+name);
   if(v)v.classList.add('active');
-  // Tenants reuses the clients view container
-  if(name==='tenants'){const cv=document.getElementById('view-clients');if(cv)cv.classList.add('active');}
   if(el)el.classList.add('active');
   else{const ni=document.getElementById('nav-'+name);if(ni)ni.classList.add('active');}
   document.getElementById('pt').textContent=TITLES[name]||name;
@@ -1235,7 +1230,6 @@ function goView(name,el){
   else if(name==='files')tba.innerHTML=`<button onclick="openFileUploadGlobal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>`;
   else tba.innerHTML='';
   if(name==='clients')showCG();
-  else if(name==='tenants'){document.getElementById('cg-view').style.display='';document.getElementById('cp-view').style.display='none';SC=null;renderTenants();}
   else{
     const url=new URL(window.location.href);
     if(url.searchParams.has('client')){url.searchParams.delete('client');history.pushState({},'',url);}
@@ -1251,11 +1245,6 @@ function goView(name,el){
   if(name==='early-access'){
     if(!isSuperadmin()){goView('dashboard');return;}
     tba.innerHTML=`<button onclick="downloadEarlyAccessCSV()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Download CSV</button>`;renderEarlyAccess();
-  }
-  if(name==='tenants'){
-    if(!isSuperadmin()){goView('dashboard');return;}
-    tba.innerHTML=`<button onclick="openTenantModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add tenant</button>`;
-    renderTenants();
   }
   closeSB();
 }
@@ -1380,9 +1369,10 @@ function renderCG(filter){
     <div style="width:40px"></div>
   </div>`;
   const rows=list.map(c=>{
-    const pend=c.workAreas.flatMap(w=>w.approvals.filter(a=>a.status==='waiting')).length;
-    const unpaid=c.workAreas.flatMap(w=>w.invoices.filter(i=>i.status==='unpaid')).length;
-    const openT=c.workAreas.flatMap(w=>w.tasks.filter(t=>!t.done)).length;
+    const wa=c.workAreas||[];
+    const pend=wa.flatMap(w=>w.approvals.filter(a=>a.status==='waiting')).length;
+    const unpaid=wa.flatMap(w=>w.invoices.filter(i=>i.status==='unpaid')).length;
+    const openT=wa.flatMap(w=>w.tasks.filter(t=>!t.done)).length;
     const statusColor=c.eng==='active'?'green':c.eng==='paused'?'gray':'amber';
     const statusLabel=c.eng==='active'?'Active':c.eng==='paused'?'Paused':'Prospect';
     return `<div class="cl-row" onclick="openCP(${c.id})" role="button" tabindex="0">
@@ -1481,9 +1471,13 @@ function showCG(){
   SC=null;SWA=null;STAB='overview';
   const url=new URL(window.location.href);
   if(url.searchParams.has('client')){url.searchParams.delete('client');history.pushState({},'',url);}
-  renderCG();
+  // Show tenants for superadmin, clients for others
+  if (CURRENT_USER && isSuperadmin()) {
+    renderTenants();
+  } else {
+    renderCG();
+  }
 }
-function openTenantModal(){toast('Tenant creation via admin API');}
 
 /* ══ CLIENT PROFILE (WORKSPACE) ══ */
 async function openCP(id){
@@ -1515,9 +1509,10 @@ async function openCP(id){
 
 function renderCP(){
   const c=SC; if(!c)return;
-  const pend=c.workAreas.flatMap(w=>w.approvals.filter(a=>a.status==='waiting')).length;
-  const unpaid=c.workAreas.flatMap(w=>w.invoices.filter(i=>i.status==='unpaid')).length;
-  const openT=c.workAreas.flatMap(w=>w.tasks.filter(t=>!t.done)).length;
+  const wa=c.workAreas||[];
+  const pend=wa.flatMap(w=>w.approvals.filter(a=>a.status==='waiting')).length;
+  const unpaid=wa.flatMap(w=>w.invoices.filter(i=>i.status==='unpaid')).length;
+  const openT=wa.flatMap(w=>w.tasks.filter(t=>!t.done)).length;
   const pv=document.getElementById('cp-view');
   // Update topbar breadcrumb
   document.getElementById('pt').textContent='Clients';
@@ -2448,17 +2443,21 @@ async function addClient(){
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Please enter a valid email.');return;}
   try {
     const type = document.getElementById('nc-svc').value || 'Service';
+    const portalUrl = ncPortalOn ? `portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}` : '';
     const res = await apiFetch('/clients', {
       method: 'POST',
-      body: JSON.stringify({ name, contact, email, type, status: ncEng })
+      body: JSON.stringify({ name, contact, email, type, status: ncEng, portal_on: ncPortalOn, portal_url: portalUrl })
     });
     const json = await res.json();
     if (!res.ok) { toast(json.error || 'Failed to create client'); return; }
     const newClient = apiClientToData(json.data, DATA.clients.length);
     newClient.portal.on = ncPortalOn;
-    if(ncPortalOn) newClient.portal.url = `portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}`;
+    if(ncPortalOn) newClient.portal.url = portalUrl;
     DATA.clients.push(newClient);
     document.getElementById('cl-bdg').textContent = DATA.clients.length;
+    const sub = document.getElementById('cl-subtitle');
+    if(sub){const activeCount=DATA.clients.filter(c=>c.eng==='active').length;sub.textContent=`${activeCount} active engagement${activeCount!==1?'s':''}`;}
+    renderCG();
     closeMod(); toast(`${name} added.`); openCP(newClient.id);
   } catch (err) {
     toast('Network error. Please try again.');

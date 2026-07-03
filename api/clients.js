@@ -91,7 +91,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { name, contact, email, type = 'Service', status = 'active' } = req.body || {};
+    const { name, contact, email, type = 'Service', status = 'active', portal_on, portal_url } = req.body || {};
     if (!name || !contact || !email) {
       badRequest(res, 'name, contact, and email are required');
       return;
@@ -109,8 +109,8 @@ export default async function handler(req, res) {
     let row;
     try {
       [row] = await sql`
-        INSERT INTO clients (tenant_id, user_id, name, contact, email, type, status)
-        VALUES (${tenantId}, ${user.userId}, ${name}, ${contact}, ${email.toLowerCase()}, ${type}, ${status})
+        INSERT INTO clients (tenant_id, user_id, name, contact, email, type, status, portal_on, portal_url)
+        VALUES (${tenantId}, ${user.userId}, ${name}, ${contact}, ${email.toLowerCase()}, ${type}, ${status}, ${portal_on ?? false}, ${portal_url ?? ''})
         RETURNING id, name, contact, email, type, status, portal_on, portal_url, created_at;
       `;
     } catch (err) {
