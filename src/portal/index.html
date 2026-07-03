@@ -223,6 +223,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
     </div>
 
     <div class="sb-foot">
+      <button class="ni" onclick="portalLogout()" style="margin-bottom:8px;width:100%;justify-content:center;color:#88AAA4;font-size:12px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Log out
+      </button>
       <div style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:#F0F5F3;border-radius:10px;border:1px solid #E0EAE7">
         <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" style="height:22px;width:auto;flex-shrink:0">
         <div style="font-size:11px;color:#88AAA4;font-family:'General Sans',sans-serif;font-weight:600">Powered by Vereli</div>
@@ -380,25 +384,99 @@ function fileIcon(type){
   if(t.includes('mp4')||t.includes('vid'))return{bg:'#F5F0FF',tc:'#6B3FA0',i:'film'};
   return{bg:'#EAF2EE',tc:'#2D6A4F',i:'file-text'};
 }
+let CLIENT_AUTH=null;
+async function checkClientAuth(){
+  try{
+    const res=await apiFetch('/portal/auth');
+    if(!res.ok){CLIENT_AUTH=null;return false;}
+    const json=await res.json();
+    CLIENT_AUTH=json.data||null;
+    return !!CLIENT_AUTH;
+  }catch{return false;}
+}
+function showPortalLogin(){
+  const overlay=document.createElement('div');
+  overlay.id='portal-login-overlay';
+  overlay.innerHTML=`<div style="position:fixed;inset:0;z-index:2000;background:rgba(11,61,62,.5);display:flex;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#fff;border-radius:18px;max-width:380px;width:100%;padding:32px;box-shadow:0 20px 60px rgba(11,61,62,.2)">
+      <div class="ht" style="font-size:20px;font-weight:800;color:#0B4F52;margin-bottom:6px;text-align:center">Client Portal</div>
+      <div style="font-size:13px;color:#7A9E99;margin-bottom:24px;text-align:center">Log in to review your work and approve deliverables.</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Email</div>
+          <input type="email" id="pl-email" class="field" placeholder="you@company.com" style="width:100%">
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Password</div>
+          <input type="password" id="pl-pass" class="field" placeholder="••••••••" style="width:100%">
+        </div>
+      </div>
+      <button class="tb-btn pri" style="width:100%;padding:10px" onclick="portalLogin()">Log in</button>
+      <div id="pl-error" style="margin-top:10px;font-size:12px;color:#c0392b;text-align:center;display:none"></div>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+async function portalLogin(){
+  const email=document.getElementById('pl-email').value.trim();
+  const password=document.getElementById('pl-pass').value;
+  const errEl=document.getElementById('pl-error');
+  if(!email||!password){errEl.textContent='Please enter email and password.';errEl.style.display='';return;}
+  try{
+    const res=await apiFetch('/portal/auth',{method:'POST',body:JSON.stringify({email,password})});
+    if(!res.ok){errEl.textContent='Invalid credentials.';errEl.style.display='';return;}
+    const overlay=document.getElementById('portal-login-overlay');
+    if(overlay)overlay.remove();
+    await initPortal();
+  }catch{errEl.textContent='Login failed. Please try again.';errEl.style.display='';}
+}
+async function portalLogout(){
+  try{await apiFetch('/portal/auth',{method:'DELETE'});}catch{}
+  CLIENT_AUTH=null;
+  showPortalLogin();
+}
+async function initPortal(){
+  const hasUrlClient=!!(new URLSearchParams(window.location.search)).get('client');
+  if(!hasUrlClient){
+    const authed=await checkClientAuth();
+    if(!authed){showPortalLogin();return;}
+  }
+  loadPortalData();
+}
 async function loadPortalData(){
-  const params=new URLSearchParams(window.location.search);
-  const clientId=params.get('client');
+  const urlClientId=(new URLSearchParams(window.location.search)).get('client');
+  const useClientAuth=!!CLIENT_AUTH;
+  const clientId=CLIENT_AUTH?CLIENT_AUTH.id:urlClientId;
   if(!clientId){document.getElementById('render-overview').innerHTML='<div style="padding:40px;text-align:center;color:#88AAA4">No client selected.</div>';return;}
   try{
-    const [cRes,waRes,tRes,fRes,cmRes,aRes,iRes]=await Promise.all([
-      apiFetch('/clients/'+clientId),apiFetch('/work-areas?clientId='+clientId),
-      apiFetch('/tasks').catch(()=>null),apiFetch('/files').catch(()=>null),
-      apiFetch('/comments').catch(()=>null),apiFetch('/approvals').catch(()=>null),
-      apiFetch('/invoices').catch(()=>null)
-    ]);
     let client=null,workAreas=[],tasks=[],files=[],comments=[],approvals=[],invoices=[];
-    if(cRes.ok){const j=await cRes.json();client=j.data;}
-    if(waRes.ok){const j=await waRes.json();workAreas=j.data||[];}
-    if(tRes&&tRes.ok){const j=await tRes.json();tasks=j.data||[];}
-    if(fRes&&fRes.ok){const j=await fRes.json();files=j.data||[];}
-    if(cmRes&&cmRes.ok){const j=await cmRes.json();comments=j.data||[];}
-    if(aRes&&aRes.ok){const j=await aRes.json();approvals=j.data||[];}
-    if(iRes&&iRes.ok){const j=await iRes.json();invoices=j.data||[];}
+    if(useClientAuth){
+      const res=await apiFetch('/portal/data');
+      if(!res.ok){throw new Error('Unauthorized');}
+      const json=await res.json();
+      const d=json.data||{};
+      client=d.client||null;
+      workAreas=d.workAreas||[];
+      tasks=d.tasks||[];
+      files=d.files||[];
+      comments=d.comments||[];
+      approvals=d.approvals||[];
+      invoices=d.invoices||[];
+    }else{
+      const [cRes,waRes,tRes,fRes,cmRes,aRes,iRes]=await Promise.all([
+        apiFetch('/clients/'+clientId),apiFetch('/work-areas?clientId='+clientId),
+        apiFetch('/tasks').catch(()=>null),apiFetch('/files').catch(()=>null),
+        apiFetch('/comments').catch(()=>null),apiFetch('/approvals').catch(()=>null),
+        apiFetch('/invoices').catch(()=>null)
+      ]);
+      if(cRes.ok){const j=await cRes.json();client=j.data;}
+      if(waRes.ok){const j=await waRes.json();workAreas=j.data||[];}
+      if(tRes&&tRes.ok){const j=await tRes.json();tasks=j.data||[];}
+      if(fRes&&fRes.ok){const j=await fRes.json();files=j.data||[];}
+      if(cmRes&&cmRes.ok){const j=await cmRes.json();comments=j.data||[];}
+      if(aRes&&aRes.ok){const j=await aRes.json();approvals=j.data||[];}
+      if(iRes&&iRes.ok){const j=await iRes.json();invoices=j.data||[];}
+    }
     PORTAL_DATA={client,workAreas,tasks,files,comments,approvals,invoices};
     if(client){
       document.getElementById('portal-name').textContent=client.name;
@@ -584,7 +662,7 @@ function renderPayments(){
   if(!unpaid.length&&!paid.length)html+='<div class="card" style="padding:22px;color:#88AAA4">No invoices yet.</div>';
   document.getElementById('render-payments').innerHTML=html;
 }
-loadPortalData();
+initPortal();
 </script>
 </body>
 </html>

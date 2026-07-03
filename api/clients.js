@@ -2,6 +2,14 @@ import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
 import { canManageData } from './lib/auth.js';
 import { ensureAuditTable, logAudit } from './lib/audit.js';
+import bcryptjs from 'bcryptjs';
+
+function genPortalPassword(len = 10) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  let pwd = '';
+  for (let i = 0; i < len; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+  return pwd;
+}
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -62,7 +70,7 @@ export default async function handler(req, res) {
       email: r.email,
       type: r.type || 'Service',
       status: r.status,
-      portal: { on: r.portal_on, url: r.portal_url, logo: r.portal_logo, banner: r.portal_banner },
+      portal: { on: r.portal_on, url: r.portal_url, logo: r.portal_logo, banner: r.portal_banner, username: r.portal_username },
       createdAt: r.created_at,
     }));
     sendJson(res, 200, { data });
@@ -91,16 +99,27 @@ export default async function handler(req, res) {
       return;
     }
     
-    // Ensure portal branding columns exist
+    // Ensure portal columns exist
     await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_logo TEXT`;
     await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_banner TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_username TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_password_hash TEXT`;
+
+    // Generate portal credentials if portal is enabled
+    let plainPortalPassword = '';
+    const portalUsername = email.toLowerCase();
+    let portalPasswordHash = '';
+    if (portal_on) {
+      plainPortalPassword = genPortalPassword();
+      portalPasswordHash = await bcryptjs.hash(plainPortalPassword, 10);
+    }
 
     let row;
     try {
       [row] = await sql`
-        INSERT INTO clients (tenant_id, user_id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner)
-        VALUES (${tenantId}, ${user.userId}, ${name}, ${contact}, ${email.toLowerCase()}, ${type}, ${status}, ${portal_on ?? false}, ${portal_url ?? ''}, ${portal_logo ?? ''}, ${portal_banner ?? ''})
-        RETURNING id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, created_at;
+        INSERT INTO clients (tenant_id, user_id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, portal_username, portal_password_hash)
+        VALUES (${tenantId}, ${user.userId}, ${name}, ${contact}, ${email.toLowerCase()}, ${type}, ${status}, ${portal_on ?? false}, ${portal_url ?? ''}, ${portal_logo ?? ''}, ${portal_banner ?? ''}, ${portalUsername}, ${portalPasswordHash || null})
+        RETURNING id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, portal_username, portal_password_hash, created_at;
       `;
     } catch (err) {
       console.error('Error creating client:', err);
@@ -115,12 +134,16 @@ export default async function handler(req, res) {
       email: row.email,
       type: row.type || type,
       status: row.status,
-      portal: { on: row.portal_on, url: row.portal_url, logo: row.portal_logo, banner: row.portal_banner },
+      portal: { on: row.portal_on, url: row.portal_url, logo: row.portal_logo, banner: row.portal_banner, username: row.portal_username },
       createdAt: row.created_at,
     };
     await ensureAuditTable();
     await logAudit({ tenantId, userId: user.userId, userEmail: user.email, action: 'create', entityType: 'client', entityId: row.id, newValue: client, ip: req.headers['x-forwarded-for'] || req.socket?.remoteAddress });
-    sendJson(res, 201, { data: client });
+    const response = { data: client };
+    if (plainPortalPassword) {
+      response.portalCredentials = { username: portalUsername, password: plainPortalPassword };
+    }
+    sendJson(res, 201, response);
     return;
   }
 

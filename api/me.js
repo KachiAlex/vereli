@@ -15,7 +15,12 @@ export default async function handler(req, res) {
       LEFT JOIN tenants t ON u.tenant_id = t.id
       WHERE u.id = ${user.userId}
     `;
-    
+
+    if (!userData) {
+      sendJson(res, 404, { error: 'User not found' });
+      return;
+    }
+
     sendJson(res, 200, {
       data: {
         id: userData.id,

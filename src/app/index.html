@@ -1947,6 +1947,19 @@ function renderCTPortal(c){
       </div>
     </div>
 
+    <!-- ── Credentials ── -->
+    <div class="slbl" style="margin-bottom:10px">Portal credentials</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px">
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fff;border-radius:11px;border:1px solid #DCE5E6;box-shadow:0 1px 3px rgba(15,61,62,.04)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8AADA8" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div style="flex:1">
+          <div style="font-size:11px;color:#8AADA8;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Username</div>
+          <div class="ht" style="font-size:13px;font-weight:600;color:#0B4F52">${p.username || c.email}</div>
+        </div>
+        <button class="tb-btn" style="font-size:11.5px;padding:5px 11px" onclick="resetPortalPassword(${c.id})">Reset password</button>
+      </div>
+    </div>
+
     <!-- ── Branding ── -->
     <div class="slbl" style="margin-bottom:14px">Portal branding</div>
     <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px">
@@ -2465,6 +2478,11 @@ async function addClient(){
     if(sub){const activeCount=DATA.clients.filter(c=>c.eng==='active').length;sub.textContent=`${activeCount} active engagement${activeCount!==1?'s':''}`;}
     renderCG();
     closeMod(); toast(`${name} added.`); openCP(newClient.id);
+    if (json.portalCredentials) {
+      setTimeout(() => {
+        showPortalCredentialsModal(newClient.name, json.portalCredentials);
+      }, 400);
+    }
   } catch (err) {
     toast('Network error. Please try again.');
     console.error(err);
@@ -2611,6 +2629,50 @@ async function savePortalBranding(cid){
     if(!res.ok){toast('Save failed');return;}
     toast('Portal branding saved');
   }catch(err){toast('Save failed');}
+}
+function showPortalCredentialsModal(clientName, creds){
+  const modal=document.createElement('div');
+  modal.id='cred-modal';
+  modal.innerHTML=`<div style="position:fixed;inset:0;z-index:2000;background:rgba(11,61,62,.45);display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)document.getElementById('cred-modal').remove()">
+    <div style="background:#fff;border-radius:18px;max-width:420px;width:100%;padding:28px;box-shadow:0 20px 60px rgba(11,61,62,.18)" onclick="event.stopPropagation()">
+      <div class="ht" style="font-size:17px;font-weight:800;color:#0B4F52;margin-bottom:6px">${clientName} — Portal credentials</div>
+      <div style="font-size:13px;color:#7A9E99;margin-bottom:20px">Share these with your client to access their branded portal.</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Portal link</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#F7FAF9;border-radius:10px;border:1px solid #E0E8E4">
+            <div style="flex:1;font-size:13px;font-weight:600;color:#3550C4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">https://portal.vereli.app</div>
+            <button class="tb-btn" style="font-size:11px;padding:5px 10px" onclick="navigator.clipboard.writeText('https://portal.vereli.app').then(()=>toast('Copied')).catch(()=>toast('https://portal.vereli.app'))">Copy</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Username</div>
+          <div style="padding:10px 12px;background:#F7FAF9;border-radius:10px;border:1px solid #E0E8E4;font-size:13px;font-weight:600;color:#0B4F52;font-family:monospace">${creds.username}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Password</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#F7FAF9;border-radius:10px;border:1px solid #E0E8E4">
+            <div id="cred-pwd" style="flex:1;font-size:13px;font-weight:600;color:#0B4F52;font-family:monospace;letter-spacing:.04em">${creds.password}</div>
+            <button class="tb-btn" style="font-size:11px;padding:5px 10px" onclick="navigator.clipboard.writeText(document.getElementById('cred-pwd').textContent).then(()=>toast('Copied'))">Copy</button>
+          </div>
+        </div>
+      </div>
+      <button class="tb-btn pri" style="width:100%;padding:10px" onclick="document.getElementById('cred-modal').remove()">Done</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+}
+async function resetPortalPassword(cid){
+  const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
+  if(!confirm('Generate a new portal password for '+c.name+'?'))return;
+  try{
+    const res=await apiFetch(`/clients/${cid}`,{method:'PATCH',body:JSON.stringify({reset_portal_password:true})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Reset failed');return;}
+    if(json.portalCredentials){
+      showPortalCredentialsModal(c.name, json.portalCredentials);
+    }
+  }catch(err){toast('Reset failed');}
 }
 function addWorkflowItem(list){
   const val=prompt(`Add new ${list.slice(0,-1)}:`);if(!val||!val.trim())return;

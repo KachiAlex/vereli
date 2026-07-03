@@ -1,5 +1,13 @@
 import { sendJson, handleCors, badRequest, notFound, requireAuth } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
+import bcryptjs from 'bcryptjs';
+
+function genPortalPassword(len = 10) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  let pwd = '';
+  for (let i = 0; i < len; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+  return pwd;
+}
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -13,9 +21,11 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_logo TEXT`;
     await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_banner TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_username TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_password_hash TEXT`;
     const [row] = user.role === 'superadmin'
-      ? await sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, created_at FROM clients WHERE id = ${id}`
-      : await sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, created_at FROM clients WHERE id = ${id} AND tenant_id = ${user.tenantId}`;
+      ? await sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, portal_username, created_at FROM clients WHERE id = ${id}`
+      : await sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, portal_username, created_at FROM clients WHERE id = ${id} AND tenant_id = ${user.tenantId}`;
     if (!row) { notFound(res); return; }
     sendJson(res, 200, {
       data: {
@@ -25,7 +35,7 @@ export default async function handler(req, res) {
         email: row.email,
         type: row.type,
         status: row.status,
-        portal: { on: row.portal_on, url: row.portal_url, logo: row.portal_logo, banner: row.portal_banner },
+        portal: { on: row.portal_on, url: row.portal_url, logo: row.portal_logo, banner: row.portal_banner, username: row.portal_username },
         createdAt: row.created_at,
       }
     });
@@ -33,7 +43,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
-    const { name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner } = req.body || {};
+    const { name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, reset_portal_password } = req.body || {};
     const fields = [];
     const values = [];
     if (name !== undefined) { fields.push('name = $' + (fields.length + 1)); values.push(name); }
@@ -46,20 +56,31 @@ export default async function handler(req, res) {
     if (portal_logo !== undefined) { fields.push('portal_logo = $' + (fields.length + 1)); values.push(portal_logo); }
     if (portal_banner !== undefined) { fields.push('portal_banner = $' + (fields.length + 1)); values.push(portal_banner); }
 
-    if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }
-
-    // Ensure portal branding columns exist
+    // Ensure portal columns exist
     await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_logo TEXT`;
     await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_banner TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_username TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_password_hash TEXT`;
+
+    // Handle password reset
+    let plainPortalPassword = '';
+    if (reset_portal_password) {
+      plainPortalPassword = genPortalPassword();
+      const hash = await bcryptjs.hash(plainPortalPassword, 10);
+      fields.push('portal_password_hash = $' + (fields.length + 1));
+      values.push(hash);
+    }
+
+    if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }
 
     const query = user.role === 'superadmin'
-      ? `UPDATE clients SET ${fields.join(', ')} WHERE id = $${fields.length + 1} RETURNING id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, created_at`
-      : `UPDATE clients SET ${fields.join(', ')} WHERE id = $${fields.length + 1} AND tenant_id = $${fields.length + 2} RETURNING id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, created_at`;
+      ? `UPDATE clients SET ${fields.join(', ')} WHERE id = $${fields.length + 1} RETURNING id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, portal_username, created_at`
+      : `UPDATE clients SET ${fields.join(', ')} WHERE id = $${fields.length + 1} AND tenant_id = $${fields.length + 2} RETURNING id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, portal_username, created_at`;
     values.push(id);
     if (user.role !== 'superadmin') values.push(user.tenantId);
     const [row] = await sql(query, values);
     if (!row) { notFound(res); return; }
-    sendJson(res, 200, {
+    const response = {
       data: {
         id: row.id,
         name: row.name,
@@ -67,10 +88,14 @@ export default async function handler(req, res) {
         email: row.email,
         type: row.type,
         status: row.status,
-        portal: { on: row.portal_on, url: row.portal_url, logo: row.portal_logo, banner: row.portal_banner },
+        portal: { on: row.portal_on, url: row.portal_url, logo: row.portal_logo, banner: row.portal_banner, username: row.portal_username },
         createdAt: row.created_at,
       }
-    });
+    };
+    if (plainPortalPassword) {
+      response.portalCredentials = { username: row.portal_username || row.email, password: plainPortalPassword };
+    }
+    sendJson(res, 200, response);
     return;
   }
 
