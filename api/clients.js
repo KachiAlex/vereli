@@ -19,51 +19,32 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const { status, search } = req.query || {};
     let rows;
-    
+
     try {
-      // Build query with tenant filtering
-      let baseQuery = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c`;
-      
-      // Apply tenant filter (superadmin sees all, others see only their tenant)
-      if (user.role === 'superadmin') {
-        if (req.query.tenantId) {
-          baseQuery = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.tenant_id = ${req.query.tenantId}`;
-        } else {
-          baseQuery = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c`;
-        }
-      } else {
-        baseQuery = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.tenant_id = ${tenantId}`;
+      const conditions = [];
+      const values = [];
+
+      // Tenant filter
+      if (user.role !== 'superadmin' || req.query.tenantId) {
+        conditions.push('c.tenant_id = $' + (conditions.length + 1));
+        values.push(user.role === 'superadmin' ? req.query.tenantId : tenantId);
       }
-      
-      // Apply filters
-      let query = baseQuery;
-      if (status && user.role === 'superadmin' && !req.query.tenantId) {
-        query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.status = ${status}`;
-      } else if (status) {
-        query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.tenant_id = ${tenantId} AND c.status = ${status}`;
+
+      // Status filter
+      if (status) {
+        conditions.push('c.status = $' + (conditions.length + 1));
+        values.push(status);
       }
-      
+
+      // Search filter
       if (search) {
-        const q = `%${search.toLowerCase()}%`;
-        if (user.role === 'superadmin' && !req.query.tenantId) {
-          query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE (LOWER(c.name) LIKE ${q} OR LOWER(c.contact) LIKE ${q} OR LOWER(c.email) LIKE ${q})`;
-        } else {
-          const tid = user.role === 'superadmin' && req.query.tenantId ? req.query.tenantId : tenantId;
-          query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.tenant_id = ${tid} AND (LOWER(c.name) LIKE ${q} OR LOWER(c.contact) LIKE ${q} OR LOWER(c.email) LIKE ${q})`;
-        }
+        conditions.push('(LOWER(c.name) LIKE $' + (conditions.length + 1) + ' OR LOWER(c.contact) LIKE $' + (conditions.length + 1) + ' OR LOWER(c.email) LIKE $' + (conditions.length + 1) + ')');
+        values.push('%' + search.toLowerCase() + '%');
       }
-      
-      if (status && search) {
-        const q = `%${search.toLowerCase()}%`;
-        if (user.role === 'superadmin' && !req.query.tenantId) {
-          query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.status = ${status} AND (LOWER(c.name) LIKE ${q} OR LOWER(c.contact) LIKE ${q} OR LOWER(c.email) LIKE ${q})`;
-        } else {
-          const tid = user.role === 'superadmin' && req.query.tenantId ? req.query.tenantId : tenantId;
-          query = sql`SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c WHERE c.tenant_id = ${tid} AND c.status = ${status} AND (LOWER(c.name) LIKE ${q} OR LOWER(c.contact) LIKE ${q} OR LOWER(c.email) LIKE ${q})`;
-        }
-      }
-      
-      rows = await query;
+
+      const where = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
+      const query = `SELECT c.id, c.name, c.contact, c.email, c.type, c.status, c.portal_on, c.portal_url, c.created_at FROM clients c ${where} ORDER BY c.created_at DESC`;
+      rows = await sql(query, values);
     } catch (err) {
       console.error('Error fetching clients:', err);
       sendJson(res, 500, { error: 'Failed to fetch clients' });

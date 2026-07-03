@@ -24,15 +24,15 @@ export default async function handler(req, res) {
       
       if (workAreaId) {
         if (user.role === 'superadmin' && !req.query.tenantId) {
-          rows = await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, created_at FROM files WHERE work_area_id = ${Number(workAreaId)} ORDER BY created_at DESC`;
+          rows = await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, url, created_at FROM files WHERE work_area_id = ${Number(workAreaId)} ORDER BY created_at DESC`;
         } else {
-          rows = await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, created_at FROM files WHERE tenant_id = ${tid} AND work_area_id = ${Number(workAreaId)} ORDER BY created_at DESC`;
+          rows = await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, url, created_at FROM files WHERE tenant_id = ${tid} AND work_area_id = ${Number(workAreaId)} ORDER BY created_at DESC`;
         }
       } else {
         if (user.role === 'superadmin' && !req.query.tenantId) {
-          rows = await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, created_at FROM files ORDER BY created_at DESC`;
+          rows = await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, url, created_at FROM files ORDER BY created_at DESC`;
         } else {
-          rows = await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, created_at FROM files WHERE tenant_id = ${tid} ORDER BY created_at DESC`;
+          rows = await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, url, created_at FROM files WHERE tenant_id = ${tid} ORDER BY created_at DESC`;
         }
       }
     } catch (err) {

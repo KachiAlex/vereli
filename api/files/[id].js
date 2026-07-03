@@ -12,10 +12,10 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     const [row] = user.role === 'superadmin'
-      ? await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, created_at FROM files WHERE id = ${id}`
-      : await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, created_at FROM files WHERE id = ${id} AND tenant_id = ${user.tenantId}`;
+      ? await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, url, created_at FROM files WHERE id = ${id}`
+      : await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, url, created_at FROM files WHERE id = ${id} AND tenant_id = ${user.tenantId}`;
     if (!row) { notFound(res); return; }
-    sendJson(res, 200, { data: { id: row.id, workAreaId: row.work_area_id, name: row.name, type: row.type, size: row.size, visibility: row.visibility, uploaderName: row.uploader_name, createdAt: row.created_at } });
+    sendJson(res, 200, { data: { id: row.id, workAreaId: row.work_area_id, name: row.name, type: row.type, size: row.size, visibility: row.visibility, uploaderName: row.uploader_name, url: row.url, createdAt: row.created_at } });
     return;
   }
 
