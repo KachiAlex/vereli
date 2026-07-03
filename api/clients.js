@@ -20,6 +20,10 @@ export default async function handler(req, res) {
     const { status, search } = req.query || {};
     let rows;
 
+    // Ensure portal branding columns exist
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_logo TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_banner TEXT`;
+
     try {
       const conditions = [];
       const values = [];
@@ -58,7 +62,7 @@ export default async function handler(req, res) {
       email: r.email,
       type: r.type || 'Service',
       status: r.status,
-      portal: { on: r.portal_on, url: r.portal_url },
+      portal: { on: r.portal_on, url: r.portal_url, logo: r.portal_logo, banner: r.portal_banner },
       createdAt: r.created_at,
     }));
     sendJson(res, 200, { data });
@@ -72,7 +76,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { name, contact, email, type = 'Service', status = 'active', portal_on, portal_url } = req.body || {};
+    const { name, contact, email, type = 'Service', status = 'active', portal_on, portal_url, portal_logo, portal_banner } = req.body || {};
     if (!name || !contact || !email) {
       badRequest(res, 'name, contact, and email are required');
       return;
@@ -87,12 +91,16 @@ export default async function handler(req, res) {
       return;
     }
     
+    // Ensure portal branding columns exist
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_logo TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_banner TEXT`;
+
     let row;
     try {
       [row] = await sql`
-        INSERT INTO clients (tenant_id, user_id, name, contact, email, type, status, portal_on, portal_url)
-        VALUES (${tenantId}, ${user.userId}, ${name}, ${contact}, ${email.toLowerCase()}, ${type}, ${status}, ${portal_on ?? false}, ${portal_url ?? ''})
-        RETURNING id, name, contact, email, type, status, portal_on, portal_url, created_at;
+        INSERT INTO clients (tenant_id, user_id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner)
+        VALUES (${tenantId}, ${user.userId}, ${name}, ${contact}, ${email.toLowerCase()}, ${type}, ${status}, ${portal_on ?? false}, ${portal_url ?? ''}, ${portal_logo ?? ''}, ${portal_banner ?? ''})
+        RETURNING id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, created_at;
       `;
     } catch (err) {
       console.error('Error creating client:', err);
@@ -107,7 +115,7 @@ export default async function handler(req, res) {
       email: row.email,
       type: row.type || type,
       status: row.status,
-      portal: { on: row.portal_on, url: row.portal_url },
+      portal: { on: row.portal_on, url: row.portal_url, logo: row.portal_logo, banner: row.portal_banner },
       createdAt: row.created_at,
     };
     await ensureAuditTable();

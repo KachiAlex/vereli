@@ -11,9 +11,11 @@ export default async function handler(req, res) {
   if (!id) { badRequest(res, 'id is required'); return; }
 
   if (req.method === 'GET') {
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_logo TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_banner TEXT`;
     const [row] = user.role === 'superadmin'
-      ? await sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, created_at FROM clients WHERE id = ${id}`
-      : await sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, created_at FROM clients WHERE id = ${id} AND tenant_id = ${user.tenantId}`;
+      ? await sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, created_at FROM clients WHERE id = ${id}`
+      : await sql`SELECT id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, created_at FROM clients WHERE id = ${id} AND tenant_id = ${user.tenantId}`;
     if (!row) { notFound(res); return; }
     sendJson(res, 200, {
       data: {
@@ -23,7 +25,7 @@ export default async function handler(req, res) {
         email: row.email,
         type: row.type,
         status: row.status,
-        portal: { on: row.portal_on, url: row.portal_url },
+        portal: { on: row.portal_on, url: row.portal_url, logo: row.portal_logo, banner: row.portal_banner },
         createdAt: row.created_at,
       }
     });
@@ -31,7 +33,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
-    const { name, contact, email, type, status, portal_on, portal_url } = req.body || {};
+    const { name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner } = req.body || {};
     const fields = [];
     const values = [];
     if (name !== undefined) { fields.push('name = $' + (fields.length + 1)); values.push(name); }
@@ -41,12 +43,18 @@ export default async function handler(req, res) {
     if (status !== undefined) { fields.push('status = $' + (fields.length + 1)); values.push(status); }
     if (portal_on !== undefined) { fields.push('portal_on = $' + (fields.length + 1)); values.push(portal_on); }
     if (portal_url !== undefined) { fields.push('portal_url = $' + (fields.length + 1)); values.push(portal_url); }
+    if (portal_logo !== undefined) { fields.push('portal_logo = $' + (fields.length + 1)); values.push(portal_logo); }
+    if (portal_banner !== undefined) { fields.push('portal_banner = $' + (fields.length + 1)); values.push(portal_banner); }
 
     if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }
 
+    // Ensure portal branding columns exist
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_logo TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_banner TEXT`;
+
     const query = user.role === 'superadmin'
-      ? `UPDATE clients SET ${fields.join(', ')} WHERE id = $${fields.length + 1} RETURNING id, name, contact, email, type, status, portal_on, portal_url, created_at`
-      : `UPDATE clients SET ${fields.join(', ')} WHERE id = $${fields.length + 1} AND tenant_id = $${fields.length + 2} RETURNING id, name, contact, email, type, status, portal_on, portal_url, created_at`;
+      ? `UPDATE clients SET ${fields.join(', ')} WHERE id = $${fields.length + 1} RETURNING id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, created_at`
+      : `UPDATE clients SET ${fields.join(', ')} WHERE id = $${fields.length + 1} AND tenant_id = $${fields.length + 2} RETURNING id, name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, created_at`;
     values.push(id);
     if (user.role !== 'superadmin') values.push(user.tenantId);
     const [row] = await sql(query, values);
@@ -59,7 +67,7 @@ export default async function handler(req, res) {
         email: row.email,
         type: row.type,
         status: row.status,
-        portal: { on: row.portal_on, url: row.portal_url },
+        portal: { on: row.portal_on, url: row.portal_url, logo: row.portal_logo, banner: row.portal_banner },
         createdAt: row.created_at,
       }
     });
