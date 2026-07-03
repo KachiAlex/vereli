@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     // Fetch full user data with tenant info
     const [userData] = await sql`
-      SELECT u.id, u.email, u.name, u.role, u.tenant_id, t.name as tenant_name, t.slug as tenant_slug, t.status as tenant_status
+      SELECT u.id, u.email, u.name, u.role, u.tenant_id, t.name as tenant_name, t.slug as tenant_slug, t.status as tenant_status, t.logo_url, t.primary_color
       FROM users u
       LEFT JOIN tenants t ON u.tenant_id = t.id
       WHERE u.id = ${user.userId}
@@ -27,13 +27,15 @@ export default async function handler(req, res) {
         tenantSlug: userData.tenant_slug,
         tenantStatus: userData.tenant_status,
         company: userData.tenant_name || null,
+        logoUrl: userData.logo_url || null,
+        primary: userData.primary_color || null,
       },
     });
     return;
   }
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
-    const { name, company } = req.body || {};
+    const { name, company, logoUrl, primary } = req.body || {};
     const fields = [];
     const values = [];
     if (name !== undefined) { fields.push('name = $' + (fields.length + 1)); values.push(name); }
@@ -55,15 +57,26 @@ export default async function handler(req, res) {
       row = existing;
     }
 
-    // Update tenant name if company provided
-    if (company !== undefined && row.tenant_id) {
-      await sql`UPDATE tenants SET name = ${company} WHERE id = ${row.tenant_id}`;
+    // Update tenant branding if any branding fields provided
+    if (row.tenant_id && (company !== undefined || logoUrl !== undefined || primary !== undefined)) {
+      const tFields = [];
+      const tValues = [];
+      if (company !== undefined) { tFields.push('name = $' + (tFields.length + 1)); tValues.push(company); }
+      if (logoUrl !== undefined) { tFields.push('logo_url = $' + (tFields.length + 1)); tValues.push(logoUrl); }
+      if (primary !== undefined) { tFields.push('primary_color = $' + (tFields.length + 1)); tValues.push(primary); }
+      if (tFields.length > 0) {
+        await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS logo_url TEXT`;
+        await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS primary_color TEXT`;
+        const tQuery = `UPDATE tenants SET ${tFields.join(', ')} WHERE id = $${tFields.length + 1}`;
+        tValues.push(row.tenant_id);
+        await sql(tQuery, tValues);
+      }
     }
 
-    if (!name && company === undefined) { badRequest(res, 'No fields to update'); return; }
+    if (!name && company === undefined && logoUrl === undefined && primary === undefined) { badRequest(res, 'No fields to update'); return; }
 
     // Get tenant info
-    const [tenant] = await sql`SELECT name, slug, status FROM tenants WHERE id = ${row.tenant_id}`;
+    const [tenant] = await sql`SELECT name, slug, status, logo_url, primary_color FROM tenants WHERE id = ${row.tenant_id}`;
     
     sendJson(res, 200, {
       data: {
@@ -76,6 +89,8 @@ export default async function handler(req, res) {
         tenantSlug: tenant?.slug || null,
         tenantStatus: tenant?.status || null,
         company: tenant?.name || null,
+        logoUrl: tenant?.logo_url || null,
+        primary: tenant?.primary_color || null,
       },
     });
     return;
