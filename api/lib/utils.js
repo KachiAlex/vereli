@@ -65,7 +65,8 @@ export async function requireAuth(req, res) {
     const { payload } = await jwtVerify(token, secret, { clockTolerance: 60 });
     req.user = payload;
     return payload;
-  } catch {
+  } catch (err) {
+    console.error('[requireAuth] JWT verify failed:', err.message, '| token length:', token?.length, '| secret set:', !!process.env.JWT_SECRET);
     sendJson(res, 401, { error: 'Invalid or expired token' });
     return null;
   }
