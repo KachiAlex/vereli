@@ -1,5 +1,4 @@
 import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
-import { sql } from './lib/neon.js';
 
 // Simple rule-based AI assistant (no external API needed)
 // Can be swapped for OpenAI/Anthropic integration later

@@ -12,7 +12,7 @@ vi.mock('../api/lib/utils.js', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
-    requireAuth: vi.fn().mockResolvedValue({ id: 1, email: 'admin@vereli.app' })
+    requireAuth: vi.fn().mockResolvedValue({ id: 1, email: 'admin@vereli.com', role: 'superadmin' })
   };
 });
 

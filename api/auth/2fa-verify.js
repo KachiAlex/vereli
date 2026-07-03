@@ -1,6 +1,7 @@
 import { sendJson, handleCors, badRequest, requireAuth } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
 import { generateTOTP } from './2fa-setup.js';
+export { generateTOTP };
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
