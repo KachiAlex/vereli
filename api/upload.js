@@ -1,6 +1,7 @@
 import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
-import { uploadBuffer, isS3Configured } from './lib/s3.js';
+import { uploadBuffer as uploadS3Buffer, isS3Configured } from './lib/s3.js';
+import { uploadBase64, isCloudinaryConfigured } from './lib/cloudinary.js';
 import crypto from 'crypto';
 
 export default async function handler(req, res) {
@@ -25,11 +26,13 @@ export default async function handler(req, res) {
     await sql`ALTER TABLE files ADD COLUMN IF NOT EXISTS url TEXT`;
 
     let url = '';
-    if (isS3Configured()) {
+    if (isCloudinaryConfigured()) {
+      url = await uploadBase64(name, data, contentType);
+    } else if (isS3Configured()) {
       const buffer = Buffer.from(data, 'base64');
       const ext = name.split('.').pop() || 'bin';
       const key = `tenants/${user.tenantId || 'global'}/${crypto.randomUUID()}.${ext}`;
-      url = await uploadBuffer(key, buffer, contentType || 'application/octet-stream');
+      url = await uploadS3Buffer(key, buffer, contentType || 'application/octet-stream');
     }
 
     sendJson(res, 200, { data: { url, name } });
