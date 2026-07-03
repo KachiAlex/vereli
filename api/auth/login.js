@@ -31,14 +31,14 @@ export default async function handler(req, res) {
       LEFT JOIN tenants t ON u.tenant_id = t.id
       WHERE u.email = ${email.toLowerCase()}
     `;
-    ) {
+
+    if (!user) {
       sendJson(res, 401, { error: 'Invalid credentials' });
       return;
-   }
+    }
 
-    const valid = await bcryptjs.compare(password,);
-    if(vli
-    if (!user || user.password_hash !== password) {
+    const valid = await bcryptjs.compare(password, user.password_hash);
+    if (!valid) {
       sendJson(res, 401, { error: 'Invalid credentials' });
       return;
     }
