@@ -43,7 +43,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
-    const { name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, reset_portal_password } = req.body || {};
+    const { name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, reset_portal_password, portal_password } = req.body || {};
     const fields = [];
     const values = [];
     if (name !== undefined) { fields.push('name = $' + (fields.length + 1)); values.push(name); }
@@ -62,13 +62,39 @@ export default async function handler(req, res) {
     await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_username TEXT`;
     await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_password_hash TEXT`;
 
-    // Handle password reset
+    // Handle password changes
     let plainPortalPassword = '';
-    if (reset_portal_password) {
+    if (portal_password) {
+      if (portal_password.length < 6) {
+        sendJson(res, 400, { error: 'Password must be at least 6 characters' });
+        return;
+      }
+      plainPortalPassword = portal_password;
+      const hash = await bcryptjs.hash(plainPortalPassword, 10);
+      fields.push('portal_password_hash = $' + (fields.length + 1));
+      values.push(hash);
+    } else if (reset_portal_password) {
       plainPortalPassword = genPortalPassword();
       const hash = await bcryptjs.hash(plainPortalPassword, 10);
       fields.push('portal_password_hash = $' + (fields.length + 1));
       values.push(hash);
+    }
+
+    // Auto-generate password if portal is being enabled but no password exists
+    if (portal_on === true && !plainPortalPassword) {
+      const [existing] = user.role === 'superadmin'
+        ? await sql`SELECT portal_password_hash, portal_username, email FROM clients WHERE id = ${id}`
+        : await sql`SELECT portal_password_hash, portal_username, email FROM clients WHERE id = ${id} AND tenant_id = ${user.tenantId}`;
+      if (existing && !existing.portal_password_hash) {
+        plainPortalPassword = genPortalPassword();
+        const hash = await bcryptjs.hash(plainPortalPassword, 10);
+        fields.push('portal_password_hash = $' + (fields.length + 1));
+        values.push(hash);
+      }
+      if (existing && !existing.portal_username) {
+        fields.push('portal_username = $' + (fields.length + 1));
+        values.push(existing.email || '');
+      }
     }
 
     if (fields.length === 0) { badRequest(res, 'No fields to update'); return; }

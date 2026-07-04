@@ -2569,9 +2569,13 @@ async function toggleP(cid){
   try {
     const res = await apiFetch(`/clients/${cid}`, {method:'PATCH', body:JSON.stringify({portal_on:newOn, portal_url:newUrl})});
     if(!res.ok) throw new Error('Failed to update portal');
+    const json = await res.json();
     c.portal.on = newOn;
     if(newOn) c.portal.url = newUrl;
     renderCP();lucide.createIcons();
+    if(newOn && json.portalCredentials){
+      setTimeout(()=>{showPortalCredentialsModal(c.name, json.portalCredentials);},300);
+    }
   } catch(err){toast('Failed to update portal');}
 }
 async function setPC(cid,el,val){
@@ -2699,15 +2703,48 @@ function showPortalCredentialsModal(clientName, creds){
 }
 async function resetPortalPassword(cid){
   const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
-  if(!confirm('Generate a new portal password for '+c.name+'?'))return;
+  showResetPortalPasswordModal(c);
+}
+function showResetPortalPasswordModal(c){
+  const modal=document.createElement('div');
+  modal.id='rpw-modal';
+  modal.innerHTML=`<div style="position:fixed;inset:0;z-index:2000;background:rgba(11,61,62,.45);display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)document.getElementById('rpw-modal').remove()">
+    <div style="background:#fff;border-radius:18px;max-width:420px;width:100%;padding:28px;box-shadow:0 20px 60px rgba(11,61,62,.18)" onclick="event.stopPropagation()">
+      <div class="ht" style="font-size:17px;font-weight:800;color:#0B4F52;margin-bottom:6px">${esc(c.name)} — Reset portal password</div>
+      <div style="font-size:13px;color:#7A9E99;margin-bottom:20px">Set a new password for your client.</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">New password</div>
+          <input type="text" id="rpw-new" class="field" placeholder="Enter a password" style="width:100%;font-family:monospace;font-size:14px">
+        </div>
+      </div>
+      <div id="rpw-error" style="margin-bottom:12px;font-size:12px;color:#c0392b;display:none"></div>
+      <div style="display:flex;gap:10px">
+        <button class="tb-btn" style="flex:1;padding:10px" onclick="document.getElementById('rpw-modal').remove()">Cancel</button>
+        <button class="tb-btn pri" style="flex:1;padding:10px" onclick="submitPortalPasswordReset(${c.id})">Reset password</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('rpw-new').focus();
+}
+async function submitPortalPasswordReset(cid){
+  const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
+  const newPw=document.getElementById('rpw-new').value.trim();
+  const errEl=document.getElementById('rpw-error');
+  if(!newPw){errEl.textContent='Please enter a password.';errEl.style.display='';return;}
+  if(newPw.length<6){errEl.textContent='Password must be at least 6 characters.';errEl.style.display='';return;}
   try{
-    const res=await apiFetch(`/clients/${cid}`,{method:'PATCH',body:JSON.stringify({reset_portal_password:true})});
+    const res=await apiFetch(`/clients/${cid}`,{method:'PATCH',body:JSON.stringify({portal_password:newPw})});
     const json=await res.json();
-    if(!res.ok){toast(json.error||'Reset failed');return;}
+    if(!res.ok){errEl.textContent=json.error||'Reset failed.';errEl.style.display='';return;}
+    document.getElementById('rpw-modal').remove();
     if(json.portalCredentials){
       showPortalCredentialsModal(c.name, json.portalCredentials);
+    }else{
+      toast('Password updated.');
     }
-  }catch(err){toast('Reset failed');}
+  }catch(err){errEl.textContent='Network error. Please try again.';errEl.style.display='';}
 }
 function addWorkflowItem(list){
   const val=prompt(`Add new ${list.slice(0,-1)}:`);if(!val||!val.trim())return;
