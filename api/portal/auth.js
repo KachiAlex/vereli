@@ -109,6 +109,43 @@ export default async function handler(req, res) {
     return;
   }
 
+  if (req.method === 'PATCH') {
+    const client = await requireClientAuth(req, res);
+    if (!client) {
+      sendJson(res, 401, { error: 'Unauthorized' });
+      return;
+    }
+    const { currentPassword, newPassword } = req.body || {};
+    if (!currentPassword || !newPassword) {
+      badRequest(res, 'currentPassword and newPassword are required');
+      return;
+    }
+    if (newPassword.length < 6) {
+      sendJson(res, 400, { error: 'New password must be at least 6 characters' });
+      return;
+    }
+    try {
+      await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_password_hash TEXT`;
+      const [row] = await sql`SELECT id, portal_password_hash FROM clients WHERE id = ${client.clientId}`;
+      if (!row || !row.portal_password_hash) {
+        sendJson(res, 401, { error: 'Account not found or password not set' });
+        return;
+      }
+      const valid = await bcryptjs.compare(currentPassword, row.portal_password_hash);
+      if (!valid) {
+        sendJson(res, 401, { error: 'Current password is incorrect' });
+        return;
+      }
+      const hash = await bcryptjs.hash(newPassword, 10);
+      await sql`UPDATE clients SET portal_password_hash = ${hash} WHERE id = ${client.clientId}`;
+      sendJson(res, 200, { message: 'Password updated' });
+    } catch (err) {
+      console.error('Portal password change error:', err);
+      sendJson(res, 500, { error: 'Failed to update password' });
+    }
+    return;
+  }
+
   if (req.method === 'DELETE') {
     const cookie = 'client_token=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
     const existing = res.getHeader('Set-Cookie') || [];

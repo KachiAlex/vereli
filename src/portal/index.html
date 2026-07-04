@@ -220,6 +220,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
         <span class="ni-label">Payments</span>
         <span class="dot-red" id="badge-payments" style="display:none"></span>
       </div>
+      <div class="ni" onclick="nav('settings',this)" id="nav-settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.67 15 1.65 1.65 0 0 0 3 14.09V14a2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 6.6 10.33a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H12a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V12a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span class="ni-label">Settings</span>
+      </div>
     </div>
 
     <div class="sb-foot">
@@ -267,6 +271,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 
       <!-- PAYMENTS --><div class="view" id="view-payments"><div id="render-payments">Loading...</div></div>
 
+      <!-- SETTINGS --><div class="view" id="view-settings"><div id="render-settings">Loading...</div></div>
+
     </div><!-- /cb -->
   </div><!-- /main -->
 </div><!-- /shell -->
@@ -280,7 +286,7 @@ document.dispatchEvent(new CustomEvent("kite:core-ready", { detail: { submitCont
 lucide.createIcons();
 
 /* ── Nav ── */
-const TITLES={overview:'Overview',work:'Work',approvals:'Approvals',files:'Files',messages:'Messages',payments:'Payments'};
+const TITLES={overview:'Overview',work:'Work',approvals:'Approvals',files:'Files',messages:'Messages',payments:'Payments',settings:'Settings'};
 function nav(viewId,el){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+viewId).classList.add('active');
@@ -484,10 +490,10 @@ async function loadPortalData(){
       document.getElementById('user-name').textContent=client.contact||'Client';
       document.getElementById('user-av').textContent=getInitials(client.contact);
     }
-    updateBadges();renderOverview();renderWork();renderApprovals();renderFiles();renderMessages();renderPayments();if(typeof lucide!=='undefined')lucide.createIcons();
+    updateBadges();renderOverview();renderWork();renderApprovals();renderFiles();renderMessages();renderPayments();renderSettings();if(typeof lucide!=='undefined')lucide.createIcons();
   }catch(err){
     const msg=err.message==='Unauthorized'?'Please log in to view this portal.':'Failed to load data.';
-    ['overview','work','approvals','files','messages','payments'].forEach(v=>{document.getElementById('render-'+v).innerHTML='<div style="padding:40px;text-align:center;color:#88AAA4">'+msg+'</div>';});
+    ['overview','work','approvals','files','messages','payments','settings'].forEach(v=>{document.getElementById('render-'+v).innerHTML='<div style="padding:40px;text-align:center;color:#88AAA4">'+msg+'</div>';});
   }
 }
 function updateBadges(){
@@ -661,6 +667,47 @@ function renderPayments(){
   }
   if(!unpaid.length&&!paid.length)html+='<div class="card" style="padding:22px;color:#88AAA4">No invoices yet.</div>';
   document.getElementById('render-payments').innerHTML=html;
+}
+function renderSettings(){
+  const{client}=PORTAL_DATA;
+  if(!client)return;
+  let html='<div style="margin-bottom:24px"><h1 class="ht" style="font-size:22px;font-weight:900;letter-spacing:-.025em;margin-bottom:4px">Settings</h1><p style="font-size:13px;color:#6B7C7D">Manage your account.</p></div>';
+  html+='<div class="card" style="padding:24px 26px;max-width:520px">';
+  html+='<div class="ht" style="font-size:15px;font-weight:800;color:#0B3D3F;margin-bottom:16px">Account info</div>';
+  html+='<div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px">';
+  html+='<div><div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Name</div><div style="padding:10px 12px;background:#F7FAF9;border-radius:10px;border:1px solid #E0E8E4;font-size:13px;font-weight:600;color:#0B3D3F">'+esc(client.name)+'</div></div>';
+  html+='<div><div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Email</div><div style="padding:10px 12px;background:#F7FAF9;border-radius:10px;border:1px solid #E0E8E4;font-size:13px;font-weight:600;color:#0B3D3F">'+esc(client.email)+'</div></div>';
+  html+='<div><div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Portal URL</div><div style="padding:10px 12px;background:#F7FAF9;border-radius:10px;border:1px solid #E0E8E4;font-size:13px;font-weight:600;color:#3550C4">'+esc(client.portal&&client.portal.url?client.portal.url:'portal.vereli.app')+'</div></div>';
+  html+='</div>';
+  html+='<div class="ht" style="font-size:15px;font-weight:800;color:#0B3D3F;margin-bottom:16px;border-top:1px solid #E8F0EC;padding-top:22px">Change password</div>';
+  html+='<div id="pw-form" style="display:flex;flex-direction:column;gap:14px">';
+  html+='<div><div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Current password</div><input type="password" id="pw-current" class="field" placeholder="Enter current password" style="width:100%;height:40px;padding:0 13px;border-radius:9px;border:1.5px solid #EEF2F2;font-family:Inter,sans-serif;font-size:13px;outline:none;background:#fff" onfocus="this.style.borderColor=\'var(--brand-primary)\'" onblur="this.style.borderColor=\'#EEF2F2\'"></div>';
+  html+='<div><div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">New password</div><input type="password" id="pw-new" class="field" placeholder="Enter new password" style="width:100%;height:40px;padding:0 13px;border-radius:9px;border:1.5px solid #EEF2F2;font-family:Inter,sans-serif;font-size:13px;outline:none;background:#fff" onfocus="this.style.borderColor=\'var(--brand-primary)\'" onblur="this.style.borderColor=\'#EEF2F2\'"></div>';
+  html+='<div><div style="font-size:11px;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Confirm new password</div><input type="password" id="pw-confirm" class="field" placeholder="Confirm new password" style="width:100%;height:40px;padding:0 13px;border-radius:9px;border:1.5px solid #EEF2F2;font-family:Inter,sans-serif;font-size:13px;outline:none;background:#fff" onfocus="this.style.borderColor=\'var(--brand-primary)\'" onblur="this.style.borderColor=\'#EEF2F2\'"></div>';
+  html+='<div id="pw-error" style="font-size:12px;color:#c0392b;display:none"></div>';
+  html+='<button class="act-btn act-pay" style="align-self:flex-start;margin-top:4px" onclick="changePortalPassword()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Update password</button>';
+  html+='</div>';
+  html+='</div>';
+  document.getElementById('render-settings').innerHTML=html;
+}
+async function changePortalPassword(){
+  const current=document.getElementById('pw-current').value;
+  const newPw=document.getElementById('pw-new').value;
+  const confirmPw=document.getElementById('pw-confirm').value;
+  const errEl=document.getElementById('pw-error');
+  if(!current||!newPw||!confirmPw){errEl.textContent='All fields are required.';errEl.style.display='';return;}
+  if(newPw!==confirmPw){errEl.textContent='New passwords do not match.';errEl.style.display='';return;}
+  if(newPw.length<6){errEl.textContent='New password must be at least 6 characters.';errEl.style.display='';return;}
+  try{
+    const res=await apiFetch('/portal/auth',{method:'PATCH',body:JSON.stringify({currentPassword:current,newPassword:newPw})});
+    const json=await res.json();
+    if(!res.ok){errEl.textContent=json.error||'Update failed.';errEl.style.display='';return;}
+    document.getElementById('pw-current').value='';
+    document.getElementById('pw-new').value='';
+    document.getElementById('pw-confirm').value='';
+    errEl.style.display='none';
+    showToast('Password updated successfully');
+  }catch{errEl.textContent='Network error. Please try again.';errEl.style.display='';}
 }
 initPortal();
 </script>
