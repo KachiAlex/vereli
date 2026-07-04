@@ -63,6 +63,11 @@ export async function requireAuth(req, res) {
     const { jwtVerify } = await import('jose');
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const { payload } = await jwtVerify(token, secret, { clockTolerance: 60 });
+    if (!payload.userId) {
+      console.error('[requireAuth] Token missing userId:', JSON.stringify(payload));
+      sendJson(res, 401, { error: 'Invalid token payload' });
+      return null;
+    }
     req.user = payload;
     return payload;
   } catch (err) {

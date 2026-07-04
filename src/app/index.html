@@ -379,18 +379,18 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
         <button id="tab-login" onclick="setAuthTab('login')" style="flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:700;background:#fff;color:#0B4F52;box-shadow:0 1px 3px rgba(15,61,62,.08)">Log in</button>
         <button id="tab-register" onclick="setAuthTab('register')" style="flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:700;background:transparent;color:#8AADA8">Register</button>
       </div>
-      <div id="auth-login">
-        <div style="margin-bottom:16px"><label class="flbl">Email</label><input type="email" class="field" id="li-email" placeholder="you@agency.com"></div>
-        <div style="margin-bottom:20px"><label class="flbl">Password</label><input type="password" class="field" id="li-pass" placeholder="••••••••"></div>
-        <button onclick="doLogin()" class="tb-btn pri" style="width:100%;justify-content:center;height:44px">Log in</button>
-      </div>
-      <div id="auth-register" style="display:none">
-        <div style="margin-bottom:14px"><label class="flbl">Full name</label><input type="text" class="field" id="reg-name" placeholder="Jane Smith"></div>
-        <div style="margin-bottom:14px"><label class="flbl">Company / Workspace</label><input type="text" class="field" id="reg-company" placeholder="Kreatix Technologies"></div>
-        <div style="margin-bottom:14px"><label class="flbl">Email</label><input type="email" class="field" id="reg-email" placeholder="you@agency.com"></div>
-        <div style="margin-bottom:20px"><label class="flbl">Password</label><input type="password" class="field" id="reg-pass" placeholder="••••••••"></div>
-        <button onclick="doRegister()" class="tb-btn pri" style="width:100%;justify-content:center;height:44px">Create account</button>
-      </div>
+      <form id="auth-login" onsubmit="event.preventDefault();doLogin();">
+        <div style="margin-bottom:16px"><label class="flbl">Email</label><input type="email" class="field" id="li-email" placeholder="you@agency.com" autocomplete="username"></div>
+        <div style="margin-bottom:20px"><label class="flbl">Password</label><input type="password" class="field" id="li-pass" placeholder="••••••••" autocomplete="current-password"></div>
+        <button type="submit" class="tb-btn pri" style="width:100%;justify-content:center;height:44px">Log in</button>
+      </form>
+      <form id="auth-register" style="display:none" onsubmit="event.preventDefault();doRegister();">
+        <div style="margin-bottom:14px"><label class="flbl">Full name</label><input type="text" class="field" id="reg-name" placeholder="Jane Smith" autocomplete="name"></div>
+        <div style="margin-bottom:14px"><label class="flbl">Company / Workspace</label><input type="text" class="field" id="reg-company" placeholder="Kreatix Technologies" autocomplete="organization"></div>
+        <div style="margin-bottom:14px"><label class="flbl">Email</label><input type="email" class="field" id="reg-email" placeholder="you@agency.com" autocomplete="username"></div>
+        <div style="margin-bottom:20px"><label class="flbl">Password</label><input type="password" class="field" id="reg-pass" placeholder="••••••••" autocomplete="new-password"></div>
+        <button type="submit" class="tb-btn pri" style="width:100%;justify-content:center;height:44px">Create account</button>
+      </form>
       <div id="auth-error" style="margin-top:12px;font-size:12px;color:#B01C1C;text-align:center;display:none"></div>
     </div>
   </div>
