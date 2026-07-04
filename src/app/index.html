@@ -546,6 +546,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
         <div id="cg" class="cl-list"></div>
       </div>
       <div id="cp-view" style="display:none"></div>
+      <div id="tp-view" style="display:none"></div>
     </div>
 
     <!-- ════ (Tasks view hidden — no dedicated nav item now, accessed from client workspace) ════ -->
@@ -842,6 +843,7 @@ async function initFromApi() {
     // If superadmin, fetch tenants instead of clients
     if (CURRENT_USER && isSuperadmin()) {
       await fetchTenants();
+      renderTenants();
       return;
     }
     const res = await apiFetch('/clients');
@@ -1231,10 +1233,20 @@ function goView(name,el){
   if(v)v.classList.add('active');
   if(el)el.classList.add('active');
   else{const ni=document.getElementById('nav-'+name);if(ni)ni.classList.add('active');}
-  document.getElementById('pt').textContent=TITLES[name]||name;
+  if(name==='clients' && isSuperadmin()){
+    document.getElementById('pt').textContent='Tenants';
+  } else {
+    document.getElementById('pt').textContent=TITLES[name]||name;
+  }
   document.getElementById('pt-sub').style.display='none';
   const tba=document.getElementById('tba');
-  if(name==='clients')tba.innerHTML=`<button onclick="openMod()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add client</button>`;
+  if(name==='clients'){
+    if(isSuperadmin()){
+      tba.innerHTML=`<button onclick="openTenantModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add tenant</button>`;
+    } else {
+      tba.innerHTML=`<button onclick="openMod()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add client</button>`;
+    }
+  }
   else if(name==='invoices')tba.innerHTML=`<button onclick="openInvModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New invoice</button>`;
   else if(name==='files')tba.innerHTML=`<button onclick="openFileUploadGlobal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>`;
   else tba.innerHTML='';
@@ -1477,15 +1489,273 @@ function renderTenants(filter) {
 function showCG(){
   document.getElementById('cg-view').style.display='';
   document.getElementById('cp-view').style.display='none';
+  document.getElementById('tp-view').style.display='none';
   SC=null;SWA=null;STAB='overview';
   const url=new URL(window.location.href);
   if(url.searchParams.has('client')){url.searchParams.delete('client');history.pushState({},'',url);}
   // Show tenants for superadmin, clients for others
   if (CURRENT_USER && isSuperadmin()) {
+    document.querySelector('#cg-view .ht').textContent='Tenants';
+    document.getElementById('cl-subtitle').textContent='Manage all platform tenants';
+    const btn=document.querySelector('#cg-view button.tb-btn.pri');
+    if(btn){btn.outerHTML=`<button onclick="openTenantModal()" class="tb-btn pri"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add tenant</button>`;}
+    const inp=document.querySelector('#cg-view input[type="text"]');
+    if(inp){inp.setAttribute('oninput','filterTenants(this.value)');inp.setAttribute('placeholder','Search tenants…');}
     renderTenants();
   } else {
+    document.querySelector('#cg-view .ht').textContent='Clients';
+    document.getElementById('cl-subtitle').textContent='Loading…';
+    const btn=document.querySelector('#cg-view button.tb-btn.pri');
+    if(btn){btn.outerHTML=`<button onclick="openMod()" class="tb-btn pri"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add client</button>`;}
+    const inp=document.querySelector('#cg-view input[type="text"]');
+    if(inp){inp.setAttribute('oninput','filterCG(this.value)');inp.setAttribute('placeholder','Search clients…');}
     renderCG();
   }
+}
+
+function filterTenants(v){
+  renderTenants(v);
+}
+
+/* ══ TENANT MODAL ══ */
+function openTenantModal(){
+  const html=`
+    <div id="tm-overlay" onclick="if(event.target===this)closeTenantModal()" style="position:fixed;inset:0;background:rgba(11,79,82,.35);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:16px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(11,79,82,.18);overflow:hidden;max-height:90vh;overflow-y:auto">
+        <div style="padding:22px 24px 18px;border-bottom:1px solid #E6EDEB;display:flex;justify-content:space-between;align-items:center">
+          <div class="ht" style="font-size:15px;font-weight:700;color:#0B4F52">Add new tenant</div>
+          <button onclick="closeTenantModal()" style="background:none;border:none;cursor:pointer;color:#A0C4C0;padding:4px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div style="padding:18px 24px 24px;display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6B9E99;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Tenant name</label>
+            <input id="tm-name" type="text" placeholder="Acme Corp" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6B9E99;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Plan</label>
+            <select id="tm-plan" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+              <option value="trial">Trial</option>
+              <option value="starter">Starter</option>
+              <option value="pro">Pro</option>
+              <option value="enterprise">Enterprise</option>
+            </select>
+          </div>
+          <div style="border-top:1px solid #E6EDEB;padding-top:14px;margin-top:4px">
+            <div class="ht" style="font-size:12px;font-weight:700;color:#0B4F52;margin-bottom:10px">Admin user</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <input id="tm-admin-name" type="text" placeholder="Admin name" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+              <input id="tm-admin-email" type="email" placeholder="admin@company.com" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+              <input id="tm-admin-pass" type="text" placeholder="Password (min 6 chars)" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+            </div>
+          </div>
+          <button onclick="submitTenantCreation()" class="tb-btn pri" style="width:100%;margin-top:4px">Create tenant</button>
+        </div>
+      </div>
+    </div>`;
+  const el=document.createElement('div');el.innerHTML=html;document.body.appendChild(el);
+}
+function closeTenantModal(){
+  const m=document.getElementById('tm-overlay');if(m)m.parentElement.remove();
+}
+async function submitTenantCreation(){
+  const name=document.getElementById('tm-name').value.trim();
+  const plan=document.getElementById('tm-plan').value;
+  const adminName=document.getElementById('tm-admin-name').value.trim();
+  const adminEmail=document.getElementById('tm-admin-email').value.trim().toLowerCase();
+  const adminPassword=document.getElementById('tm-admin-pass').value;
+  if(!name){toast('Please enter a tenant name');return;}
+  if(!adminEmail||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminEmail)){toast('Please enter a valid admin email');return;}
+  if(!adminPassword||adminPassword.length<6){toast('Admin password must be at least 6 characters');return;}
+  try{
+    const res=await apiFetch('/admin/tenants',{method:'POST',body:JSON.stringify({name,plan,adminName,adminEmail,adminPassword})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Failed to create tenant');return;}
+    toast(`${name} created.`);
+    closeTenantModal();
+    await fetchTenants();
+    renderTenants();
+  }catch(err){toast('Network error');console.error(err);}
+}
+
+/* ══ TENANT PROFILE ══ */
+let ST=null; // Selected tenant for profile view
+
+async function openTenantProfile(id){
+  const tv=document.getElementById('view-clients');
+  if(!tv.classList.contains('active')){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+    tv.classList.add('active');
+    document.getElementById('nav-clients').classList.add('active');
+    document.getElementById('pt').textContent='Tenants';
+    document.getElementById('tba').innerHTML='';
+  }
+  ST=DATA.tenants.find(t=>t.id===id);
+  if(!ST){
+    try{
+      const res=await apiFetch(`/admin/tenants?tenantId=${id}`);
+      if(!res.ok) throw new Error('Failed to fetch tenant');
+      const json=await res.json();
+      if(json.data) ST=json.data;
+    }catch(err){console.error(err);}
+  }
+  document.getElementById('cg-view').style.display='none';
+  document.getElementById('cp-view').style.display='none';
+  document.getElementById('tp-view').style.display='';
+  if(ST) renderTenantProfile(ST);
+  lucide.createIcons();
+}
+
+function closeTenantProfile(){
+  document.getElementById('tp-view').style.display='none';
+  document.getElementById('cg-view').style.display='';
+  ST=null;
+  document.getElementById('pt').textContent='Tenants';
+  document.getElementById('tba').innerHTML=`<button onclick="openTenantModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add tenant</button>`;
+  renderTenants();
+}
+
+function renderTenantProfile(t){
+  const tv=document.getElementById('tp-view');
+  const statusColor=t.status==='active'?'green':t.status==='suspended'?'red':'amber';
+  const statusLabel=t.status==='active'?'Active':t.status==='suspended'?'Suspended':'Pending';
+  const created=new Date(t.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const [bg,tc]=BALS[(t.id||0)%BALS.length].split(':');
+  const inits=t.name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'TN';
+
+  tv.innerHTML=`
+    <div style="margin-bottom:6px">
+      <button onclick="closeTenantProfile()" style="display:inline-flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12px;font-weight:600;color:#7A9E99;padding:0 0 16px;transition:color .1s" onmouseenter="this.style.color='#0B4F52'" onmouseleave="this.style.color='#7A9E99'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Back to all tenants
+      </button>
+    </div>
+    <div style="border:1px solid #E2EBE9;border-radius:16px;overflow:hidden;margin-bottom:24px;box-shadow:0 1px 3px rgba(15,61,62,.04),0 4px 16px rgba(15,61,62,.05)">
+      <div style="height:52px;background:linear-gradient(135deg,${bg} 0%,${tc} 100%);position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,61,62,.75) 0%,rgba(31,138,112,.25) 100%)"></div>
+      </div>
+      <div style="background:#fff;padding:18px 24px 20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:48px;height:48px;border-radius:12px;border:2px solid #fff;box-shadow:0 2px 10px rgba(15,61,62,.12);display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:16px;font-weight:800;flex-shrink:0;background:${bg};color:${tc}">${inits}</div>
+            <div>
+              <div class="ht" style="font-size:18px;font-weight:800;color:#0B4F52;letter-spacing:-.025em;margin-bottom:3px">${esc(t.name)}</div>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <span class="st ${statusColor}" style="font-size:10px">${statusLabel}</span>
+                <span class="st teal" style="font-size:10px">${t.plan}</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            ${t.status==='active'?`<button onclick="suspendTenant(${t.id})" class="tb-btn" style="background:#FEF2F2;color:#B91C1C;border-color:#FECACA"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Suspend</button>`:`<button onclick="activateTenant(${t.id})" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>Activate</button>`}
+            <button onclick="editTenantModal(${t.id})" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px">
+      <div style="background:#fff;border:1px solid #E2EBE9;border-radius:14px;padding:18px 20px">
+        <div class="ht" style="font-size:12px;font-weight:700;color:#7A9E99;margin-bottom:8px">Users</div>
+        <div style="font-size:22px;font-weight:800;color:#0B4F52">${t.userCount||0}</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2EBE9;border-radius:14px;padding:18px 20px">
+        <div class="ht" style="font-size:12px;font-weight:700;color:#7A9E99;margin-bottom:8px">Clients</div>
+        <div style="font-size:22px;font-weight:800;color:#0B4F52">${t.clientCount||0}</div>
+      </div>
+      <div style="background:#fff;border:1px solid #E2EBE9;border-radius:14px;padding:18px 20px">
+        <div class="ht" style="font-size:12px;font-weight:700;color:#7A9E99;margin-bottom:8px">Created</div>
+        <div style="font-size:16px;font-weight:700;color:#0B4F52">${created}</div>
+      </div>
+    </div>
+    ${t.admin?`
+    <div style="background:#fff;border:1px solid #E2EBE9;border-radius:14px;padding:18px 20px;margin-bottom:24px">
+      <div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52;margin-bottom:12px">Tenant admin</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:36px;height:36px;border-radius:10px;background:#EBF0EE;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:11px;font-weight:800;color:#0B4F52">${t.admin.name.split(' ').map(w=>w[0]||'').join('').toUpperCase()||'A'}</div>
+        <div>
+          <div style="font-size:13.5px;font-weight:700;color:#0B4F52">${esc(t.admin.name)}</div>
+          <div style="font-size:12px;color:#7A9E99">${t.admin.email}</div>
+        </div>
+      </div>
+    </div>`:''}
+    <div style="background:#F8FAF9;border:1px solid #E2EBE9;border-radius:14px;padding:16px 20px">
+      <div style="font-size:12px;font-weight:600;color:#7A9E99">Slug</div>
+      <div style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-top:2px;font-family:monospace">${t.slug}</div>
+    </div>`;
+}
+
+async function suspendTenant(id){
+  if(!confirm('Suspend this tenant? They will lose access until reactivated.'))return;
+  try{
+    const res=await apiFetch(`/admin/tenants?tenantId=${id}`,{method:'DELETE'});
+    if(!res.ok) throw new Error('Failed to suspend');
+    toast('Tenant suspended');
+    await fetchTenants();
+    if(ST&&ST.id===id){ST.status='suspended';renderTenantProfile(ST);}
+    else{closeTenantProfile();}
+  }catch(err){toast('Failed to suspend tenant');}
+}
+async function activateTenant(id){
+  try{
+    const res=await apiFetch(`/admin/tenants?tenantId=${id}`,{method:'PATCH',body:JSON.stringify({status:'active'})});
+    if(!res.ok) throw new Error('Failed to activate');
+    toast('Tenant activated');
+    await fetchTenants();
+    if(ST&&ST.id===id){ST.status='active';renderTenantProfile(ST);}
+  }catch(err){toast('Failed to activate tenant');}
+}
+function editTenantModal(id){
+  const t=DATA.tenants.find(x=>x.id===id);
+  if(!t) return;
+  const html=`
+    <div id="te-overlay" onclick="if(event.target===this)closeEditTenantModal()" style="position:fixed;inset:0;background:rgba(11,79,82,.35);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:16px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(11,79,82,.18);overflow:hidden;max-height:90vh;overflow-y:auto">
+        <div style="padding:22px 24px 18px;border-bottom:1px solid #E6EDEB;display:flex;justify-content:space-between;align-items:center">
+          <div class="ht" style="font-size:15px;font-weight:700;color:#0B4F52">Edit tenant</div>
+          <button onclick="closeEditTenantModal()" style="background:none;border:none;cursor:pointer;color:#A0C4C0;padding:4px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div style="padding:18px 24px 24px;display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6B9E99;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Tenant name</label>
+            <input id="te-name" type="text" value="${esc(t.name)}" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6B9E99;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Plan</label>
+            <select id="te-plan" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+              <option value="trial" ${t.plan==='trial'?'selected':''}>Trial</option>
+              <option value="starter" ${t.plan==='starter'?'selected':''}>Starter</option>
+              <option value="pro" ${t.plan==='pro'?'selected':''}>Pro</option>
+              <option value="enterprise" ${t.plan==='enterprise'?'selected':''}>Enterprise</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6B9E99;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Status</label>
+            <select id="te-status" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+              <option value="active" ${t.status==='active'?'selected':''}>Active</option>
+              <option value="suspended" ${t.status==='suspended'?'selected':''}>Suspended</option>
+            </select>
+          </div>
+          <button onclick="submitTenantUpdate(${t.id})" class="tb-btn pri" style="width:100%;margin-top:4px">Save changes</button>
+        </div>
+      </div>
+    </div>`;
+  const el=document.createElement('div');el.innerHTML=html;document.body.appendChild(el);
+}
+function closeEditTenantModal(){
+  const m=document.getElementById('te-overlay');if(m)m.parentElement.remove();
+}
+async function submitTenantUpdate(id){
+  const name=document.getElementById('te-name').value.trim();
+  const plan=document.getElementById('te-plan').value;
+  const status=document.getElementById('te-status').value;
+  if(!name){toast('Name is required');return;}
+  try{
+    const res=await apiFetch(`/admin/tenants?tenantId=${id}`,{method:'PATCH',body:JSON.stringify({name,plan,status})});
+    if(!res.ok) throw new Error('Failed to update');
+    toast('Tenant updated');
+    closeEditTenantModal();
+    await fetchTenants();
+    if(ST&&ST.id===id){ST={...ST,name,plan,status};renderTenantProfile(ST);}
+  }catch(err){toast('Failed to update tenant');}
 }
 
 /* ══ CLIENT PROFILE (WORKSPACE) ══ */
