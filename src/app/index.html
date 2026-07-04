@@ -323,10 +323,17 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
         </div>
         <div>
           <label class="flbl">Client logo <span style="font-weight:400;color:#B8B8B4">(optional)</span></label>
-          <div class="upl" onclick="toast('File picker in production')">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B0B0AD" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 8px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <div class="ht" style="font-size:12px;font-weight:600;color:#6B7C7D">Upload logo</div>
-            <div style="font-size:11px;color:#B0B0AD;margin-top:2px">PNG or SVG preferred</div>
+          <input type="file" id="nc-logo-input" accept="image/png,image/svg+xml,image/jpeg,image/webp" style="display:none" onchange="handleNewClientLogoUpload(this)">
+          <div id="nc-logo-preview" onclick="document.getElementById('nc-logo-input').click()" class="upl" style="cursor:pointer;position:relative;overflow:hidden">
+            <div id="nc-logo-placeholder">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B0B0AD" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 8px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <div class="ht" style="font-size:12px;font-weight:600;color:#6B7C7D">Upload logo</div>
+              <div style="font-size:11px;color:#B0B0AD;margin-top:2px">PNG or SVG preferred</div>
+            </div>
+            <img id="nc-logo-img" style="max-height:90%;max-width:90%;object-fit:contain;display:none;position:absolute;inset:0;margin:auto">
+          </div>
+          <div id="nc-logo-actions" style="display:none;gap:8px;margin-top:5px;justify-content:center">
+            <button class="tb-btn" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation();removeNewClientLogo()">Remove</button>
           </div>
         </div>
       </div>
@@ -1745,7 +1752,7 @@ async function handleTaskClick(waApiId, taskApiId, taskIdx, markDone){
 function renderWADeliverables(wa){
   const shared=wa.files.filter(f=>f.vis==='shared');
   const rows=shared.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px">Awaiting signature</span>':'';return `<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;background:#fff;border:1px solid #E2EBE9"><div style="width:30px;height:30px;border-radius:7px;background:${ic.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ic.i}" style="width:13px;height:13px;color:${ic.tc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:600;color:#121212">${f.n}</div><div style="font-size:11px;color:#8E9E9E">${f.sz} · ${f.uploader} · ${f.date}</div></div>${sigBadge?sigBadge+'&nbsp;':'&nbsp;'}<button class="tb-btn" style="font-size:11px;padding:4px 10px" onclick="toast('Downloading')">Download</button></div>`;}).join('');
-  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="slbl" style="margin-bottom:0">${shared.length} shared with client</div><button onclick="toast('File picker opening…')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button></div>${shared.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):emp('No deliverables','Upload and share files with client here.','file')}`;
+  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="slbl" style="margin-bottom:0">${shared.length} shared with client</div><button onclick="openFileUploadGlobal()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button></div>${shared.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):emp('No deliverables','Upload and share files with client here.','file')}`;
 }
 
 function renderWAFiles(wa){
@@ -1880,7 +1887,7 @@ function renderWAActivityTab(wa){
 function renderCTFiles(c){
   const files=c.workAreas.flatMap(w=>w.files.map(f=>({...f,wa:w.name})));
   const rows=files.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px;margin-right:4px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px;margin-right:4px">Awaiting signature</span>':'';return `<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;background:#fff;border:1px solid #E2EBE9"><div style="width:30px;height:30px;border-radius:7px;background:${ic.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ic.i}" style="width:13px;height:13px;color:${ic.tc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:600;color:#121212">${f.n}</div><div style="font-size:11px;color:#8E9E9E">${f.sz} · ${f.wa} · Uploaded by ${f.uploader} · ${f.date}</div></div>${sigBadge}<span class="st ${f.vis==='shared'?'green':'gray'}" style="font-size:10px">${f.vis==='shared'?'Shared':'Internal'}</span></div>`;}).join('');
-  return `<div style="max-width:680px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="slbl" style="margin-bottom:0">${files.length} files across all work areas</div><button onclick="toast('File picker opening…')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button></div>${files.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):emp('No files yet','Upload files to a work area.','folder')}</div>`;
+  return `<div style="max-width:680px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="slbl" style="margin-bottom:0">${files.length} files across all work areas</div><button onclick="openFileUploadGlobal()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button></div>${files.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):emp('No files yet','Upload files to a work area.','folder')}</div>`;
 }
 
 function renderCTFeedback(c){
@@ -2167,14 +2174,14 @@ function setupKanbanDrag(){
 function renderFiles(){
   const all=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.files.map(f=>({...f,cname:c.name,wa:w.name}))));
   const el=document.getElementById('files-list');if(!el)return;
-  const hdr='<div style="padding:12px 16px 10px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">'+all.length+' files</span><button onclick="toast(\'File picker opening…\')" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload</button></div>';
+  const hdr='<div style="padding:12px 16px 10px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">'+all.length+' files</span><button onclick="openFileUploadGlobal()" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload</button></div>';
   // Desktop table
   const thStyle='font-family:\'General Sans\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8E9E9E;padding:8px 16px;text-align:left;border-bottom:1px solid #E2EBE9';
   const tableRows=all.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px;margin-left:5px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px;margin-left:5px">Awaiting signature</span>':'';return '<tr onmouseenter="this.style.background=\'#FBFBFA\'" onmouseleave="this.style.background=\'\'"><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;vertical-align:middle"><div style="display:flex;align-items:center;gap:8px"><div style="width:26px;height:26px;border-radius:6px;background:'+ic.bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+ic.i+'" style="width:12px;height:12px;color:'+ic.tc+'"></i></div><span class="ht" style="font-size:13px;font-weight:600;color:#121212;white-space:nowrap">'+f.n+'</span>'+sigBadge+'</div></td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#6B7C7D">'+f.cname+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#6B7C7D">'+f.wa+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#8E9E9E">'+(f.uploader||'—')+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#8E9E9E">'+f.date+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2"><span class="st '+(f.vis==='shared'?'green':'gray')+'" style="font-size:10px">'+(f.vis==='shared'?'Shared':'Internal')+'</span></td></tr>';}).join('');
   const desktopTable='<div class="files-table-wrap card" style="overflow:hidden">'+hdr+'<table style="width:100%;border-collapse:collapse"><thead><tr><th style="'+thStyle+'">File</th><th style="'+thStyle+'">Client</th><th style="'+thStyle+'">Work area</th><th style="'+thStyle+'">Uploaded by</th><th style="'+thStyle+'">Date</th><th style="'+thStyle+'">Visibility</th></tr></thead><tbody>'+tableRows+'</tbody></table></div>';
   // Mobile card list
   const cardRows=all.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px">Awaiting sig.</span>':'';return '<div style="background:#fff;border:1px solid #E2EBE9;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;background:'+ic.bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+ic.i+'" style="width:14px;height:14px;color:'+ic.tc+'"></i></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span class="ht" style="font-size:13px;font-weight:600;color:#121212;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px">'+f.n+'</span>'+sigBadge+'</div><div style="font-size:11px;color:#8E9E9E;margin-top:2px">'+f.cname+' · '+f.wa+'</div></div><span class="st '+(f.vis==='shared'?'green':'gray')+'" style="font-size:10px;flex-shrink:0">'+(f.vis==='shared'?'Shared':'Internal')+'</span></div>';}).join('');
-  const mobileCards='<div class="files-card-list" style="display:none"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">'+all.length+' files</span><button onclick="toast(\'File picker opening…\')" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload</button></div>'+cardRows+'</div>';
+  const mobileCards='<div class="files-card-list" style="display:none"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">'+all.length+' files</span><button onclick="openFileUploadGlobal()" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload</button></div>'+cardRows+'</div>';
   el.innerHTML=desktopTable+mobileCards;
   lucide.createIcons();
 }
@@ -2450,10 +2457,11 @@ async function openFileUploadGlobal(){
 }
 
 /* ══ ADD / EDIT CLIENT ══ */
-function openMod(){ncPortalOn=false;ncEng='active';['nc-name','nc-contact','nc-email'].forEach(id=>{document.getElementById(id).value='';});document.getElementById('nc-svc').value='';document.getElementById('nc-ptog').classList.remove('on');setEng('active');document.getElementById('mod-foot').innerHTML=`<button onclick="closeMod()" class="tb-btn">Cancel</button><button onclick="addClient()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create client</button>`;document.getElementById('mod').classList.add('open');}
+function openMod(){ncPortalOn=false;ncEng='active';['nc-name','nc-contact','nc-email'].forEach(id=>{document.getElementById(id).value='';});document.getElementById('nc-svc').value='';document.getElementById('nc-ptog').classList.remove('on');setEng('active');removeNewClientLogo();document.getElementById('mod-foot').innerHTML=`<button onclick="closeMod()" class="tb-btn">Cancel</button><button onclick="addClient()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create client</button>`;document.getElementById('mod').classList.add('open');}
 function closeMod(){document.getElementById('mod').classList.remove('open');}
 function toggleNP(){ncPortalOn=!ncPortalOn;document.getElementById('nc-ptog').classList.toggle('on',ncPortalOn);}
 function setEng(v){ncEng=v;['active','prospect','paused'].forEach(s=>{const el=document.getElementById('eng-'+s);if(el){el.style.borderColor=s===v?'#17A39B':'#EEF2F2';el.style.background=s===v?'#EBF5F0':'#fff';}});document.getElementById('nc-eng').value=v;}
+let ncLogoUrl='';
 async function addClient(){
   const name=document.getElementById('nc-name').value.trim();
   const email=document.getElementById('nc-email').value.trim();
@@ -2463,9 +2471,11 @@ async function addClient(){
   try {
     const type = document.getElementById('nc-svc').value || 'Service';
     const portalUrl = ncPortalOn ? `portal.vereli.app/${name.toLowerCase().replace(/\s+/g,'-')}` : '';
+    const body = { name, contact, email, type, status: ncEng, portal_on: ncPortalOn, portal_url: portalUrl };
+    if(ncLogoUrl) body.portal_logo = ncLogoUrl;
     const res = await apiFetch('/clients', {
       method: 'POST',
-      body: JSON.stringify({ name, contact, email, type, status: ncEng, portal_on: ncPortalOn, portal_url: portalUrl })
+      body: JSON.stringify(body)
     });
     const json = await res.json();
     if (!res.ok) { toast(json.error || 'Failed to create client'); return; }
@@ -2487,6 +2497,31 @@ async function addClient(){
     toast('Network error. Please try again.');
     console.error(err);
   }
+}
+async function handleNewClientLogoUpload(input){
+  const file=input.files[0];if(!file)return;
+  try{
+    toast('Uploading logo…');
+    const uploadData=await uploadFileBlob(file);
+    ncLogoUrl=uploadData.url||'';
+    const img=document.getElementById('nc-logo-img');
+    const placeholder=document.getElementById('nc-logo-placeholder');
+    const actions=document.getElementById('nc-logo-actions');
+    img.src=ncLogoUrl;img.style.display='block';
+    placeholder.style.display='none';
+    actions.style.display='flex';
+    toast('Logo uploaded');
+  }catch(err){toast(err.message||'Upload failed');}
+  input.value='';
+}
+function removeNewClientLogo(){
+  ncLogoUrl='';
+  const img=document.getElementById('nc-logo-img');
+  const placeholder=document.getElementById('nc-logo-placeholder');
+  const actions=document.getElementById('nc-logo-actions');
+  if(img){img.src='';img.style.display='none';}
+  if(placeholder)placeholder.style.display='block';
+  if(actions)actions.style.display='none';
 }
 function editC(cid){
   const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
