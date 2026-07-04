@@ -38,6 +38,11 @@ export default async function handler(req, res) {
       return;
     }
 
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_logo TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_banner TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_username TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_password_hash TEXT`;
+
     const [row] = await sql`SELECT id, name, email, portal_on, portal_url, portal_logo, portal_banner, portal_username FROM clients WHERE id = ${client.clientId}`;
     if (!row) {
       sendJson(res, 404, { error: 'Client not found' });
@@ -68,6 +73,7 @@ export default async function handler(req, res) {
       return;
     }
 
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_password_hash TEXT`;
     const [client] = await sql`SELECT id, email, name, portal_on, portal_password_hash FROM clients WHERE email = ${email.toLowerCase()}`;
     if (!client || !client.portal_on || !client.portal_password_hash) {
       sendJson(res, 401, { error: 'Invalid credentials' });

@@ -33,6 +33,9 @@ export default async function handler(req, res) {
       const ext = name.split('.').pop() || 'bin';
       const key = `tenants/${user.tenantId || 'global'}/${crypto.randomUUID()}.${ext}`;
       url = await uploadS3Buffer(key, buffer, contentType || 'application/octet-stream');
+    } else {
+      sendJson(res, 503, { error: 'File storage is not configured. Set CLOUDINARY_URL or S3 credentials.' });
+      return;
     }
 
     sendJson(res, 200, { data: { url, name } });

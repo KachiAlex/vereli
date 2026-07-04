@@ -11,6 +11,7 @@ export default async function handler(req, res) {
   if (!id) { badRequest(res, 'id is required'); return; }
 
   if (req.method === 'GET') {
+    await sql`ALTER TABLE files ADD COLUMN IF NOT EXISTS url TEXT`;
     const [row] = user.role === 'superadmin'
       ? await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, url, created_at FROM files WHERE id = ${id}`
       : await sql`SELECT id, work_area_id, name, type, size, visibility, uploader_name, url, created_at FROM files WHERE id = ${id} AND tenant_id = ${user.tenantId}`;

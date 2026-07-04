@@ -16,6 +16,9 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
+    // Ensure url column exists
+    await sql`ALTER TABLE files ADD COLUMN IF NOT EXISTS url TEXT`;
+
     const { workAreaId } = req.query || {};
     let rows;
     

@@ -19,6 +19,17 @@ export default async function handler(req, res) {
   const clientId = client.clientId;
 
   try {
+    // Ensure columns exist
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_logo TEXT`;
+    await sql`ALTER TABLE clients ADD COLUMN IF NOT EXISTS portal_banner TEXT`;
+    await sql`ALTER TABLE files ADD COLUMN IF NOT EXISTS url TEXT`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS parent_id INTEGER`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS author_name TEXT`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS author_initials TEXT`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS author_bg TEXT`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS author_tc TEXT`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS reference TEXT`;
+
     // Fetch client details
     const [clientRow] = await sql`SELECT id, name, contact, email, portal_on, portal_url, portal_logo, portal_banner FROM clients WHERE id = ${clientId}`;
     if (!clientRow) {
