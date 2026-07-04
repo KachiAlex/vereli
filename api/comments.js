@@ -16,6 +16,16 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
+    // Ensure comment columns exist
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS tenant_id INTEGER`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS user_id INTEGER`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS parent_id INTEGER`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS author_name TEXT`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS author_initials TEXT`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS author_bg TEXT`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS author_tc TEXT`;
+    await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS reference TEXT`;
+
     const { workAreaId, threaded } = req.query || {};
     let rows;
     
