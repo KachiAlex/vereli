@@ -14,6 +14,9 @@ export default async function handler(req, res) {
         sendJson(res, 401, { error: 'Invalid token payload' });
         return;
       }
+      // Ensure tenant branding columns exist
+      await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS logo_url TEXT`;
+      await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS primary_color TEXT`;
       // Fetch full user data with tenant info
       const [userData] = await sql`
         SELECT u.id, u.email, u.name, u.role, u.tenant_id, t.name as tenant_name, t.slug as tenant_slug, t.status as tenant_status, t.logo_url, t.primary_color
