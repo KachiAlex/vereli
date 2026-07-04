@@ -107,7 +107,63 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    // Create new tenant (superadmin manually creates tenant)
+    const { tenantId, action } = req.query || {};
+
+    // ── Add admin to existing tenant ──
+    if (tenantId && action === 'addAdmin') {
+      const { adminEmail, adminName, adminPassword } = req.body || {};
+      if (!adminEmail || !adminPassword) {
+        badRequest(res, 'adminEmail and adminPassword are required');
+        return;
+      }
+      if (adminPassword.length < 6) {
+        badRequest(res, 'adminPassword must be at least 6 characters');
+        return;
+      }
+      try {
+        // Check if email already exists
+        const [existingUser] = await sql`SELECT id FROM users WHERE email = ${adminEmail.toLowerCase()}`;
+        if (existingUser) {
+          sendJson(res, 409, { error: 'Email already registered' });
+          return;
+        }
+        // Check if tenant already has an admin
+        const [existingAdmin] = await sql`SELECT id FROM users WHERE tenant_id = ${tenantId} AND role = 'admin' LIMIT 1`;
+        if (existingAdmin) {
+          sendJson(res, 409, { error: 'Tenant already has an admin. Remove the current admin first.' });
+          return;
+        }
+        const passwordHash = await bcryptjs.hash(adminPassword, 10);
+        const [admin] = await sql`
+          INSERT INTO users (email, password_hash, name, tenant_id, role)
+          VALUES (${adminEmail.toLowerCase()}, ${passwordHash}, ${adminName || 'Admin'}, ${tenantId}, 'admin')
+          RETURNING id, email, name, role;
+        `;
+        await sql`CREATE TABLE IF NOT EXISTS team_members (
+          id SERIAL PRIMARY KEY,
+          tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+          user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          email TEXT NOT NULL,
+          name TEXT NOT NULL,
+          role TEXT NOT NULL DEFAULT 'member',
+          status TEXT NOT NULL DEFAULT 'active',
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )`;
+        await sql`
+          INSERT INTO team_members (tenant_id, user_id, email, name, role, status)
+          VALUES (${tenantId}, ${admin.id}, ${adminEmail.toLowerCase()}, ${adminName || 'Admin'}, 'admin', 'active')
+        `;
+        sendJson(res, 201, {
+          data: { id: admin.id, email: admin.email, name: admin.name, role: admin.role }
+        });
+      } catch (err) {
+        console.error('Error adding admin:', err);
+        sendJson(res, 500, { error: 'Failed to add admin' });
+      }
+      return;
+    }
+
+    // ── Create new tenant (superadmin manually creates tenant) ──
     const { name, plan = 'trial', adminEmail, adminName, adminPassword } = req.body || {};
 
     if (!name) {
@@ -193,13 +249,46 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PATCH' || req.method === 'PUT') {
-    // Update tenant status/plan
-    const { tenantId } = req.query || {};
+    const { tenantId, action } = req.query || {};
     if (!tenantId) {
       badRequest(res, 'tenantId query parameter is required');
       return;
     }
 
+    // ── Reset admin password ──
+    if (action === 'resetAdmin') {
+      const { adminId, newPassword } = req.body || {};
+      if (!adminId || !newPassword) {
+        badRequest(res, 'adminId and newPassword are required');
+        return;
+      }
+      if (newPassword.length < 6) {
+        badRequest(res, 'newPassword must be at least 6 characters');
+        return;
+      }
+      try {
+        const passwordHash = await bcryptjs.hash(newPassword, 10);
+        const [user] = await sql`
+          UPDATE users SET password_hash = ${passwordHash}
+          WHERE id = ${adminId} AND tenant_id = ${tenantId} AND role = 'admin'
+          RETURNING id, email, name, role;
+        `;
+        if (!user) {
+          sendJson(res, 404, { error: 'Admin not found for this tenant' });
+          return;
+        }
+        sendJson(res, 200, {
+          message: 'Admin password reset successfully',
+          data: { id: user.id, email: user.email, name: user.name, role: user.role }
+        });
+      } catch (err) {
+        console.error('Error resetting admin password:', err);
+        sendJson(res, 500, { error: 'Failed to reset admin password' });
+      }
+      return;
+    }
+
+    // ── Update tenant status/plan ──
     const { status, plan, name, logoUrl, primaryColor } = req.body || {};
     if (status === undefined && plan === undefined && name === undefined && logoUrl === undefined && primaryColor === undefined) {
       badRequest(res, 'No fields to update');
@@ -266,25 +355,54 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'DELETE') {
-    // Soft delete / suspend tenant
-    const { tenantId } = req.query || {};
+    const { tenantId, action } = req.query || {};
     if (!tenantId) {
       badRequest(res, 'tenantId query parameter is required');
       return;
     }
 
+    // ── Remove admin from tenant ──
+    if (action === 'removeAdmin') {
+      const { adminId } = req.query || {};
+      if (!adminId) {
+        badRequest(res, 'adminId query parameter is required');
+        return;
+      }
+      try {
+        // Delete team_members entry first (due to FK)
+        await sql`DELETE FROM team_members WHERE user_id = ${adminId} AND tenant_id = ${tenantId}`;
+        const [user] = await sql`
+          DELETE FROM users WHERE id = ${adminId} AND tenant_id = ${tenantId} AND role = 'admin'
+          RETURNING id, email, name;
+        `;
+        if (!user) {
+          sendJson(res, 404, { error: 'Admin not found for this tenant' });
+          return;
+        }
+        sendJson(res, 200, {
+          message: 'Admin removed successfully',
+          data: { id: user.id, email: user.email, name: user.name }
+        });
+      } catch (err) {
+        console.error('Error removing admin:', err);
+        sendJson(res, 500, { error: 'Failed to remove admin' });
+      }
+      return;
+    }
+
+    // ── Soft delete / suspend tenant ──
     try {
       const [tenant] = await sql`
         UPDATE tenants SET status = 'suspended' WHERE id = ${tenantId}
         RETURNING id, name, slug, status, plan, created_at;
       `;
-      
+
       if (!tenant) {
         sendJson(res, 404, { error: 'Tenant not found' });
         return;
       }
 
-      sendJson(res, 200, { 
+      sendJson(res, 200, {
         message: 'Tenant suspended successfully',
         data: {
           id: tenant.id,

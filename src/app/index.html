@@ -1666,17 +1666,26 @@ function renderTenantProfile(t){
         <div style="font-size:16px;font-weight:700;color:#0B4F52">${created}</div>
       </div>
     </div>
-    ${t.admin?`
     <div style="background:#fff;border:1px solid #E2EBE9;border-radius:14px;padding:18px 20px;margin-bottom:24px">
-      <div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52;margin-bottom:12px">Tenant admin</div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:36px;height:36px;border-radius:10px;background:#EBF0EE;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:11px;font-weight:800;color:#0B4F52">${t.admin.name.split(' ').map(w=>w[0]||'').join('').toUpperCase()||'A'}</div>
-        <div>
-          <div style="font-size:13.5px;font-weight:700;color:#0B4F52">${esc(t.admin.name)}</div>
-          <div style="font-size:12px;color:#7A9E99">${t.admin.email}</div>
-        </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52">Tenant admin</div>
+        ${!t.admin?`<button onclick="showAddAdminModal(${t.id})" class="tb-btn pri" style="padding:5px 10px;font-size:11px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add admin</button>`:''}
       </div>
-    </div>`:''}
+      ${t.admin?`
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:36px;height:36px;border-radius:10px;background:#EBF0EE;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:11px;font-weight:800;color:#0B4F52">${t.admin.name.split(' ').map(w=>w[0]||'').join('').toUpperCase()||'A'}</div>
+          <div>
+            <div style="font-size:13.5px;font-weight:700;color:#0B4F52">${esc(t.admin.name)}</div>
+            <div style="font-size:12px;color:#7A9E99">${t.admin.email}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="showResetAdminPasswordModal(${t.id},${t.admin.id})" class="tb-btn" style="padding:5px 10px;font-size:11px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Reset password</button>
+          <button onclick="removeAdmin(${t.id},${t.admin.id})" class="tb-btn" style="background:#FEF2F2;color:#B91C1C;border-color:#FECACA;padding:5px 10px;font-size:11px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Remove</button>
+        </div>
+      </div>`:`<div style="font-size:12.5px;color:#7A9E99">No admin assigned. <a href="#" onclick="showAddAdminModal(${t.id});return false;" style="color:#17A39B;font-weight:600;text-decoration:none">Add one now</a>.</div>`}
+    </div>
     <div style="background:#F8FAF9;border:1px solid #E2EBE9;border-radius:14px;padding:16px 20px">
       <div style="font-size:12px;font-weight:600;color:#7A9E99">Slug</div>
       <div style="font-size:13.5px;font-weight:700;color:#0B4F52;margin-top:2px;font-family:monospace">${t.slug}</div>
@@ -1756,6 +1765,101 @@ async function submitTenantUpdate(id){
     await fetchTenants();
     if(ST&&ST.id===id){ST={...ST,name,plan,status};renderTenantProfile(ST);}
   }catch(err){toast('Failed to update tenant');}
+}
+
+/* ══ ADMIN MANAGEMENT MODALS ══ */
+function showAddAdminModal(tenantId){
+  const html=`
+    <div id="aa-overlay" onclick="if(event.target===this)closeAddAdminModal()" style="position:fixed;inset:0;background:rgba(11,79,82,.35);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:16px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(11,79,82,.18);overflow:hidden;max-height:90vh;overflow-y:auto">
+        <div style="padding:22px 24px 18px;border-bottom:1px solid #E6EDEB;display:flex;justify-content:space-between;align-items:center">
+          <div class="ht" style="font-size:15px;font-weight:700;color:#0B4F52">Add tenant admin</div>
+          <button onclick="closeAddAdminModal()" style="background:none;border:none;cursor:pointer;color:#A0C4C0;padding:4px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div style="padding:18px 24px 24px;display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6B9E99;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Admin name</label>
+            <input id="aa-name" type="text" placeholder="John Doe" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6B9E99;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Email</label>
+            <input id="aa-email" type="email" placeholder="admin@company.com" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6B9E99;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Password</label>
+            <input id="aa-pass" type="text" placeholder="Min 6 characters" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+          </div>
+          <button onclick="submitAddAdmin(${tenantId})" class="tb-btn pri" style="width:100%;margin-top:4px">Add admin</button>
+        </div>
+      </div>
+    </div>`;
+  const el=document.createElement('div');el.innerHTML=html;document.body.appendChild(el);
+}
+function closeAddAdminModal(){
+  const m=document.getElementById('aa-overlay');if(m)m.parentElement.remove();
+}
+async function submitAddAdmin(tenantId){
+  const adminName=document.getElementById('aa-name').value.trim();
+  const adminEmail=document.getElementById('aa-email').value.trim().toLowerCase();
+  const adminPassword=document.getElementById('aa-pass').value;
+  if(!adminEmail||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminEmail)){toast('Please enter a valid email');return;}
+  if(!adminPassword||adminPassword.length<6){toast('Password must be at least 6 characters');return;}
+  try{
+    const res=await apiFetch(`/admin/tenants?tenantId=${tenantId}&action=addAdmin`,{method:'POST',body:JSON.stringify({adminName,adminEmail,adminPassword})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Failed to add admin');return;}
+    toast('Admin added successfully');
+    closeAddAdminModal();
+    await fetchTenants();
+    // Refresh tenant profile
+    const fresh=await apiFetch(`/admin/tenants?tenantId=${tenantId}`);
+    if(fresh.ok){const j=await fresh.json();if(j.data){ST=j.data;renderTenantProfile(ST);}}
+  }catch(err){toast('Network error');console.error(err);}
+}
+
+function showResetAdminPasswordModal(tenantId,adminId){
+  const html=`
+    <div id="rp-overlay" onclick="if(event.target===this)closeResetAdminPasswordModal()" style="position:fixed;inset:0;background:rgba(11,79,82,.35);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:16px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(11,79,82,.18);overflow:hidden;max-height:90vh;overflow-y:auto">
+        <div style="padding:22px 24px 18px;border-bottom:1px solid #E6EDEB;display:flex;justify-content:space-between;align-items:center">
+          <div class="ht" style="font-size:15px;font-weight:700;color:#0B4F52">Reset admin password</div>
+          <button onclick="closeResetAdminPasswordModal()" style="background:none;border:none;cursor:pointer;color:#A0C4C0;padding:4px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div style="padding:18px 24px 24px;display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6B9E99;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">New password</label>
+            <input id="rp-pass" type="text" placeholder="Min 6 characters" style="width:100%;padding:10px 12px;border:1px solid #DCE5E6;border-radius:9px;font-size:13px;outline:none;background:#FAFBFA">
+          </div>
+          <button onclick="submitResetAdminPassword(${tenantId},${adminId})" class="tb-btn pri" style="width:100%;margin-top:4px">Reset password</button>
+        </div>
+      </div>
+    </div>`;
+  const el=document.createElement('div');el.innerHTML=html;document.body.appendChild(el);
+}
+function closeResetAdminPasswordModal(){
+  const m=document.getElementById('rp-overlay');if(m)m.parentElement.remove();
+}
+async function submitResetAdminPassword(tenantId,adminId){
+  const newPassword=document.getElementById('rp-pass').value;
+  if(!newPassword||newPassword.length<6){toast('Password must be at least 6 characters');return;}
+  try{
+    const res=await apiFetch(`/admin/tenants?tenantId=${tenantId}&action=resetAdmin`,{method:'PATCH',body:JSON.stringify({adminId,newPassword})});
+    if(!res.ok){const j=await res.json();toast(j.error||'Failed to reset password');return;}
+    toast('Password reset successfully');
+    closeResetAdminPasswordModal();
+  }catch(err){toast('Network error');console.error(err);}
+}
+
+async function removeAdmin(tenantId,adminId){
+  if(!confirm('Remove this admin? They will lose access immediately.'))return;
+  try{
+    const res=await apiFetch(`/admin/tenants?tenantId=${tenantId}&action=removeAdmin&adminId=${adminId}`,{method:'DELETE'});
+    if(!res.ok){const j=await res.json();toast(j.error||'Failed to remove admin');return;}
+    toast('Admin removed');
+    await fetchTenants();
+    const fresh=await apiFetch(`/admin/tenants?tenantId=${tenantId}`);
+    if(fresh.ok){const j=await fresh.json();if(j.data){ST=j.data;renderTenantProfile(ST);}}
+  }catch(err){toast('Failed to remove admin');}
 }
 
 /* ══ CLIENT PROFILE (WORKSPACE) ══ */
