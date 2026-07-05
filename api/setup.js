@@ -33,6 +33,7 @@ export default async function handler(req, res) {
         description TEXT,
         price_monthly INTEGER NOT NULL DEFAULT 0,
         price_yearly INTEGER NOT NULL DEFAULT 0,
+        currency TEXT NOT NULL DEFAULT 'NGN',
         user_limit INTEGER,
         client_limit INTEGER,
         features TEXT[] DEFAULT '{}',
@@ -45,11 +46,11 @@ export default async function handler(req, res) {
     const existingPlans = await sql`SELECT id FROM plans LIMIT 1`;
     if (!existingPlans.length) {
       await sql`
-        INSERT INTO plans (name, slug, description, price_monthly, price_yearly, user_limit, client_limit, features, sort_order) VALUES
-        ('Trial', 'trial', '14-day free evaluation period', 0, 0, 5, 5, '{"5 users","5 clients","Basic support"}', 1),
-        ('Starter', 'starter', 'Small teams getting started', 2900, 29000, 10, 20, '{"10 users","20 clients","Email support","Standard reports"}', 2),
-        ('Pro', 'pro', 'Growing teams with advanced needs', 7900, 79000, 50, 100, '{"50 users","100 clients","Priority support","Advanced reports","Custom branding"}', 3),
-        ('Enterprise', 'enterprise', 'Large organizations with custom requirements', 0, 0, NULL, NULL, '{"Unlimited users","Unlimited clients","Dedicated support","Custom integrations","SLA guarantee"}', 4);
+        INSERT INTO plans (name, slug, description, price_monthly, price_yearly, currency, user_limit, client_limit, features, sort_order) VALUES
+        ('Trial', 'trial', '14-day free evaluation period', 0, 0, 'NGN', 5, 5, '{"5 users","5 clients","Basic support"}', 1),
+        ('Starter', 'starter', 'Small teams getting started', 2900, 29000, 'NGN', 10, 20, '{"10 users","20 clients","Email support","Standard reports"}', 2),
+        ('Pro', 'pro', 'Growing teams with advanced needs', 7900, 79000, 'NGN', 50, 100, '{"50 users","100 clients","Priority support","Advanced reports","Custom branding"}', 3),
+        ('Enterprise', 'enterprise', 'Large organizations with custom requirements', 0, 0, 'NGN', NULL, NULL, '{"Unlimited users","Unlimited clients","Dedicated support","Custom integrations","SLA guarantee"}', 4);
       `;
     }
 

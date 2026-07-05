@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const plans = await sql`
-        SELECT id, name, slug, description, price_monthly, price_yearly,
+        SELECT id, name, slug, description, price_monthly, price_yearly, currency,
                user_limit, client_limit, features, active, sort_order, created_at
         FROM plans
         ORDER BY sort_order ASC, id ASC;
@@ -30,16 +30,16 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    const { name, slug, description, priceMonthly, priceYearly, userLimit, clientLimit, features, sortOrder } = req.body || {};
+    const { name, slug, description, priceMonthly, priceYearly, currency, userLimit, clientLimit, features, sortOrder } = req.body || {};
     if (!name || !slug) {
       sendJson(res, 400, { error: 'name and slug are required' });
       return;
     }
     try {
       const [plan] = await sql`
-        INSERT INTO plans (name, slug, description, price_monthly, price_yearly, user_limit, client_limit, features, sort_order)
-        VALUES (${name}, ${slug}, ${description || ''}, ${priceMonthly || 0}, ${priceYearly || 0}, ${userLimit || null}, ${clientLimit || null}, ${features || []}, ${sortOrder || 0})
-        RETURNING id, name, slug, description, price_monthly, price_yearly, user_limit, client_limit, features, active, sort_order, created_at;
+        INSERT INTO plans (name, slug, description, price_monthly, price_yearly, currency, user_limit, client_limit, features, sort_order)
+        VALUES (${name}, ${slug}, ${description || ''}, ${priceMonthly || 0}, ${priceYearly || 0}, ${currency || 'NGN'}, ${userLimit || null}, ${clientLimit || null}, ${features || []}, ${sortOrder || 0})
+        RETURNING id, name, slug, description, price_monthly, price_yearly, currency, user_limit, client_limit, features, active, sort_order, created_at;
       `;
       sendJson(res, 201, {
         message: 'Plan created',
@@ -50,6 +50,7 @@ export default async function handler(req, res) {
           description: plan.description,
           priceMonthly: plan.price_monthly,
           priceYearly: plan.price_yearly,
+          currency: plan.currency,
           userLimit: plan.user_limit,
           clientLimit: plan.client_limit,
           features: plan.features,
@@ -76,10 +77,10 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { name, slug, description, priceMonthly, priceYearly, userLimit, clientLimit, features, active, sortOrder } = req.body || {};
+    const { name, slug, description, priceMonthly, priceYearly, currency, userLimit, clientLimit, features, active, sortOrder } = req.body || {};
     if (
       name === undefined && slug === undefined && description === undefined &&
-      priceMonthly === undefined && priceYearly === undefined &&
+      priceMonthly === undefined && priceYearly === undefined && currency === undefined &&
       userLimit === undefined && clientLimit === undefined &&
       features === undefined && active === undefined && sortOrder === undefined
     ) {
@@ -97,13 +98,14 @@ export default async function handler(req, res) {
       if (description !== undefined) { fields.push(`description = $${paramCount++}`); values.push(description); }
       if (priceMonthly !== undefined) { fields.push(`price_monthly = $${paramCount++}`); values.push(priceMonthly); }
       if (priceYearly !== undefined) { fields.push(`price_yearly = $${paramCount++}`); values.push(priceYearly); }
+      if (currency !== undefined) { fields.push(`currency = $${paramCount++}`); values.push(currency); }
       if (userLimit !== undefined) { fields.push(`user_limit = $${paramCount++}`); values.push(userLimit); }
       if (clientLimit !== undefined) { fields.push(`client_limit = $${paramCount++}`); values.push(clientLimit); }
       if (features !== undefined) { fields.push(`features = $${paramCount++}`); values.push(features); }
       if (active !== undefined) { fields.push(`active = $${paramCount++}`); values.push(active); }
       if (sortOrder !== undefined) { fields.push(`sort_order = $${paramCount++}`); values.push(sortOrder); }
 
-      const query = `UPDATE plans SET ${fields.join(', ')} WHERE id = $${paramCount} RETURNING id, name, slug, description, price_monthly, price_yearly, user_limit, client_limit, features, active, sort_order, created_at`;
+      const query = `UPDATE plans SET ${fields.join(', ')} WHERE id = $${paramCount} RETURNING id, name, slug, description, price_monthly, price_yearly, currency, user_limit, client_limit, features, active, sort_order, created_at`;
       values.push(planId);
 
       const [plan] = await sql(query, values);
@@ -119,6 +121,7 @@ export default async function handler(req, res) {
           description: plan.description,
           priceMonthly: plan.price_monthly,
           priceYearly: plan.price_yearly,
+          currency: plan.currency,
           userLimit: plan.user_limit,
           clientLimit: plan.client_limit,
           features: plan.features,
