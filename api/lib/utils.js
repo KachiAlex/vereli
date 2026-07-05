@@ -25,13 +25,13 @@ export function parseCookie(req) {
 }
 
 export function setCookie(res, name, value, maxAge) {
-  const cookie = `${name}=${value}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${maxAge}`;
+  const cookie = `${name}=${value}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${maxAge}`;
   const existing = res.getHeader('Set-Cookie') || [];
   res.setHeader('Set-Cookie', Array.isArray(existing) ? [...existing, cookie] : [existing, cookie]);
 }
 
 export function clearCookie(res, name) {
-  const cookie = `${name}=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  const cookie = `${name}=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
   const existing = res.getHeader('Set-Cookie') || [];
   res.setHeader('Set-Cookie', Array.isArray(existing) ? [...existing, cookie] : [existing, cookie]);
 }
