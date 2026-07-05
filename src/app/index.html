@@ -1819,7 +1819,12 @@ function renderTenantProfile(t){
               <div class="ht" style="font-size:18px;font-weight:800;color:#0B4F52;letter-spacing:-.025em;margin-bottom:3px">${esc(t.name)}</div>
               <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
                 <span class="st ${statusColor}" style="font-size:10px">${statusLabel}</span>
-                <span class="st teal" style="font-size:10px">${t.plan}</span>
+                <select onchange="quickChangePlan(${t.id},this.value)" style="font-size:10px;font-family:'General Sans',sans-serif;font-weight:700;padding:2px 6px;border-radius:6px;border:1px solid #DCE5E6;background:#F2F9F6;color:#0B4F52;cursor:pointer;outline:none">
+                  <option value="trial" ${t.plan==='trial'?'selected':''}>Trial</option>
+                  <option value="starter" ${t.plan==='starter'?'selected':''}>Starter</option>
+                  <option value="pro" ${t.plan==='pro'?'selected':''}>Pro</option>
+                  <option value="enterprise" ${t.plan==='enterprise'?'selected':''}>Enterprise</option>
+                </select>
               </div>
             </div>
           </div>
@@ -1956,6 +1961,16 @@ async function submitTenantUpdate(id){
     await fetchTenants();
     if(ST&&ST.id===id){ST={...ST,name,plan,status};renderTenantProfile(ST);}
   }catch(err){toast('Failed to update tenant');}
+}
+
+async function quickChangePlan(id,plan){
+  try{
+    const res=await apiFetch(`/admin/tenants?tenantId=${id}`,{method:'PATCH',body:JSON.stringify({plan})});
+    if(!res.ok) throw new Error('Failed to update');
+    toast('Plan changed to '+plan);
+    await fetchTenants();
+    if(ST&&ST.id===id){ST={...ST,plan};renderTenantProfile(ST);}
+  }catch(err){toast('Failed to change plan');}
 }
 
 /* ══ ADMIN MANAGEMENT MODALS ══ */
