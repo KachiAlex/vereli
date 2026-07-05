@@ -167,7 +167,7 @@ export default async function handler(req, res) {
     }
 
     // ── Create new tenant (superadmin manually creates tenant) ──
-    const { name, plan = 'trial', adminEmail, adminName, adminPassword } = req.body || {};
+    const { name, plan = 'starter', adminEmail, adminName, adminPassword } = req.body || {};
 
     if (!name) {
       badRequest(res, 'name is required');

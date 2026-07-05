@@ -12,7 +12,7 @@ export default async function handler(req, res) {
         name TEXT NOT NULL,
         slug TEXT NOT NULL UNIQUE,
         status TEXT NOT NULL DEFAULT 'active',
-        plan TEXT NOT NULL DEFAULT 'trial',
+        plan TEXT NOT NULL DEFAULT 'starter',
         settings JSONB DEFAULT '{}',
         logo_url TEXT,
         primary_color TEXT,
@@ -23,6 +23,7 @@ export default async function handler(req, res) {
     await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS logo_url TEXT`;
     await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS primary_color TEXT`;
     await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMPTZ`;
+    await sql`ALTER TABLE tenants ALTER COLUMN plan SET DEFAULT 'starter';`;
 
     // 1b. Plans / subscription tiers
     await sql`
@@ -45,10 +46,9 @@ export default async function handler(req, res) {
     // Always ensure default plans exist (safe to re-run)
     await sql`
       INSERT INTO plans (name, slug, description, price_monthly, price_yearly, currency, user_limit, client_limit, features, sort_order) VALUES
-      ('Trial', 'trial', '14-day free evaluation period', 0, 0, 'NGN', 5, 5, '{"5 users","5 clients","Basic support"}', 1),
-      ('Starter', 'starter', 'Small teams getting started', 2900, 29000, 'NGN', 10, 20, '{"10 users","20 clients","Email support","Standard reports"}', 2),
-      ('Pro', 'pro', 'Growing teams with advanced needs', 7900, 79000, 'NGN', 50, 100, '{"50 users","100 clients","Priority support","Advanced reports","Custom branding"}', 3),
-      ('Enterprise', 'enterprise', 'Large organizations with custom requirements', 0, 0, 'NGN', NULL, NULL, '{"Unlimited users","Unlimited clients","Dedicated support","Custom integrations","SLA guarantee"}', 4)
+      ('Starter', 'starter', 'Small teams getting started', 2900, 29000, 'NGN', 10, 20, '{"10 users","20 clients","Email support","Standard reports"}', 1),
+      ('Pro', 'pro', 'Growing teams with advanced needs', 7900, 79000, 'NGN', 50, 100, '{"50 users","100 clients","Priority support","Advanced reports","Custom branding"}', 2),
+      ('Enterprise', 'enterprise', 'Large organizations with custom requirements', 0, 0, 'NGN', NULL, NULL, '{"Unlimited users","Unlimited clients","Dedicated support","Custom integrations","SLA guarantee"}', 3)
       ON CONFLICT (slug) DO NOTHING;
     `;
 

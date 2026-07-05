@@ -81,7 +81,7 @@ export default async function handler(req, res) {
       // Create new tenant for this user with 14-day free trial
       const [tenant] = await sql`
         INSERT INTO tenants (name, slug, status, plan, trial_ends_at)
-        VALUES (${tenantName}, ${tenantSlug}, 'active', 'trial', NOW() + INTERVAL '14 days')
+        VALUES (${tenantName}, ${tenantSlug}, 'active', 'starter', NOW() + INTERVAL '14 days')
         RETURNING id, name, slug;
       `;
       

@@ -87,7 +87,7 @@ export default async function handler(req, res) {
 
       const [tenant] = await sql`
         INSERT INTO tenants (name, slug, status, plan)
-        VALUES (${client.name}, ${slug}, 'active', 'trial')
+        VALUES (${client.name}, ${slug}, 'active', 'starter')
         RETURNING id;
       `;
 
