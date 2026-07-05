@@ -330,29 +330,35 @@ export default async function handler(req, res) {
     `;
 
     // MIGRATION: Migrate existing data to multi-tenant structure
-    // This runs once to convert existing single-user data to tenant structure
-    const [existingUser] = await sql`SELECT id, email, name, role FROM users WHERE tenant_id IS NULL AND role != 'superadmin' ORDER BY id LIMIT 1`;
-    if (existingUser) {
-      // Create a tenant for the first existing user
-      const [tenant] = await sql`
-        INSERT INTO tenants (name, slug, status, plan)
-        VALUES (${existingUser.name || existingUser.email + ' Workspace'}, ${'workspace-' + existingUser.id}, 'active', 'trial')
-        RETURNING id;
-      `;
-      
-      // Update user to be admin of this tenant
-      await sql`UPDATE users SET tenant_id = ${tenant.id}, role = 'admin' WHERE id = ${existingUser.id}`;
-      
-      // Migrate all data to include tenant_id
-      await sql`UPDATE clients SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`;
-      await sql`UPDATE projects SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`;
-      await sql`UPDATE invoices SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`;
-      await sql`UPDATE work_areas SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`;
-      await sql`UPDATE tasks SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`;
-      await sql`UPDATE files SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`;
-      await sql`UPDATE comments SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`;
-      await sql`UPDATE approvals SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`;
-      await sql`UPDATE team_members SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`;
+    // Only runs once when there are no tenants yet (fresh DB or pre-tenant schema)
+    const [tenantCountPre] = await sql`SELECT COUNT(*)::int AS count FROM tenants`;
+    if (tenantCountPre.count === 0) {
+      const [existingUser] = await sql`SELECT id, email, name, role FROM users WHERE tenant_id IS NULL AND role != 'superadmin' ORDER BY id LIMIT 1`;
+      if (existingUser) {
+        // Create a tenant for the first existing user
+        const [tenant] = await sql`
+          INSERT INTO tenants (name, slug, status, plan)
+          VALUES (${existingUser.name || existingUser.email + ' Workspace'}, ${'workspace-' + existingUser.id}, 'active', 'trial')
+          RETURNING id;
+        `;
+
+        // Update user to be admin of this tenant
+        await sql`UPDATE users SET tenant_id = ${tenant.id}, role = 'admin' WHERE id = ${existingUser.id}`;
+
+        // Migrate all data to include tenant_id; ignore duplicate-key errors so setup stays idempotent
+        const migrate = async (q) => {
+          try { await q; } catch (err) { console.warn('[setup] migration skipped:', err.message); }
+        };
+        await migrate(sql`UPDATE clients SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`);
+        await migrate(sql`UPDATE projects SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`);
+        await migrate(sql`UPDATE invoices SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`);
+        await migrate(sql`UPDATE work_areas SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`);
+        await migrate(sql`UPDATE tasks SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`);
+        await migrate(sql`UPDATE files SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`);
+        await migrate(sql`UPDATE comments SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`);
+        await migrate(sql`UPDATE approvals SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`);
+        await migrate(sql`UPDATE team_members SET tenant_id = ${tenant.id} WHERE tenant_id IS NULL`);
+      }
     }
 
     // Seed demo data if no clients exist and we have a tenant with an admin
