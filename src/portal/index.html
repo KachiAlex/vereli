@@ -9,12 +9,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
+  
   <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
   <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;color:#0B3D3F;background:#F5F8F7}
-.ht{font-family:'General Sans',sans-serif}
+.ht{font-family:'Inter',sans-serif}
 
 /* ── Portal branding variables ── */
 :root{
@@ -37,15 +37,15 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 .portal-banner::before{content:'';position:absolute;bottom:-30px;left:-20px;width:120px;height:120px;border-radius:50%;background:rgba(123,224,197,.1)}
 .portal-identity{padding:0 18px 18px;margin-top:-26px;position:relative;border-bottom:1px solid #E4EDEA}
 .portal-logo-wrap{display:flex;align-items:flex-end;gap:12px;margin-bottom:12px}
-.portal-logo-av{width:50px;height:50px;border-radius:14px;border:3px solid #fff;box-shadow:0 4px 16px rgba(11,61,62,.16),0 1px 4px rgba(11,61,62,.08);background:var(--brand-secondary);color:var(--brand-primary);font-family:'General Sans',sans-serif;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.portal-co-name{font-family:'General Sans',sans-serif;font-size:14px;font-weight:800;color:#0B3D3F;letter-spacing:-.025em;line-height:1.2}
-.portal-badge{display:inline-flex;align-items:center;gap:4px;font-family:'General Sans',sans-serif;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;background:var(--brand-secondary);color:var(--brand-primary);border-radius:6px;padding:3px 8px;border:1px solid rgba(11,79,82,.12);margin-top:5px}
+.portal-logo-av{width:50px;height:50px;border-radius:14px;border:3px solid #fff;box-shadow:0 4px 16px rgba(11,61,62,.16),0 1px 4px rgba(11,61,62,.08);background:var(--brand-secondary);color:var(--brand-primary);font-family:'Inter',sans-serif;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.portal-co-name{font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:#0B3D3F;letter-spacing:-.025em;line-height:1.2}
+.portal-badge{display:inline-flex;align-items:center;gap:4px;font-family:'Inter',sans-serif;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;background:var(--brand-secondary);color:var(--brand-primary);border-radius:6px;padding:3px 8px;border:1px solid rgba(11,79,82,.12);margin-top:5px}
 .portal-user-chip{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#F5F8F7;border-radius:10px;border:1px solid #E4EDEA}
 
 /* ── Nav ── */
 .nav-group{padding:12px 10px;flex:1;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:2px}
 .nav-group::-webkit-scrollbar{display:none}
-.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-family:'General Sans',sans-serif;font-size:13px;font-weight:500;color:#6B8E89;cursor:pointer;transition:all .14s;user-select:none;white-space:nowrap;position:relative}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#6B8E89;cursor:pointer;transition:all .14s;user-select:none;white-space:nowrap;position:relative}
 .ni:hover{background:#EEF5F3;color:#0B3D3F}
 .ni.active{background:var(--brand-primary);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(11,79,82,.18)}
 .ni.active svg{stroke:#fff}
@@ -57,16 +57,16 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 
 /* ── Sidebar footer ── */
 .sb-foot{padding:12px 10px;border-top:1px solid #E4EDEA;flex-shrink:0}
-.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:11px;font-weight:800;flex-shrink:0;background:var(--brand-secondary);color:var(--brand-primary)}
+.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:11px;font-weight:800;flex-shrink:0;background:var(--brand-secondary);color:var(--brand-primary)}
 
 /* ── Main ── */
 #main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;background:#F5F8F7}
 
 /* ── Topbar ── */
 #topbar{height:62px;background:#fff;border-bottom:1px solid #E4EDEA;display:flex;align-items:center;padding:0 32px;gap:12px;flex-shrink:0;box-shadow:0 1px 4px rgba(11,61,62,.04)}
-.page-title{font-family:'General Sans',sans-serif;font-size:14px;font-weight:700;color:#0B3D3F;letter-spacing:-.015em}
+.page-title{font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:#0B3D3F;letter-spacing:-.015em}
 #topbar .sp{flex:1}
-.tb-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;border:1.5px solid #DDE8E4;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#4A7A72;cursor:pointer;background:#fff;transition:all .14s;white-space:nowrap;text-decoration:none}
+.tb-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;border:1.5px solid #DDE8E4;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:#4A7A72;cursor:pointer;background:#fff;transition:all .14s;white-space:nowrap;text-decoration:none}
 .tb-btn:hover{border-color:var(--brand-primary);color:#0B3D3F}
 .tb-btn svg{width:13px;height:13px}
 #ham{display:none;background:none;border:none;cursor:pointer;padding:4px;color:#6A8E89}
@@ -85,7 +85,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 .card{background:#fff;border:1px solid #E0EAE7;border-radius:18px;box-shadow:0 1px 4px rgba(11,61,62,.03),0 6px 28px rgba(11,61,62,.06),inset 0 0 0 1px rgba(255,255,255,.7)}
 
 /* ── Status Badges ── */
-.st{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:700;white-space:nowrap}
+.st{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:700;white-space:nowrap}
 .st-green{background:#E4F5ED;color:#1A6B4A;border:1px solid #B8E0CE}
 .st-amber{background:#FEF4E0;color:#8C5208;border:1px solid #F0D9A0}
 .st-red{background:#FDECEA;color:#B01C1C;border:1px solid #F0C4C0}
@@ -93,11 +93,11 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 .st-brand{background:var(--brand-secondary);color:var(--brand-primary);border:1px solid rgba(11,79,82,.14)}
 
 /* ── Section labels ── */
-.sec-lbl{font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#88AAA4;margin-bottom:14px;display:block}
+.sec-lbl{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#88AAA4;margin-bottom:14px;display:block}
 
 /* ── Overview greeting ── */
 .greeting-block{margin-bottom:40px}
-.greeting-title{font-family:'General Sans',sans-serif;font-size:28px;font-weight:900;letter-spacing:-.04em;color:#062B2D;margin-bottom:6px;line-height:1.1}
+.greeting-title{font-family:'Inter',sans-serif;font-size:28px;font-weight:900;letter-spacing:-.04em;color:#062B2D;margin-bottom:6px;line-height:1.1}
 .greeting-sub{font-size:14px;color:#7A9E99;line-height:1.6}
 
 /* ── Attention items ── */
@@ -107,7 +107,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 .attn-item:first-child:hover{border-radius:18px 18px 0 0}
 
 /* ── Action buttons ── */
-.act-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:9px;font-family:'General Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .14s;white-space:nowrap}
+.act-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:9px;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .14s;white-space:nowrap}
 .act-btn:hover{transform:translateY(-1px)}
 .act-approve{background:#E2F0EE;color:#0B4F52;border:1px solid rgba(11,79,82,.12)}
 .act-approve:hover{background:#D0E8E4}
@@ -123,10 +123,10 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 
 /* ── Messages ── */
 .msg{display:flex;gap:10px;margin-bottom:14px}
-.msg-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:10px;font-weight:800;background:#E2F0EE;color:#0B4F52}
+.msg-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:10px;font-weight:800;background:#E2F0EE;color:#0B4F52}
 .msg-body{flex:1;background:#EEF5F2;border-radius:12px;padding:11px 14px;font-size:13px;line-height:1.6;color:#2A4040}
 .msg-body.mine{background:var(--brand-secondary);color:#0B3D3F;border:1px solid rgba(11,79,82,.1)}
-.msg-meta{font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:600;color:#88AAA4;margin-bottom:5px}
+.msg-meta{font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;color:#88AAA4;margin-bottom:5px}
 
 /* ── Progress ── */
 .prog-bar{height:4px;background:#E0EAE7;border-radius:99px;overflow:hidden}
@@ -134,7 +134,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
 
 /* ── Table ── */
 .tbl{width:100%;border-collapse:collapse;font-size:13px}
-.tbl th{font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#88AAA4;padding:0 16px 10px;text-align:left;border-bottom:1px solid #E4EDEA}
+.tbl th{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#88AAA4;padding:0 16px 10px;text-align:left;border-bottom:1px solid #E4EDEA}
 .tbl td{padding:14px 16px;border-bottom:1px solid #EBF0EE;vertical-align:middle;color:#2A4040}
 .tbl tr:last-child td{border-bottom:none}
 
@@ -231,7 +231,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:anti
       </button>
       <div style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:#F0F5F3;border-radius:10px;border:1px solid #E0EAE7">
         <img src="https://static.kite.ai/image/upload/v1780124564/app/6f6e6a79-05d7-44be-8119-1a2be90d56a3/bg-removed-6f6e6a79-05d7-44be-8119-1a2be90d56a3-7516d98654.png" alt="Vereli" style="height:22px;width:auto;flex-shrink:0">
-        <div style="font-size:11px;color:#88AAA4;font-family:'General Sans',sans-serif;font-weight:600">Powered by Vereli</div>
+        <div style="font-size:11px;color:#88AAA4;font-family:'Inter',sans-serif;font-weight:600">Powered by Vereli</div>
       </div>
     </div>
   </aside>
@@ -346,7 +346,7 @@ function sendMsg(){
 function showToast(msg){
   const t=document.createElement('div');
   t.textContent=msg;
-  t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#062B2D;color:#fff;font-family:"General Sans",sans-serif;font-size:13px;font-weight:600;padding:11px 22px;border-radius:12px;z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(6,43,45,.35)';
+  t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#062B2D;color:#fff;font-family:"Inter",sans-serif;font-size:13px;font-weight:600;padding:11px 22px;border-radius:12px;z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(6,43,45,.35)';
   document.body.appendChild(t);
   requestAnimationFrame(()=>{t.style.opacity='1';});
   setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),200);},2600);

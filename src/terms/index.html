@@ -9,33 +9,32 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
   <script>
     tailwind.config = {
       theme: { extend: {
         colors: { teal:'#0B4F52','teal-light':'#17A39B',mist:'#E4F2F0',orange:'#17A39B',graphite:'#0B4F52','warm-gray':'#F5FAF9','mid-gray':'#DCE5E6','text-soft':'#5A6E70' },
-        fontFamily: { tight:['"General Sans"','sans-serif'], body:['Inter','sans-serif'] }
+        fontFamily: { tight:['Inter','sans-serif'], body:['Inter','sans-serif'] }
       }}
     }
   </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
     body{background:#FFFFFF;color:#0B4F52;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-    .ht{font-family:'General Sans',sans-serif}
+    .ht{font-family:'Inter',sans-serif}
     #nav{transition:background .3s ease,border-color .3s ease,backdrop-filter .3s ease}
     #nav.scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:#EEF2F2}
-    .nav-link{font-family:'General Sans',sans-serif;font-size:13px;font-weight:500;color:#5A6E70;text-decoration:none;transition:color .15s ease}
+    .nav-link{font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#5A6E70;text-decoration:none;transition:color .15s ease}
     .nav-link:hover{color:#0B4F52}
-    .cta-primary{display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 18px;border-radius:9px;background:#17A39B;color:#fff;font-family:'General Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:-.01em;box-shadow:0 4px 16px rgba(23,163,155,.3);transition:transform .18s ease,box-shadow .18s ease;white-space:nowrap;text-decoration:none}
+    .cta-primary{display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 18px;border-radius:9px;background:#17A39B;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:-.01em;box-shadow:0 4px 16px rgba(23,163,155,.3);transition:transform .18s ease,box-shadow .18s ease;white-space:nowrap;text-decoration:none}
     .cta-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(23,163,155,.4)}
     #drawer{transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.2,1)}#drawer.open{transform:translateX(0)}
 
     /* Prose */
     .prose-section{padding-top:48px;padding-bottom:48px;border-bottom:1px solid #EEF3F1}
     .prose-section:last-child{border-bottom:none;padding-bottom:0}
-    .prose-section h2{font-family:'General Sans',sans-serif;font-size:19px;font-weight:700;color:#0B4F52;letter-spacing:-.022em;line-height:1.3;margin-bottom:16px}
+    .prose-section h2{font-family:'Inter',sans-serif;font-size:19px;font-weight:700;color:#0B4F52;letter-spacing:-.022em;line-height:1.3;margin-bottom:16px}
     .prose-section p{font-size:15.5px;line-height:1.82;color:#5A6E70;margin-bottom:16px}
     .prose-section p:last-child{margin-bottom:0}
     .prose-section ul{padding-left:0;margin-bottom:16px;list-style:none}
@@ -50,7 +49,7 @@
     .callout p{font-size:14px;color:#2E6050;margin-bottom:0}
 
     /* TOC sidebar */
-    .toc-link{display:block;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:500;color:#7A9E99;text-decoration:none;padding:5px 0;border-left:2px solid transparent;padding-left:12px;transition:color .15s,border-color .15s}
+    .toc-link{display:block;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;color:#7A9E99;text-decoration:none;padding:5px 0;border-left:2px solid transparent;padding-left:12px;transition:color .15s,border-color .15s}
     .toc-link:hover,.toc-link.active{color:#0B4F52;border-left-color:#0B4F52}
 
     @media(max-width:1023px){.toc-col{display:none}}

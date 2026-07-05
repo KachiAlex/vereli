@@ -8,46 +8,45 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
   <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-serif;background:#F6F9F8;color:#0B4F52;-webkit-font-smoothing:antialiased}
-.ht{font-family:'General Sans',sans-serif}
+.ht{font-family:'Inter',sans-serif}
 #shell{display:flex;height:100vh;overflow:hidden}
 
 /* ─── SIDEBAR ─── */
 #sidebar{width:192px;min-width:192px;background:#F8FAF9;border-right:1px solid #E6EDEB;display:flex;flex-direction:column;overflow:hidden;transition:transform .26s cubic-bezier(.4,0,.2,1);z-index:10}
 .sb-logo{height:62px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid #E6EDEB;flex-shrink:0;gap:10px}
 .sb-logo img{height:24px;width:auto;opacity:1}
-.sb-ws-name{font-family:'General Sans',sans-serif;font-size:13px;font-weight:700;color:#0B4F52;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.sb-ws-name{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#0B4F52;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
 .sb-nav{flex:1;overflow-y:auto;padding:12px 10px;display:flex;flex-direction:column;gap:2px;scrollbar-width:none}
 .sb-nav::-webkit-scrollbar{display:none}
-.sb-group-label{font-family:'General Sans',sans-serif;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#A0C4C0;padding:10px 10px 4px;display:block}
+.sb-group-label{font-family:'Inter',sans-serif;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#A0C4C0;padding:10px 10px 4px;display:block}
 .ni{width:100%;height:38px;border-radius:10px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s;color:#6B9E99;position:relative;flex-shrink:0;padding:0 11px}
 .ni:hover{background:#E4EDEA;color:#0B4F52}
 .ni.active{background:#0B4F52;color:#fff;box-shadow:0 2px 8px rgba(11,79,82,.18)}
 .ni.active svg{stroke:#fff}
 .ni svg{width:15px;height:15px;stroke:currentColor;flex-shrink:0;stroke-width:1.75}
-.ni-label{font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;flex:1;letter-spacing:-.01em}
+.ni-label{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;flex:1;letter-spacing:-.01em}
 .ni-badge{position:absolute;top:50%;right:10px;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#7BE0C5;flex-shrink:0}
 .ni.active .ni-badge{background:#7BE0C5}
-.ni-badge-count{position:absolute;top:50%;right:10px;transform:translateY(-50%);min-width:17px;height:17px;border-radius:9px;background:#17A39B;font-family:'General Sans',sans-serif;font-size:9px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.ni-badge-count{position:absolute;top:50%;right:10px;transform:translateY(-50%);min-width:17px;height:17px;border-radius:9px;background:#17A39B;font-family:'Inter',sans-serif;font-size:9px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 5px}
 .ni.active .ni-badge-count{background:rgba(255,255,255,.25);color:#fff}
 .sb-sep{height:1px;background:#E6EDEB;margin:8px 10px}
 .sb-foot{padding:10px 10px;border-top:1px solid #E6EDEB;flex-shrink:0}
 .sb-user{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;cursor:pointer;transition:background .12s}
 .sb-user:hover{background:#E4EDEA}
-.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:800;flex-shrink:0;cursor:pointer}
+.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:800;flex-shrink:0;cursor:pointer}
 
 /* ─── MAIN ─── */
 #main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;max-width:100%}
 #topbar{height:62px;background:#FBFBFA;border-bottom:1px solid #E6EDEB;display:flex;align-items:center;padding:0 36px;gap:12px;flex-shrink:0}
 .pg-breadcrumb{display:flex;align-items:center;gap:7px}
-.pg-title{font-family:'General Sans',sans-serif;font-size:14px;font-weight:700;color:#0B4F52;letter-spacing:-.02em}
+.pg-title{font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:#0B4F52;letter-spacing:-.02em}
 .pg-sub{font-size:12.5px;color:#7A9E99}
 #topbar .sp{flex:1}
-.tb-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 15px;border-radius:9px;border:1px solid #DCE5E6;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#4A6E6B;cursor:pointer;background:#fff;transition:all .15s;white-space:nowrap;text-decoration:none;box-shadow:0 1px 2px rgba(15,61,62,.04)}
+.tb-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 15px;border-radius:9px;border:1px solid #DCE5E6;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:#4A6E6B;cursor:pointer;background:#fff;transition:all .15s;white-space:nowrap;text-decoration:none;box-shadow:0 1px 2px rgba(15,61,62,.04)}
 .tb-btn:hover{border-color:#A8CCC4;color:#0B4F52;background:#F8FDFB}
 .tb-btn.pri{background:#0B4F52;border-color:#0B4F52;color:#fff;box-shadow:0 2px 8px rgba(15,61,62,.22),0 1px 2px rgba(15,61,62,.1)}
 .tb-btn.pri:hover{background:#0D5558;box-shadow:0 4px 16px rgba(15,61,62,.28)}
@@ -69,7 +68,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 .card-sm{background:#fff;border:1px solid #E2EBE9;border-radius:13px;box-shadow:0 1px 3px rgba(11,79,82,.03)}
 
 /* ─── STATUS PILLS ─── */
-.st{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;white-space:nowrap;letter-spacing:.01em}
+.st{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-family:'Inter',sans-serif;font-size:10px;font-weight:700;white-space:nowrap;letter-spacing:.01em}
 .green{background:#E8F8F0;color:#1A8B5A;border:1px solid #C0E8D4}
 .amber{background:#FEF6E8;color:#8E5510;border:1px solid #F0DFC0}
 .blue{background:#EDF1FF;color:#3148C2;border:1px solid #D0D8F4}
@@ -80,11 +79,11 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 .orange{background:#FFF0E9;color:#C4541A;border:1px solid #F0D8C8}
 
 /* ─── SECTION LABEL ─── */
-.slbl{font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:#8AADA8;margin-bottom:12px;display:block}
+.slbl{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:#8AADA8;margin-bottom:12px;display:block}
 
 /* ─── UNDERLINE TABS ─── */
 .tab-bar{display:flex;gap:0;border-bottom:1px solid #E2EBE9;margin-bottom:28px;flex-wrap:wrap}
-.tab{padding:9px 15px;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#8AADA8;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .12s,border-color .12s;white-space:nowrap}
+.tab{padding:9px 15px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:#8AADA8;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .12s,border-color .12s;white-space:nowrap}
 .tab:hover{color:#0B4F52}
 .tab.active{color:#0B4F52;border-bottom-color:#0B4F52}
 
@@ -100,11 +99,11 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 .cl-row{display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid #EEF2F2;cursor:pointer;transition:background .12s}
 .cl-row:last-child{border-bottom:none}
 .cl-row:hover{background:#F7FAF9}
-.cl-av{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:13px;font-weight:800;flex-shrink:0}
+.cl-av{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;flex-shrink:0}
 .cl-add-row{display:flex;align-items:center;gap:12px;padding:18px 22px;cursor:pointer;transition:all .12s;border-bottom:1px solid #EEF2F2;color:#6A8E89}
 .cl-add-row:last-child{border-bottom:none}
 .cl-add-row:hover{background:#F0F8F5;color:#0B4F52}
-.cl-header{display:none;align-items:center;gap:14px;padding:10px 22px;border-bottom:1px solid #EEF2F2;background:#FBFBFA;font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ABDB7}
+.cl-header{display:none;align-items:center;gap:14px;padding:10px 22px;border-bottom:1px solid #EEF2F2;background:#FBFBFA;font-family:'Inter',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ABDB7}
 @media(min-width:768px){
   .cl-header{display:flex}
   .cl-row{padding:16px 22px}
@@ -134,7 +133,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 /* ─── INVOICE / FILE ROWS ─── */
 .ir{display:flex;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid #EEF2F2}
 .ir:last-child{border-bottom:none}
-.iname{font-family:'General Sans',sans-serif;font-size:13px;font-weight:700;color:#0B4F52}
+.iname{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#0B4F52}
 .imeta{font-size:11.5px;color:#7A9E99;margin-top:2px}
 
 /* ─── PORTAL TOGGLE ─── */
@@ -145,9 +144,9 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 
 /* ─── STAT CARDS ─── */
 .stat{padding:22px 24px;border-radius:14px;background:#fff;border:1px solid #E2EBE9;box-shadow:0 1px 3px rgba(11,79,82,.03),0 3px 12px rgba(11,79,82,.04),inset 0 0 0 1px rgba(255,255,255,.6)}
-.stat-n{font-family:'General Sans',sans-serif;font-size:34px;font-weight:900;letter-spacing:-.04em;line-height:1}
+.stat-n{font-family:'Inter',sans-serif;font-size:34px;font-weight:900;letter-spacing:-.04em;line-height:1}
 .stat-l{font-size:11.5px;color:#7A9E99;margin-top:6px;font-weight:500}
-.stat-trend{font-size:11px;font-family:'General Sans',sans-serif;font-weight:700;margin-top:8px;display:flex;align-items:center;gap:3px}
+.stat-trend{font-size:11px;font-family:'Inter',sans-serif;font-weight:700;margin-top:8px;display:flex;align-items:center;gap:3px}
 
 /* ─── PROGRESS BAR ─── */
 .prog{height:3px;background:#E2EBE9;border-radius:99px;overflow:hidden;margin-top:8px}
@@ -157,7 +156,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 .field{width:100%;height:44px;padding:0 14px;border-radius:10px;border:1.5px solid #DCE5E6;background:#fff;font-size:13px;font-family:'Inter',sans-serif;color:#0B4F52;outline:none;transition:border-color .15s,box-shadow .15s}
 .field:focus{border-color:#17A39B;box-shadow:0 0 0 3px rgba(31,138,112,.09)}
 .field::placeholder{color:#BACDC9}
-.flbl{font-size:11px;font-family:'General Sans',sans-serif;font-weight:700;color:#5A7A74;display:block;margin-bottom:7px;letter-spacing:.01em;text-transform:uppercase}
+.flbl{font-size:11px;font-family:'Inter',sans-serif;font-weight:700;color:#5A7A74;display:block;margin-bottom:7px;letter-spacing:.01em;text-transform:uppercase}
 
 /* ─── UPLOAD ZONE ─── */
 .upl{border:1.5px dashed #CCDDD9;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .12s;background:#FBFBFA}
@@ -175,7 +174,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 /* ─── EMPTY STATE ─── */
 .emp{text-align:center;padding:60px 24px}
 .emp-ico{width:52px;height:52px;border-radius:15px;background:#EDF2F0;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
-.emp-t{font-family:'General Sans',sans-serif;font-size:15px;font-weight:700;color:#0B4F52;margin-bottom:6px;letter-spacing:-.01em}
+.emp-t{font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:#0B4F52;margin-bottom:6px;letter-spacing:-.01em}
 .emp-b{font-size:13px;color:#7A9E99;max-width:240px;margin:0 auto;line-height:1.65}
 
 /* ─── MODAL ─── */
@@ -191,9 +190,9 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 .cw-banner-inner{position:absolute;inset:0;background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="110"><defs><radialGradient id="g" cx="75%" cy="40%" r="55%"><stop offset="0%" stop-color="%231F8A70" stop-opacity=".5"/><stop offset="100%" stop-color="%230F3D3E" stop-opacity="0"/></radialGradient></defs><rect width="400" height="110" fill="url(%23g)"/></svg>') no-repeat center;background-size:cover}
 .cw-header-body{background:#fff;border:1px solid #E2EBE9;border-top:none;border-radius:0 0 18px 18px;padding:0 26px 22px}
 .cw-logo-wrap{display:flex;align-items:flex-end;gap:16px;margin-top:-26px;margin-bottom:16px}
-.cw-logo{width:52px;height:52px;border-radius:14px;border:3px solid #fff;box-shadow:0 4px 18px rgba(15,61,62,.14);display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:17px;font-weight:800;flex-shrink:0}
+.cw-logo{width:52px;height:52px;border-radius:14px;border:3px solid #fff;box-shadow:0 4px 18px rgba(15,61,62,.14);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;flex-shrink:0}
 .cw-meta{padding-top:10px;flex:1;min-width:0}
-.cw-name{font-family:'General Sans',sans-serif;font-size:19px;font-weight:800;color:#0B4F52;letter-spacing:-.025em;margin-bottom:4px}
+.cw-name{font-family:'Inter',sans-serif;font-size:19px;font-weight:800;color:#0B4F52;letter-spacing:-.025em;margin-bottom:4px}
 .cw-sub{font-size:13px;color:#6A8E89;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .cw-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 
@@ -207,7 +206,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 
 /* ─── DATA TABLE ─── */
 .tbl{width:100%;border-collapse:collapse;font-size:13px}
-.tbl th{font-family:'General Sans',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8AADA8;padding:10px 16px;text-align:left;border-bottom:1px solid #E2EBE9;background:#FBFBFA}
+.tbl th{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8AADA8;padding:10px 16px;text-align:left;border-bottom:1px solid #E2EBE9;background:#FBFBFA}
 .tbl td{padding:12px 16px;border-bottom:1px solid #EEF2F2;vertical-align:middle}
 .tbl tr:last-child td{border-bottom:none}
 .tbl tr:hover td{background:#F8FBFA}
@@ -307,9 +306,9 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
         <div>
           <label class="flbl">Engagement status</label>
           <div style="display:flex;gap:8px" id="eng-opts">
-            <label id="eng-active" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1.5px solid #17A39B;background:#EBF5F0;cursor:pointer;font-size:13px;font-family:'General Sans',sans-serif;font-weight:600;transition:all .12s" onclick="setEng('active')"><span style="width:8px;height:8px;border-radius:50%;background:#2D6A4F;display:inline-block"></span>Active</label>
-            <label id="eng-prospect" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1.5px solid #EEF2F2;cursor:pointer;font-size:13px;font-family:'General Sans',sans-serif;font-weight:600;transition:all .12s" onclick="setEng('prospect')"><span style="width:8px;height:8px;border-radius:50%;background:#8E9E9E;display:inline-block"></span>Prospect</label>
-            <label id="eng-paused" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1.5px solid #EEF2F2;cursor:pointer;font-size:13px;font-family:'General Sans',sans-serif;font-weight:600;transition:all .12s" onclick="setEng('paused')"><span style="width:8px;height:8px;border-radius:50%;background:#B0B0AD;display:inline-block"></span>Paused</label>
+            <label id="eng-active" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1.5px solid #17A39B;background:#EBF5F0;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;font-weight:600;transition:all .12s" onclick="setEng('active')"><span style="width:8px;height:8px;border-radius:50%;background:#2D6A4F;display:inline-block"></span>Active</label>
+            <label id="eng-prospect" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1.5px solid #EEF2F2;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;font-weight:600;transition:all .12s" onclick="setEng('prospect')"><span style="width:8px;height:8px;border-radius:50%;background:#8E9E9E;display:inline-block"></span>Prospect</label>
+            <label id="eng-paused" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1.5px solid #EEF2F2;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;font-weight:600;transition:all .12s" onclick="setEng('paused')"><span style="width:8px;height:8px;border-radius:50%;background:#B0B0AD;display:inline-block"></span>Paused</label>
           </div>
           <input type="hidden" id="nc-eng" value="active">
         </div>
@@ -376,13 +375,13 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
 <div id="auth-overlay" style="display:none;position:fixed;inset:0;background:#F6F9F8;z-index:9999;align-items:center;justify-content:center;padding:24px;overflow-y:auto">
   <div style="width:100%;max-width:380px">
     <div style="text-align:center;margin-bottom:32px">
-      <div style="font-family:'General Sans',sans-serif;font-size:28px;font-weight:800;color:#0B4F52;letter-spacing:-.03em;margin-bottom:6px">Vereli</div>
+      <div style="font-family:'Inter',sans-serif;font-size:28px;font-weight:800;color:#0B4F52;letter-spacing:-.03em;margin-bottom:6px">Vereli</div>
       <div style="font-size:13.5px;color:#7A9E99">Client workspace for agencies</div>
     </div>
     <div id="auth-box" style="background:#fff;border:1px solid #E2EBE9;border-radius:18px;padding:28px;box-shadow:0 4px 24px rgba(11,79,82,.06)">
       <div id="auth-tabs" style="display:flex;gap:1px;background:#EEF3F0;border-radius:8px;padding:3px;margin-bottom:24px">
-        <button id="tab-login" onclick="setAuthTab('login')" style="flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:700;background:#fff;color:#0B4F52;box-shadow:0 1px 3px rgba(15,61,62,.08)">Log in</button>
-        <button id="tab-register" onclick="setAuthTab('register')" style="flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:700;background:transparent;color:#8AADA8">Register</button>
+        <button id="tab-login" onclick="setAuthTab('login')" style="flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:700;background:#fff;color:#0B4F52;box-shadow:0 1px 3px rgba(15,61,62,.08)">Log in</button>
+        <button id="tab-register" onclick="setAuthTab('register')" style="flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:700;background:transparent;color:#8AADA8">Register</button>
       </div>
       <form id="auth-login" onsubmit="event.preventDefault();doLogin();">
         <div style="margin-bottom:16px"><label class="flbl">Email</label><input type="email" class="field" id="li-email" placeholder="you@agency.com" autocomplete="username"></div>
@@ -685,13 +684,13 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
           <div style="position:relative;z-index:1">
             <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
               <div>
-                <div style="font-size:10.5px;font-family:'General Sans',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.45);margin-bottom:10px">Collected this month</div>
+                <div style="font-size:10.5px;font-family:'Inter',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.45);margin-bottom:10px">Collected this month</div>
                 <div class="ht" style="font-size:44px;font-weight:900;letter-spacing:-.05em;color:#fff;line-height:1" id="pay-collected">—</div>
               </div>
               <div style="display:flex;gap:2px;background:rgba(0,0,0,.2);border-radius:10px;padding:3px" id="pay-win-tabs">
-                <button onclick="switchPayWin('month',this)" class="pay-win-btn" style="padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;background:rgba(255,255,255,.18);color:#fff;letter-spacing:-.01em">This month</button>
-                <button onclick="switchPayWin('year',this)" class="pay-win-btn" style="padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;background:transparent;color:rgba(255,255,255,.45);letter-spacing:-.01em">This year</button>
-                <button onclick="switchPayWin('all',this)" class="pay-win-btn" style="padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:11px;font-weight:700;background:transparent;color:rgba(255,255,255,.45);letter-spacing:-.01em">All time</button>
+                <button onclick="switchPayWin('month',this)" class="pay-win-btn" style="padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;background:rgba(255,255,255,.18);color:#fff;letter-spacing:-.01em">This month</button>
+                <button onclick="switchPayWin('year',this)" class="pay-win-btn" style="padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;background:transparent;color:rgba(255,255,255,.45);letter-spacing:-.01em">This year</button>
+                <button onclick="switchPayWin('all',this)" class="pay-win-btn" style="padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;background:transparent;color:rgba(255,255,255,.45);letter-spacing:-.01em">All time</button>
               </div>
             </div>
             <div class="pay-stat-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px" id="pay-rev-grid">
@@ -1089,8 +1088,8 @@ function hideAuth() {
 function setAuthTab(tab) {
   document.getElementById('auth-login').style.display = tab === 'login' ? 'block' : 'none';
   document.getElementById('auth-register').style.display = tab === 'register' ? 'block' : 'none';
-  document.getElementById('tab-login').style.cssText = tab === 'login' ? 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"General Sans",sans-serif;font-size:12.5px;font-weight:700;background:#fff;color:#0B4F52;box-shadow:0 1px 3px rgba(15,61,62,.08)' : 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"General Sans",sans-serif;font-size:12.5px;font-weight:700;background:transparent;color:#8AADA8';
-  document.getElementById('tab-register').style.cssText = tab === 'register' ? 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"General Sans",sans-serif;font-size:12.5px;font-weight:700;background:#fff;color:#0B4F52;box-shadow:0 1px 3px rgba(15,61,62,.08)' : 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"General Sans",sans-serif;font-size:12.5px;font-weight:700;background:transparent;color:#8AADA8';
+  document.getElementById('tab-login').style.cssText = tab === 'login' ? 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"Inter",sans-serif;font-size:12.5px;font-weight:700;background:#fff;color:#0B4F52;box-shadow:0 1px 3px rgba(15,61,62,.08)' : 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"Inter",sans-serif;font-size:12.5px;font-weight:700;background:transparent;color:#8AADA8';
+  document.getElementById('tab-register').style.cssText = tab === 'register' ? 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"Inter",sans-serif;font-size:12.5px;font-weight:700;background:#fff;color:#0B4F52;box-shadow:0 1px 3px rgba(15,61,62,.08)' : 'flex:1;padding:6px 0;border-radius:6px;border:none;cursor:pointer;font-family:"Inter",sans-serif;font-size:12.5px;font-weight:700;background:transparent;color:#8AADA8';
   document.getElementById('auth-error').style.display = 'none';
 }
 function authError(msg) {
@@ -1408,7 +1407,7 @@ function renderDash(){
   const dc=document.getElementById('dash-clients');
   dc.innerHTML=DATA.clients.map(c=>`<div style="background:#fff;border:1px solid #E2EBE9;border-radius:16px;padding:18px 20px;cursor:pointer;transition:all .18s;box-shadow:0 1px 3px rgba(15,61,62,.04),0 3px 12px rgba(15,61,62,.04)" onclick="openCP(${c.id})" onmouseenter="this.style.boxShadow='0 8px 28px rgba(15,61,62,.1)';this.style.borderColor='#BDDAD2';this.style.transform='translateY(-1px)'" onmouseleave="this.style.boxShadow='0 1px 3px rgba(15,61,62,.04),0 3px 12px rgba(15,61,62,.04)';this.style.borderColor='#E2EBE9';this.style.transform=''">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-      <div style="width:36px;height:36px;border-radius:10px;background:${c.bg};color:${c.tc};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:12px;font-weight:800;flex-shrink:0">${c.init}</div>
+      <div style="width:36px;height:36px;border-radius:10px;background:${c.bg};color:${c.tc};display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:12px;font-weight:800;flex-shrink:0">${c.init}</div>
       <div style="flex:1;min-width:0">
         <div class="ht" style="font-size:13.5px;font-weight:700;color:#0A2E2F;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.015em">${c.name}</div>
         <div style="font-size:12px;color:#7A9E99;margin-top:1px">${c.type}</div>
@@ -1421,7 +1420,7 @@ function renderDash(){
   const rv=document.getElementById('dash-rev');
   function renderRevSnapshot(win){
     const d=computeRevenue(win);
-    rv.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><span class="slbl" style="margin-bottom:0">Revenue</span><div style="display:flex;gap:1px;background:#EEF3F0;border-radius:8px;padding:3px">${['month','year','all'].map(w=>`<button onclick="renderRevSnapshot('${w}')" style="padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:10.5px;font-weight:700;transition:all .12s;background:${win===w?'#fff':'transparent'};color:${win===w?'#0B4F52':'#8AADA8'};box-shadow:${win===w?'0 1px 3px rgba(15,61,62,.08)':'none'}">${w==='month'?'Month':w==='year'?'Year':'All'}</button>`).join('')}</div></div>
+    rv.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><span class="slbl" style="margin-bottom:0">Revenue</span><div style="display:flex;gap:1px;background:#EEF3F0;border-radius:8px;padding:3px">${['month','year','all'].map(w=>`<button onclick="renderRevSnapshot('${w}')" style="padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:700;transition:all .12s;background:${win===w?'#fff':'transparent'};color:${win===w?'#0B4F52':'#8AADA8'};box-shadow:${win===w?'0 1px 3px rgba(15,61,62,.08)':'none'}">${w==='month'?'Month':w==='year'?'Year':'All'}</button>`).join('')}</div></div>
     <div style="display:flex;flex-direction:column;gap:9px">
       <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#F2F9F6;border-radius:10px;border:1px solid #E0EFE8"><span style="font-size:12.5px;color:#5A8A80;font-weight:500">Collected</span><span class="ht" style="font-weight:800;color:#22C55E;font-size:15px;letter-spacing:-.02em">${formatCurrency(d.collected,'NGN')}</span></div>
       <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#FEFAF3;border-radius:10px;border:1px solid #F0E5CE"><span style="font-size:12.5px;color:#5A8A80;font-weight:500">Pending</span><span class="ht" style="font-weight:800;color:#8E5510;font-size:15px;letter-spacing:-.02em">${formatCurrency(d.pending,'NGN')}</span></div>
@@ -1490,7 +1489,7 @@ function renderSuperadminOverview(){
         const init=t.name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'T';
         return `<div style="background:#fff;border:1px solid #E2EBE9;border-radius:16px;padding:18px 20px;cursor:pointer;transition:all .18s;box-shadow:0 1px 3px rgba(15,61,62,.04),0 3px 12px rgba(15,61,62,.04)" onclick="openTenantProfile(${t.id})" onmouseenter="this.style.boxShadow='0 8px 28px rgba(15,61,62,.1)';this.style.borderColor='#BDDAD2';this.style.transform='translateY(-1px)'" onmouseleave="this.style.boxShadow='0 1px 3px rgba(15,61,62,.04),0 3px 12px rgba(15,61,62,.04)';this.style.borderColor='#E2EBE9';this.style.transform=''">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-            <div style="width:36px;height:36px;border-radius:10px;background:#E2EDE9;color:#0B4F52;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:12px;font-weight:800;flex-shrink:0">${init}</div>
+            <div style="width:36px;height:36px;border-radius:10px;background:#E2EDE9;color:#0B4F52;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:12px;font-weight:800;flex-shrink:0">${init}</div>
             <div style="flex:1;min-width:0">
               <div class="ht" style="font-size:13.5px;font-weight:700;color:#0A2E2F;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.015em">${t.name}</div>
               <div style="font-size:12px;color:#7A9E99;margin-top:1px">${(DATA.plans||[]).find(p=>p.slug===t.plan)?.name||t.plan||'Unassigned'} · ${t.userCount||0} users</div>
@@ -2030,7 +2029,7 @@ function renderTenantProfile(t){
 
   tv.innerHTML=`
     <div style="margin-bottom:6px">
-      <button onclick="closeTenantProfile()" style="display:inline-flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12px;font-weight:600;color:#7A9E99;padding:0 0 16px;transition:color .1s" onmouseenter="this.style.color='#0B4F52'" onmouseleave="this.style.color='#7A9E99'">
+      <button onclick="closeTenantProfile()" style="display:inline-flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#7A9E99;padding:0 0 16px;transition:color .1s" onmouseenter="this.style.color='#0B4F52'" onmouseleave="this.style.color='#7A9E99'">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Back to all tenants
       </button>
     </div>
@@ -2041,12 +2040,12 @@ function renderTenantProfile(t){
       <div style="background:#fff;padding:18px 24px 20px">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px">
           <div style="display:flex;align-items:center;gap:14px">
-            <div style="width:48px;height:48px;border-radius:12px;border:2px solid #fff;box-shadow:0 2px 10px rgba(15,61,62,.12);display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:16px;font-weight:800;flex-shrink:0;background:${bg};color:${tc}">${inits}</div>
+            <div style="width:48px;height:48px;border-radius:12px;border:2px solid #fff;box-shadow:0 2px 10px rgba(15,61,62,.12);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:16px;font-weight:800;flex-shrink:0;background:${bg};color:${tc}">${inits}</div>
             <div>
               <div class="ht" style="font-size:18px;font-weight:800;color:#0B4F52;letter-spacing:-.025em;margin-bottom:3px">${esc(t.name)}</div>
               <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
                 <span class="st ${statusColor}" style="font-size:10px">${statusLabel}</span>
-                <select onchange="quickChangePlan(${t.id},this.value)" style="font-size:10px;font-family:'General Sans',sans-serif;font-weight:700;padding:2px 6px;border-radius:6px;border:1px solid #DCE5E6;background:#F2F9F6;color:#0B4F52;cursor:pointer;outline:none">${(DATA.plans||[]).map(p=>`<option value="${esc(p.slug)}" ${t.plan===p.slug?'selected':''}>${esc(p.name)}</option>`).join('')}</select>
+                <select onchange="quickChangePlan(${t.id},this.value)" style="font-size:10px;font-family:'Inter',sans-serif;font-weight:700;padding:2px 6px;border-radius:6px;border:1px solid #DCE5E6;background:#F2F9F6;color:#0B4F52;cursor:pointer;outline:none">${(DATA.plans||[]).map(p=>`<option value="${esc(p.slug)}" ${t.plan===p.slug?'selected':''}>${esc(p.name)}</option>`).join('')}</select>
               </div>
             </div>
           </div>
@@ -2080,7 +2079,7 @@ function renderTenantProfile(t){
       ${t.admin?`
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
         <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:36px;height:36px;border-radius:10px;background:#EBF0EE;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:11px;font-weight:800;color:#0B4F52">${t.admin.name.split(' ').map(w=>w[0]||'').join('').toUpperCase()||'A'}</div>
+          <div style="width:36px;height:36px;border-radius:10px;background:#EBF0EE;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:11px;font-weight:800;color:#0B4F52">${t.admin.name.split(' ').map(w=>w[0]||'').join('').toUpperCase()||'A'}</div>
           <div>
             <div style="font-size:13.5px;font-weight:700;color:#0B4F52">${esc(t.admin.name)}</div>
             <div style="font-size:12px;color:#7A9E99">${t.admin.email}</div>
@@ -2330,7 +2329,7 @@ function renderCP(){
     <button onclick="quickAddTask(${c.id})" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add task</button>`;
   pv.innerHTML=`
     <div style="margin-bottom:6px">
-      <button onclick="showCG()" style="display:inline-flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12px;font-weight:600;color:#7A9E99;padding:0 0 16px;transition:color .1s" onmouseenter="this.style.color='#0B4F52'" onmouseleave="this.style.color='#7A9E99'">
+      <button onclick="showCG()" style="display:inline-flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#7A9E99;padding:0 0 16px;transition:color .1s" onmouseenter="this.style.color='#0B4F52'" onmouseleave="this.style.color='#7A9E99'">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Back to all clients
       </button>
     </div>
@@ -2346,7 +2345,7 @@ function renderCP(){
         <!-- Avatar + Name + Stats row -->
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:16px">
           <div style="display:flex;align-items:center;gap:14px">
-            <div style="width:48px;height:48px;border-radius:12px;border:2px solid #fff;box-shadow:0 2px 10px rgba(15,61,62,.12);display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:16px;font-weight:800;flex-shrink:0;background:${c.bg};color:${c.tc}">${c.init}</div>
+            <div style="width:48px;height:48px;border-radius:12px;border:2px solid #fff;box-shadow:0 2px 10px rgba(15,61,62,.12);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:16px;font-weight:800;flex-shrink:0;background:${c.bg};color:${c.tc}">${c.init}</div>
             <div>
               <div class="ht" style="font-size:18px;font-weight:800;color:#0B4F52;letter-spacing:-.025em;margin-bottom:3px">${c.name}</div>
               <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
@@ -2433,7 +2432,7 @@ function renderCTOverview(c){
   const recentAct=buildActivity(c).slice(0,3);
   const nextAction=c.nextAction;
   return `<div style="max-width:600px;display:flex;flex-direction:column;gap:16px">
-    ${nextAction?`<div style="padding:16px 20px;border-radius:14px;background:#F0F8F5;border:1px solid #C8E8DC;display:flex;align-items:center;gap:12px"><div style="width:32px;height:32px;border-radius:9px;background:#D4EDE5;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="arrow-right" style="width:14px;height:14px;color:#17A39B"></i></div><div style="flex:1;min-width:0"><div style="font-size:11px;color:#5A9A86;font-family:'General Sans',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Next action</div><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52">${nextAction}</div></div></div>`:''}
+    ${nextAction?`<div style="padding:16px 20px;border-radius:14px;background:#F0F8F5;border:1px solid #C8E8DC;display:flex;align-items:center;gap:12px"><div style="width:32px;height:32px;border-radius:9px;background:#D4EDE5;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="arrow-right" style="width:14px;height:14px;color:#17A39B"></i></div><div style="flex:1;min-width:0"><div style="font-size:11px;color:#5A9A86;font-family:'Inter',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Next action</div><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B4F52">${nextAction}</div></div></div>`:''}
     <div class="card" style="overflow:hidden">
       <div style="padding:15px 20px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">Pending approvals</span>${pend.length?`<span class="st amber" style="font-size:10px">${pend.length} waiting</span>`:''}</div>
       <div style="padding:0 20px">${pend.length?pend.map(a=>'<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #F5F5F3"><div style="width:7px;height:7px;border-radius:50%;background:#A0621A;flex-shrink:0"></div><span style="font-size:13px;color:#121212;flex:1">'+a.item+'</span><span class="st amber" style="font-size:10px">Waiting</span></div>').join(''):'<div style="padding:16px 0;text-align:center;font-size:13px;color:#B8B8B4">All clear — no pending approvals</div>'}</div>
@@ -2448,7 +2447,7 @@ function renderCTOverview(c){
 
 function renderWAList(c){
   const empty=emp('No projects','Add a project, campaign, or engagement.','folder');
-  const addBtn=`<button onclick="createWorkArea(${c.id})" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:1.5px dashed #D8D8D5;border-radius:10px;background:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#8E9E9E;transition:all .12s;margin-top:12px" onmouseenter="this.style.borderColor='#B0B0AD';this.style.color='#555552'" onmouseleave="this.style.borderColor='#D8D8D5';this.style.color='#8E9E9E'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add project</button>`;
+  const addBtn=`<button onclick="createWorkArea(${c.id})" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:1.5px dashed #D8D8D5;border-radius:10px;background:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:#8E9E9E;transition:all .12s;margin-top:12px" onmouseenter="this.style.borderColor='#B0B0AD';this.style.color='#555552'" onmouseleave="this.style.borderColor='#D8D8D5';this.style.color='#8E9E9E'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add project</button>`;
   if(!c.workAreas.length)return empty+addBtn;
   return `<div style="max-width:680px"><div class="card" style="overflow:hidden;margin-bottom:12px">${c.workAreas.map(w=>`<div class="wa-row" onclick="SWA=DATA.clients.find(x=>x.id===${c.id}).workAreas.find(x=>x.id==='${w.id}');SWATAB='tasks';document.getElementById('ct').innerHTML=renderWADrill(SC);lucide.createIcons()"><div class="wa-ico" style="background:${w.ibg}"><i data-lucide="${w.icon}" style="width:14px;height:14px;color:${w.itc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:700;color:#121212">${w.name}</div><div style="font-size:11.5px;color:#8E9E9E;margin-top:2px">${w.type} · ${w.tasks.length} tasks · ${w.files.length} files</div><div class="prog" style="max-width:160px;margin-top:6px"><div class="prog-f" style="width:${w.progress}%"></div></div></div><span class="st ${w.status==='active'?'amber':'green'}" style="font-size:10px">${w.status==='active'?'In progress':'Complete'}</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C8C8C4" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg></div>`).join('')}</div>${addBtn}</div>`;
 }
@@ -2472,7 +2471,7 @@ async function createWorkArea(cid){
 
 function renderWADrill(c){
   const wa=SWA; if(!wa)return renderWAList(c);
-  return `<div style="max-width:680px"><button onclick="SWA=null;document.getElementById('ct').innerHTML=renderWAList(SC);lucide.createIcons();" style="display:flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:'General Sans',sans-serif;font-size:12.5px;font-weight:600;color:#8E9E9E;padding:0;margin-bottom:16px;transition:color .1s" onmouseenter="this.style.color='#121212'" onmouseleave="this.style.color='#8E9E9E'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Projects</button>
+  return `<div style="max-width:680px"><button onclick="SWA=null;document.getElementById('ct').innerHTML=renderWAList(SC);lucide.createIcons();" style="display:flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:#8E9E9E;padding:0;margin-bottom:16px;transition:color .1s" onmouseenter="this.style.color='#121212'" onmouseleave="this.style.color='#8E9E9E'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Projects</button>
     <div class="card" style="overflow:hidden">
       <div style="padding:16px 20px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;gap:10px">
         <div class="wa-ico" style="background:${wa.ibg};width:34px;height:34px;border-radius:9px"><i data-lucide="${wa.icon}" style="width:14px;height:14px;color:${wa.itc}"></i></div>
@@ -2549,12 +2548,12 @@ async function handleTaskClick(waApiId, taskApiId, taskIdx, markDone){
 function renderWADeliverables(wa){
   const shared=wa.files.filter(f=>f.vis==='shared');
   const rows=shared.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px">Awaiting signature</span>':'';return `<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;background:#fff;border:1px solid #E2EBE9"><div style="width:30px;height:30px;border-radius:7px;background:${ic.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ic.i}" style="width:13px;height:13px;color:${ic.tc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:600;color:#121212">${f.n}</div><div style="font-size:11px;color:#8E9E9E">${f.sz} · ${f.uploader} · ${f.date}</div></div>${sigBadge?sigBadge+'&nbsp;':'&nbsp;'}<button class="tb-btn" style="font-size:11px;padding:4px 10px" onclick="toast('Downloading')">Download</button></div>`;}).join('');
-  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="slbl" style="margin-bottom:0">${shared.length} shared with client</div><button onclick="openFileUploadGlobal()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button></div>${shared.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):emp('No deliverables','Upload and share files with client here.','file')}`;
+  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="slbl" style="margin-bottom:0">${shared.length} shared with client</div><button onclick="openFileUploadGlobal()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button></div>${shared.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):emp('No deliverables','Upload and share files with client here.','file')}`;
 }
 
 function renderWAFiles(wa){
   const fileRows=wa.files.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px;margin-left:4px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px;margin-left:4px">Awaiting signature</span>':'';return `<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;background:#fff;border:1px solid #E2EBE9"><div style="width:30px;height:30px;border-radius:7px;background:${ic.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ic.i}" style="width:13px;height:13px;color:${ic.tc}"></i></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:4px"><span class="ht" style="font-size:13px;font-weight:600;color:#121212">${f.n}</span>${sigBadge}</div><div style="font-size:11px;color:#8E9E9E">${f.sz} · Uploaded by ${f.uploader} · ${f.date}</div></div><span class="st ${f.vis==='shared'?'green':'gray'}" style="font-size:10px;margin-right:4px">${f.vis==='shared'?'Shared':'Internal'}</span><button class="tb-btn" style="font-size:11px;padding:4px 9px" onclick="toast('Downloading')">↓</button></div>`;}).join('');
-  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="slbl" style="margin-bottom:0">${wa.files.length} file${wa.files.length!==1?'s':''}</div><input type="file" id="wa-file-${wa.apiId}" style="display:none" onchange="handleFileUpload(${wa.apiId},this)"><button onclick="document.getElementById('wa-file-'+${wa.apiId}).click()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s" onmouseenter="this.style.borderColor='#B8CECC'" onmouseleave="this.style.borderColor='#EEF2F2'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload</button></div>${wa.files.length?('<div style="display:flex;flex-direction:column;gap:8px">'+fileRows+'</div>'):emp('No files','Upload files to this project.','folder')}`;
+  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="slbl" style="margin-bottom:0">${wa.files.length} file${wa.files.length!==1?'s':''}</div><input type="file" id="wa-file-${wa.apiId}" style="display:none" onchange="handleFileUpload(${wa.apiId},this)"><button onclick="document.getElementById('wa-file-'+${wa.apiId}).click()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s" onmouseenter="this.style.borderColor='#B8CECC'" onmouseleave="this.style.borderColor='#EEF2F2'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload</button></div>${wa.files.length?('<div style="display:flex;flex-direction:column;gap:8px">'+fileRows+'</div>'):emp('No files','Upload files to this project.','folder')}`;
 }
 async function uploadFileBlob(file) {
   return new Promise((resolve, reject) => {
@@ -2597,7 +2596,7 @@ async function handleFileUpload(waApiId, input){
 }
 
 function renderWAFeedback(wa){
-  const existing = wa.feedback.length ? `<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">${wa.feedback.map(f=>`<div style="display:flex;gap:10px"><div style="width:28px;height:28px;border-radius:8px;flex-shrink:0;background:${f.bg};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:10px;font-weight:800;color:${f.tc}">${f.init}</div><div style="flex:1;background:#F8F7F4;border-radius:10px;border:1px solid #E2EBE9;padding:11px 13px"><div style="font-size:10.5px;color:#8E9E9E;margin-bottom:4px">On: ${f.ref}</div><p style="font-size:13px;color:#121212">${f.txt}</p><p style="font-size:10.5px;color:#8E9E9E;margin-top:5px">${f.from} · ${f.time}</p></div></div>`).join('')}</div>` : '';
+  const existing = wa.feedback.length ? `<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">${wa.feedback.map(f=>`<div style="display:flex;gap:10px"><div style="width:28px;height:28px;border-radius:8px;flex-shrink:0;background:${f.bg};display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:10px;font-weight:800;color:${f.tc}">${f.init}</div><div style="flex:1;background:#F8F7F4;border-radius:10px;border:1px solid #E2EBE9;padding:11px 13px"><div style="font-size:10.5px;color:#8E9E9E;margin-bottom:4px">On: ${f.ref}</div><p style="font-size:13px;color:#121212">${f.txt}</p><p style="font-size:10.5px;color:#8E9E9E;margin-top:5px">${f.from} · ${f.time}</p></div></div>`).join('')}</div>` : '';
   const addBox = `<div style="display:flex;gap:8px"><input id="new-comment-${wa.apiId}" type="text" class="field" placeholder="Add a comment…" style="flex:1;font-size:13px;padding:8px 12px;height:auto" onkeydown="if(event.key==='Enter')createComment(${wa.apiId})"><button class="tb-btn pri" style="padding:8px 14px" onclick="createComment(${wa.apiId})">Post</button></div>`;
   return existing || addBox ? existing + addBox : emp('No feedback','Client feedback tied to this work will appear here.','message-circle');
 }
@@ -2684,13 +2683,13 @@ function renderWAActivityTab(wa){
 function renderCTFiles(c){
   const files=c.workAreas.flatMap(w=>w.files.map(f=>({...f,wa:w.name})));
   const rows=files.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px;margin-right:4px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px;margin-right:4px">Awaiting signature</span>':'';return `<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;background:#fff;border:1px solid #E2EBE9"><div style="width:30px;height:30px;border-radius:7px;background:${ic.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ic.i}" style="width:13px;height:13px;color:${ic.tc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:600;color:#121212">${f.n}</div><div style="font-size:11px;color:#8E9E9E">${f.sz} · ${f.wa} · Uploaded by ${f.uploader} · ${f.date}</div></div>${sigBadge}<span class="st ${f.vis==='shared'?'green':'gray'}" style="font-size:10px">${f.vis==='shared'?'Shared':'Internal'}</span></div>`;}).join('');
-  return `<div style="max-width:680px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="slbl" style="margin-bottom:0">${files.length} files across all projects</div><button onclick="openFileUploadGlobal()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'General Sans',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button></div>${files.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):emp('No files yet','Upload files to a project.','folder')}</div>`;
+  return `<div style="max-width:680px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="slbl" style="margin-bottom:0">${files.length} files across all projects</div><button onclick="openFileUploadGlobal()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button></div>${files.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):emp('No files yet','Upload files to a project.','folder')}</div>`;
 }
 
 function renderCTFeedback(c){
   const all=c.workAreas.flatMap(w=>w.feedback.map(f=>({...f,wa:w.name})));
   const appr=c.workAreas.flatMap(w=>w.approvals.map(a=>({...a,wa:w.name})));
-  return `<div style="max-width:680px"><div class="slbl">Feedback</div><div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">${all.map(f=>`<div style="display:flex;gap:10px"><div style="width:28px;height:28px;border-radius:8px;flex-shrink:0;background:${f.bg};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:10px;font-weight:800;color:${f.tc}">${f.init}</div><div style="flex:1;background:#F8F7F4;border-radius:10px;border:1px solid #E2EBE9;padding:11px 13px"><div style="font-size:10.5px;color:#8E9E9E;margin-bottom:4px">${f.wa} · On: ${f.ref}</div><p style="font-size:13px;color:#121212">${f.txt}</p><p style="font-size:10.5px;color:#8E9E9E;margin-top:5px">${f.from} · ${f.time}</p></div></div>`).join('')}</div><div class="slbl">Approvals</div><div class="card" style="padding:0 18px">${appr.map(a=>`<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #F5F5F3"><div style="width:28px;height:28px;border-radius:7px;background:${a.status==='approved'?'#EAF2EE':'#FEF3E2'};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${a.status==='approved'?'check':'clock'}" style="width:12px;height:12px;color:${a.status==='approved'?'#2D6A4F':'#A0621A'}"></i></div><div style="flex:1;min-width:0"><span class="ht" style="font-size:13px;font-weight:600;color:#121212">${a.item}</span><div style="font-size:11px;color:#8E9E9E">${a.wa}</div></div><span class="st ${a.status==='approved'?'green':'amber'}" style="font-size:10px">${a.status==='approved'?'Approved':'Waiting'}</span></div>`).join('')}</div></div>`;
+  return `<div style="max-width:680px"><div class="slbl">Feedback</div><div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">${all.map(f=>`<div style="display:flex;gap:10px"><div style="width:28px;height:28px;border-radius:8px;flex-shrink:0;background:${f.bg};display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:10px;font-weight:800;color:${f.tc}">${f.init}</div><div style="flex:1;background:#F8F7F4;border-radius:10px;border:1px solid #E2EBE9;padding:11px 13px"><div style="font-size:10.5px;color:#8E9E9E;margin-bottom:4px">${f.wa} · On: ${f.ref}</div><p style="font-size:13px;color:#121212">${f.txt}</p><p style="font-size:10.5px;color:#8E9E9E;margin-top:5px">${f.from} · ${f.time}</p></div></div>`).join('')}</div><div class="slbl">Approvals</div><div class="card" style="padding:0 18px">${appr.map(a=>`<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #F5F5F3"><div style="width:28px;height:28px;border-radius:7px;background:${a.status==='approved'?'#EAF2EE':'#FEF3E2'};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${a.status==='approved'?'check':'clock'}" style="width:12px;height:12px;color:${a.status==='approved'?'#2D6A4F':'#A0621A'}"></i></div><div style="flex:1;min-width:0"><span class="ht" style="font-size:13px;font-weight:600;color:#121212">${a.item}</span><div style="font-size:11px;color:#8E9E9E">${a.wa}</div></div><span class="st ${a.status==='approved'?'green':'amber'}" style="font-size:10px">${a.status==='approved'?'Approved':'Waiting'}</span></div>`).join('')}</div></div>`;
 }
 
 function openClientInvModal(cid){
@@ -2818,13 +2817,13 @@ function renderCTPortal(c){
 
         <!-- Logo -->
         <div>
-          <div style="font-size:11px;font-family:'General Sans',sans-serif;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Client logo</div>
+          <div style="font-size:11px;font-family:'Inter',sans-serif;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Client logo</div>
           <input type="file" id="portal-logo-${c.id}" accept="image/png,image/svg+xml,image/jpeg,image/webp" style="display:none" onchange="handlePortalLogoUpload(${c.id},this)">
           <div onclick="document.getElementById('portal-logo-'+${c.id}).click()" style="height:100px;border:1.5px dashed #CCDDD9;border-radius:14px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;cursor:pointer;transition:all .14s;position:relative;overflow:hidden" onmouseenter="this.style.borderColor='#7A9E99';this.style.background='#F5FAF7'" onmouseleave="this.style.borderColor='#CCDDD9';this.style.background='#fff'">
-            ${p.logo?`<img src="${p.logo}" style="max-height:90%;max-width:90%;object-fit:contain" alt="Logo">`:`<div style="width:40px;height:40px;border-radius:10px;background:#E4EFE9;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:13px;font-weight:800;color:#0B4F52">${c.init}</div>
+            ${p.logo?`<img src="${p.logo}" style="max-height:90%;max-width:90%;object-fit:contain" alt="Logo">`:`<div style="width:40px;height:40px;border-radius:10px;background:#E4EFE9;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:13px;font-weight:800;color:#0B4F52">${c.init}</div>
             <div style="display:flex;align-items:center;gap:5px">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#7A9E99" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span style="font-size:11.5px;color:#6B9E99;font-family:'General Sans',sans-serif;font-weight:600">Upload logo</span>
+              <span style="font-size:11.5px;color:#6B9E99;font-family:'Inter',sans-serif;font-weight:600">Upload logo</span>
             </div>`}
           </div>
           ${p.logo?`<div style="display:flex;gap:8px;margin-top:5px;justify-content:center"><button class="tb-btn" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation();removePortalLogo(${c.id})">Remove</button></div>`:''}
@@ -2833,11 +2832,11 @@ function renderCTPortal(c){
 
         <!-- Banner -->
         <div>
-          <div style="font-size:11px;font-family:'General Sans',sans-serif;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Header banner</div>
+          <div style="font-size:11px;font-family:'Inter',sans-serif;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Header banner</div>
           <input type="file" id="portal-banner-${c.id}" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="handlePortalBannerUpload(${c.id},this)">
           <div onclick="document.getElementById('portal-banner-'+${c.id}).click()" style="height:100px;border:1.5px dashed #CCDDD9;border-radius:14px;background:${p.banner?`url(${p.banner}) center/cover no-repeat`:`linear-gradient(135deg,${p.primary}18 0%,${p.primary}08 100%)`};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;cursor:pointer;transition:all .14s;overflow:hidden" onmouseenter="this.style.borderColor='#7A9E99'" onmouseleave="this.style.borderColor='#CCDDD9'">
             ${p.banner?'':`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A9E99" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <span style="font-size:11.5px;color:#6B9E99;font-family:'General Sans',sans-serif;font-weight:600">Upload banner</span>`}
+            <span style="font-size:11.5px;color:#6B9E99;font-family:'Inter',sans-serif;font-weight:600">Upload banner</span>`}
           </div>
           ${p.banner?`<div style="display:flex;gap:8px;margin-top:5px;justify-content:center"><button class="tb-btn" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation();removePortalBanner(${c.id})">Remove</button></div>`:''}
           <div style="font-size:10.5px;color:#8AADA8;margin-top:5px;text-align:center">1440 × 320px recommended</div>
@@ -2848,7 +2847,7 @@ function renderCTPortal(c){
       <div style="padding:18px 20px;background:#fff;border-radius:14px;border:1px solid #E2EBE9;box-shadow:0 1px 3px rgba(15,61,62,.04)">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
           <div>
-            <div style="font-size:11px;font-family:'General Sans',sans-serif;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Brand colour</div>
+            <div style="font-size:11px;font-family:'Inter',sans-serif;font-weight:700;color:#5A7A74;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Brand colour</div>
             <div style="font-size:12px;color:#8AADA8">Used for buttons, highlights, and accents in the portal</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;background:#F6F9F8;border:1px solid #DCE5E6">
@@ -3018,7 +3017,7 @@ function renderFiles(){
   const el=document.getElementById('files-list');if(!el)return;
   const hdr='<div style="padding:12px 16px 10px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">'+all.length+' files</span><button onclick="openFileUploadGlobal()" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload</button></div>';
   // Desktop table
-  const thStyle='font-family:\'General Sans\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8E9E9E;padding:8px 16px;text-align:left;border-bottom:1px solid #E2EBE9';
+  const thStyle='font-family:\'Inter\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8E9E9E;padding:8px 16px;text-align:left;border-bottom:1px solid #E2EBE9';
   const tableRows=all.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px;margin-left:5px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px;margin-left:5px">Awaiting signature</span>':'';return '<tr onmouseenter="this.style.background=\'#FBFBFA\'" onmouseleave="this.style.background=\'\'"><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;vertical-align:middle"><div style="display:flex;align-items:center;gap:8px"><div style="width:26px;height:26px;border-radius:6px;background:'+ic.bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+ic.i+'" style="width:12px;height:12px;color:'+ic.tc+'"></i></div><span class="ht" style="font-size:13px;font-weight:600;color:#121212;white-space:nowrap">'+f.n+'</span>'+sigBadge+'</div></td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#6B7C7D">'+f.cname+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#6B7C7D">'+f.wa+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#8E9E9E">'+(f.uploader||'—')+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#8E9E9E">'+f.date+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2"><span class="st '+(f.vis==='shared'?'green':'gray')+'" style="font-size:10px">'+(f.vis==='shared'?'Shared':'Internal')+'</span></td></tr>';}).join('');
   const desktopTable='<div class="files-table-wrap card" style="overflow:hidden">'+hdr+'<table style="width:100%;border-collapse:collapse"><thead><tr><th style="'+thStyle+'">File</th><th style="'+thStyle+'">Client</th><th style="'+thStyle+'">Project</th><th style="'+thStyle+'">Uploaded by</th><th style="'+thStyle+'">Date</th><th style="'+thStyle+'">Visibility</th></tr></thead><tbody>'+tableRows+'</tbody></table></div>';
   // Mobile card list
@@ -3208,7 +3207,7 @@ async function renderTeam(){
   await loadTeam();
   const el=document.getElementById('team-list');if(!el)return;
   if(!DATA.team.length){el.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No team members yet.</div>`;lucide.createIcons();return;}
-  el.innerHTML=DATA.team.map(m=>`<div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #EEF2F2"><div style="width:38px;height:38px;border-radius:50%;background:${m.bg||'#E4F2F0'};color:${m.tc||'#0B4F52'};display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:12px;font-weight:800;flex-shrink:0">${m.init}</div><div style="flex:1"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0A2E2F;letter-spacing:-.01em">${m.name||m.email}</div><div style="font-size:12px;color:#7A9E99;margin-top:2px">${m.email}</div></div><span class="st teal" style="font-size:10px">${m.role}</span></div>`).join('');
+  el.innerHTML=DATA.team.map(m=>`<div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #EEF2F2"><div style="width:38px;height:38px;border-radius:50%;background:${m.bg||'#E4F2F0'};color:${m.tc||'#0B4F52'};display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:12px;font-weight:800;flex-shrink:0">${m.init}</div><div style="flex:1"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0A2E2F;letter-spacing:-.01em">${m.name||m.email}</div><div style="font-size:12px;color:#7A9E99;margin-top:2px">${m.email}</div></div><span class="st teal" style="font-size:10px">${m.role}</span></div>`).join('');
   lucide.createIcons();
 }
 async function inviteMember(){
@@ -3614,7 +3613,7 @@ async function saveWorkflowSettings(){
 /* ══ HELPERS ══ */
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function emp(t,b,i){return `<div class="emp"><div class="emp-ico"><i data-lucide="${i}" style="width:22px;height:22px;color:#9ABDB7"></i></div><div class="emp-t">${t}</div><div class="emp-b">${b}</div></div>`;}
-function toast(msg){const t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#0B4F52;color:#fff;font-family:"General Sans",sans-serif;font-size:13px;font-weight:600;padding:11px 22px;border-radius:12px;z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(15,61,62,.3)';document.body.appendChild(t);requestAnimationFrame(()=>{t.style.opacity='1';});setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),200);},2600);}
+function toast(msg){const t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#0B4F52;color:#fff;font-family:"Inter",sans-serif;font-size:13px;font-weight:600;padding:11px 22px;border-radius:12px;z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(15,61,62,.3)';document.body.appendChild(t);requestAnimationFrame(()=>{t.style.opacity='1';});setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),200);},2600);}
 
 /* ══ MOBILE ══ */
 function openSB(){document.getElementById('sidebar').classList.add('open');document.getElementById('mob-ov').classList.add('show');}
