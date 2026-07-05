@@ -1258,6 +1258,11 @@ async function checkAuth() {
       BRANDING.primary=json.data.primary||'';
     }
     hideAuth();
+    // Superadmin has no tenant; skip tenant settings and workspace prompt
+    if(isSuperadmin()){
+      initFromApi();
+      return;
+    }
     // Load tenant workflow settings
     try{
       const tsRes=await apiFetch('/tenant-settings');
@@ -1659,7 +1664,11 @@ function renderPlansTenants(){
 async function fetchPlans(){
   try{
     const res=await apiFetch('/admin/plans');
-    if(!res.ok) throw new Error('Failed');
+    if(!res.ok){
+      const body=await res.text();
+      console.error('fetchPlans failed', res.status, body);
+      throw new Error('Failed to load plans');
+    }
     const json=await res.json();
     DATA.plans=(json.data||[]).map(p=>({id:p.id,name:p.name,slug:p.slug,description:p.description,priceMonthly:p.price_monthly,priceYearly:p.price_yearly,currency:p.currency||'NGN',userLimit:p.user_limit,clientLimit:p.client_limit,features:p.features||[],active:p.active,sortOrder:p.sort_order,createdAt:p.created_at}));
   }catch(err){console.error(err);}
