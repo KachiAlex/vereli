@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
       // Single tenant fetch
       if (tenantId) {
-        const [tenant] = await sql`SELECT t.id, t.name, t.slug, t.status, t.plan, t.settings, t.logo_url, t.primary_color, t.created_at,
+        const [tenant] = await sql`SELECT t.id, t.name, t.slug, t.status, t.plan, t.settings, t.logo_url, t.primary_color, t.trial_ends_at, t.created_at,
           (SELECT COUNT(*) FROM users WHERE tenant_id = t.id) as user_count,
           (SELECT COUNT(*) FROM clients WHERE tenant_id = t.id) as client_count
           FROM tenants t WHERE t.id = ${tenantId}`;
@@ -51,6 +51,7 @@ export default async function handler(req, res) {
             settings: tenant.settings,
             logoUrl: tenant.logo_url,
             primaryColor: tenant.primary_color,
+            trialEndsAt: tenant.trial_ends_at,
             userCount: parseInt(tenant.user_count),
             clientCount: parseInt(tenant.client_count),
             createdAt: tenant.created_at,
@@ -63,22 +64,22 @@ export default async function handler(req, res) {
       // List all tenants
       let rows;
       if (status && plan) {
-        rows = await sql`SELECT t.id, t.name, t.slug, t.status, t.plan, t.settings, t.logo_url, t.primary_color, t.created_at,
+        rows = await sql`SELECT t.id, t.name, t.slug, t.status, t.plan, t.settings, t.logo_url, t.primary_color, t.trial_ends_at, t.created_at,
           (SELECT COUNT(*) FROM users WHERE tenant_id = t.id) as user_count,
           (SELECT COUNT(*) FROM clients WHERE tenant_id = t.id) as client_count
           FROM tenants t WHERE t.status = ${status} AND t.plan = ${plan} ORDER BY t.created_at DESC`;
       } else if (status) {
-        rows = await sql`SELECT t.id, t.name, t.slug, t.status, t.plan, t.settings, t.logo_url, t.primary_color, t.created_at,
+        rows = await sql`SELECT t.id, t.name, t.slug, t.status, t.plan, t.settings, t.logo_url, t.primary_color, t.trial_ends_at, t.created_at,
           (SELECT COUNT(*) FROM users WHERE tenant_id = t.id) as user_count,
           (SELECT COUNT(*) FROM clients WHERE tenant_id = t.id) as client_count
           FROM tenants t WHERE t.status = ${status} ORDER BY t.created_at DESC`;
       } else if (plan) {
-        rows = await sql`SELECT t.id, t.name, t.slug, t.status, t.plan, t.settings, t.logo_url, t.primary_color, t.created_at,
+        rows = await sql`SELECT t.id, t.name, t.slug, t.status, t.plan, t.settings, t.logo_url, t.primary_color, t.trial_ends_at, t.created_at,
           (SELECT COUNT(*) FROM users WHERE tenant_id = t.id) as user_count,
           (SELECT COUNT(*) FROM clients WHERE tenant_id = t.id) as client_count
           FROM tenants t WHERE t.plan = ${plan} ORDER BY t.created_at DESC`;
       } else {
-        rows = await sql`SELECT t.id, t.name, t.slug, t.status, t.plan, t.settings, t.logo_url, t.primary_color, t.created_at,
+        rows = await sql`SELECT t.id, t.name, t.slug, t.status, t.plan, t.settings, t.logo_url, t.primary_color, t.trial_ends_at, t.created_at,
           (SELECT COUNT(*) FROM users WHERE tenant_id = t.id) as user_count,
           (SELECT COUNT(*) FROM clients WHERE tenant_id = t.id) as client_count
           FROM tenants t ORDER BY t.created_at DESC`;
@@ -93,6 +94,7 @@ export default async function handler(req, res) {
         settings: r.settings,
         logoUrl: r.logo_url,
         primaryColor: r.primary_color,
+        trialEndsAt: r.trial_ends_at,
         userCount: parseInt(r.user_count),
         clientCount: parseInt(r.client_count),
         createdAt: r.created_at,
@@ -194,9 +196,9 @@ export default async function handler(req, res) {
       // Create tenant
       const slug = generateSlug(name);
       const [tenant] = await sql`
-        INSERT INTO tenants (name, slug, status, plan)
-        VALUES (${name}, ${slug}, 'active', ${plan})
-        RETURNING id, name, slug, status, plan, created_at;
+        INSERT INTO tenants (name, slug, status, plan, trial_ends_at)
+        VALUES (${name}, ${slug}, 'active', ${plan}, NOW() + INTERVAL '14 days')
+        RETURNING id, name, slug, status, plan, trial_ends_at, created_at;
       `;
 
       // Hash password and create admin user for tenant
@@ -231,6 +233,7 @@ export default async function handler(req, res) {
             slug: tenant.slug,
             status: tenant.status,
             plan: tenant.plan,
+            trialEndsAt: tenant.trial_ends_at,
             createdAt: tenant.created_at,
           },
           admin: {
@@ -324,7 +327,7 @@ export default async function handler(req, res) {
         values.push(primaryColor);
       }
 
-      const query = `UPDATE tenants SET ${fields.join(', ')} WHERE id = $${paramCount} RETURNING id, name, slug, status, plan, settings, logo_url, primary_color, created_at`;
+      const query = `UPDATE tenants SET ${fields.join(', ')} WHERE id = $${paramCount} RETURNING id, name, slug, status, plan, settings, logo_url, primary_color, trial_ends_at, created_at`;
       values.push(tenantId);
 
       const [tenant] = await sql(query, values);
@@ -344,6 +347,7 @@ export default async function handler(req, res) {
           settings: tenant.settings,
           logoUrl: tenant.logo_url,
           primaryColor: tenant.primary_color,
+          trialEndsAt: tenant.trial_ends_at,
           createdAt: tenant.created_at,
         }
       });
@@ -394,7 +398,7 @@ export default async function handler(req, res) {
     try {
       const [tenant] = await sql`
         UPDATE tenants SET status = 'suspended' WHERE id = ${tenantId}
-        RETURNING id, name, slug, status, plan, created_at;
+        RETURNING id, name, slug, status, plan, trial_ends_at, created_at;
       `;
 
       if (!tenant) {
@@ -410,6 +414,7 @@ export default async function handler(req, res) {
           slug: tenant.slug,
           status: tenant.status,
           plan: tenant.plan,
+          trialEndsAt: tenant.trial_ends_at,
           createdAt: tenant.created_at,
         }
       });

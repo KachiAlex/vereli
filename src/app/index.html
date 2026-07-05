@@ -843,7 +843,11 @@ async function initFromApi() {
     // If superadmin, fetch tenants instead of clients
     if (CURRENT_USER && isSuperadmin()) {
       await fetchTenants();
-      renderTenants();
+      if (document.getElementById('view-clients').classList.contains('active')) {
+        showCG();
+      } else {
+        renderTenants();
+      }
       return;
     }
     const res = await apiFetch('/clients');
@@ -1445,6 +1449,8 @@ function apiTenantToData(t, idx) {
     ownerEmail: t.owner_email || '—',
     ownerName: t.owner_name || '—',
     userCount: t.user_count || 0,
+    clientCount: t.client_count || 0,
+    trialEndsAt: t.trial_ends_at,
     createdAt: t.created_at,
     updatedAt: t.updated_at
   };
@@ -1473,7 +1479,7 @@ function renderTenants(filter) {
         <div style="font-size:12px;color:#7A9E99">${tData.slug}</div>
       </div>
       <div style="width:100px;font-size:12.5px;color:#6A8E89" class="ht">${tData.plan}</div>
-      <div style="width:90px"><span class="st ${statusColor}" style="font-size:10px">${statusLabel}</span></div>
+      <div style="width:90px"><span class="st ${statusColor}" style="font-size:10px">${statusLabel}</span>${tData.plan==='trial'&&tData.trialEndsAt?` <span class="st amber" style="font-size:10px">${Math.max(0,Math.ceil((new Date(tData.trialEndsAt)-Date.now())/86400000))}d left</span>`:''}</div>
       <div style="width:100px;text-align:center" class="ht" style="font-size:13px;font-weight:800;color:#0B4F52">${tData.userCount}</div>
       <div style="width:160px;font-size:12px;color:#7A9E99">${tData.ownerName}<br><span style="font-size:11px;color:#9AB5B0">${tData.ownerEmail}</span></div>
       <div style="width:40px;display:flex;justify-content:flex-end"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C0D4D0" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
@@ -1622,6 +1628,7 @@ function renderTenantProfile(t){
   const created=new Date(t.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   const [bg,tc]=BALS[(t.id||0)%BALS.length].split(':');
   const inits=t.name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'TN';
+  const trialDays = t.trialEndsAt ? Math.max(0, Math.ceil((new Date(t.trialEndsAt) - Date.now()) / 86400000)) : null;
 
   tv.innerHTML=`
     <div style="margin-bottom:6px">
@@ -1662,8 +1669,8 @@ function renderTenantProfile(t){
         <div style="font-size:22px;font-weight:800;color:#0B4F52">${t.clientCount||0}</div>
       </div>
       <div style="background:#fff;border:1px solid #E2EBE9;border-radius:14px;padding:18px 20px">
-        <div class="ht" style="font-size:12px;font-weight:700;color:#7A9E99;margin-bottom:8px">Created</div>
-        <div style="font-size:16px;font-weight:700;color:#0B4F52">${created}</div>
+        <div class="ht" style="font-size:12px;font-weight:700;color:#7A9E99;margin-bottom:8px">${t.plan==='trial'?'Trial ends':'Created'}</div>
+        <div style="font-size:16px;font-weight:700;color:#0B4F52">${t.plan==='trial'&&trialDays!==null?trialDays+' days remaining':created}</div>
       </div>
     </div>
     <div style="background:#fff;border:1px solid #E2EBE9;border-radius:14px;padding:18px 20px;margin-bottom:24px">

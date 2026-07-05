@@ -16,11 +16,13 @@ export default async function handler(req, res) {
         settings JSONB DEFAULT '{}',
         logo_url TEXT,
         primary_color TEXT,
+        trial_ends_at TIMESTAMPTZ,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `;
     await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS logo_url TEXT`;
     await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS primary_color TEXT`;
+    await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMPTZ`;
 
     // 2. Update users table with tenant support
     await sql`
