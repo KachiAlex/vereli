@@ -1596,15 +1596,14 @@ async function openTenantProfile(id){
     document.getElementById('pt').textContent='Tenants';
     document.getElementById('tba').innerHTML='';
   }
-  ST=DATA.tenants.find(t=>t.id===id);
-  if(!ST){
-    try{
-      const res=await apiFetch(`/admin/tenants?tenantId=${id}`);
-      if(!res.ok) throw new Error('Failed to fetch tenant');
-      const json=await res.json();
-      if(json.data) ST=json.data;
-    }catch(err){console.error(err);}
-  }
+  // Always fetch full tenant profile (includes admin) from API
+  ST=DATA.tenants.find(t=>t.id===id)||null;
+  try{
+    const res=await apiFetch(`/admin/tenants?tenantId=${id}`);
+    if(!res.ok) throw new Error('Failed to fetch tenant');
+    const json=await res.json();
+    if(json.data) ST=json.data;
+  }catch(err){console.error(err);}
   document.getElementById('cg-view').style.display='none';
   document.getElementById('cp-view').style.display='none';
   document.getElementById('tp-view').style.display='';
