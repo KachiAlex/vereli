@@ -420,6 +420,10 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
       <span class="ni-label" id="nav-clients-label">Clients</span>
       <span class="ni-badge-count" id="cl-bdg">0</span>
     </div>
+    <div class="ni" id="nav-plans" onclick="goView('plans',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      <span class="ni-label">Plans</span>
+    </div>
     <div class="ni" id="nav-deliverables" onclick="goView('deliverables',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
       <span class="ni-label">Deliverables</span>
@@ -741,6 +745,16 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
       <div id="ea-view-content">Loading...</div>
     </div>
 
+    <!-- ════ PLANS / LICENSING ════ -->
+    <div class="view" id="view-plans">
+      <div style="max-width:760px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px">
+          <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Plans & Licensing</div><div style="font-size:13.5px;color:#7A9E99">Manage tenant plans and subscription tiers</div></div>
+        </div>
+        <div id="plans-content">Loading...</div>
+      </div>
+    </div>
+
     <!-- ════ SETTINGS ════ -->
     <div class="view" id="view-settings">
       <div style="max-width:580px">
@@ -843,7 +857,9 @@ async function initFromApi() {
     // If superadmin, fetch tenants instead of clients
     if (CURRENT_USER && isSuperadmin()) {
       await fetchTenants();
-      if (document.getElementById('view-clients').classList.contains('active')) {
+      if (document.getElementById('view-dashboard').classList.contains('active')) {
+        renderDash();
+      } else if (document.getElementById('view-clients').classList.contains('active')) {
         showCG();
       } else {
         renderTenants();
@@ -1135,6 +1151,31 @@ function isSuperadmin() {
   return CURRENT_USER.role === 'superadmin' || CURRENT_USER.email === 'admin@vereli.com';
 }
 
+function streamlineSuperadminUI() {
+  if (!isSuperadmin()) return;
+  // Remove irrelevant nav items from DOM for superadmin
+  const toRemoveNav = [
+    'nav-deliverables','nav-kanban','nav-contracts',
+    'nav-invoices','nav-payments','nav-files','nav-team'
+  ];
+  toRemoveNav.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  });
+  // Remove irrelevant view divs from DOM for superadmin
+  const toRemoveViews = [
+    'view-deliverables','view-kanban','view-contracts',
+    'view-invoices','view-payments','view-files','view-team'
+  ];
+  toRemoveViews.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  });
+  // Rename Dashboard nav to Overview
+  const dashNav = document.querySelector('#nav-dashboard .ni-label');
+  if (dashNav) dashNav.textContent = 'Overview';
+}
+
 function updateNavLabels() {
   if (!CURRENT_USER) return;
 
@@ -1159,6 +1200,9 @@ function updateNavLabels() {
   if (eaNav) {
     eaNav.style.display = isSuperadmin() ? '' : 'none';
   }
+
+  // Streamline UI for superadmin
+  streamlineSuperadminUI();
 }
 
 function updateUserUI(user) {
@@ -1228,7 +1272,7 @@ async function checkAuth() {
 }
 
 /* ══ NAVIGATION ══ */
-const TITLES={dashboard:'Dashboard',clients:'Clients',deliverables:'Deliverables',contracts:'Contracts',files:'Files',invoices:'Invoices',payments:'Payments',team:'Team','early-access':'Early Access',settings:'Settings'};
+const TITLES={dashboard:'Dashboard',clients:'Clients',deliverables:'Deliverables',contracts:'Contracts',files:'Files',invoices:'Invoices',payments:'Payments',team:'Team','early-access':'Early Access',settings:'Settings',plans:'Plans'};
 
 function goView(name,el){
   document.querySelectorAll('.view').forEach(v=>{if(!v.style.cssText.includes('!important'))v.classList.remove('active');});
@@ -1239,6 +1283,8 @@ function goView(name,el){
   else{const ni=document.getElementById('nav-'+name);if(ni)ni.classList.add('active');}
   if(name==='clients' && isSuperadmin()){
     document.getElementById('pt').textContent='Tenants';
+  } else if(name==='dashboard' && isSuperadmin()){
+    document.getElementById('pt').textContent='Overview';
   } else {
     document.getElementById('pt').textContent=TITLES[name]||name;
   }
@@ -1253,6 +1299,7 @@ function goView(name,el){
   }
   else if(name==='invoices')tba.innerHTML=`<button onclick="openInvModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New invoice</button>`;
   else if(name==='files')tba.innerHTML=`<button onclick="openFileUploadGlobal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>`;
+  else if(name==='plans' && isSuperadmin()) tba.innerHTML='';
   else tba.innerHTML='';
   if(name==='clients')showCG();
   else{
@@ -1271,6 +1318,7 @@ function goView(name,el){
     if(!isSuperadmin()){goView('dashboard');return;}
     tba.innerHTML=`<button onclick="downloadEarlyAccessCSV()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Download CSV</button>`;renderEarlyAccess();
   }
+  if(name==='plans' && isSuperadmin()) renderPlans();
   closeSB();
 }
 
@@ -1291,8 +1339,9 @@ function computeRevenue(win){
   return {collected,pending,overdue};
 }
 
-/* ══ DASHBOARD ══ */
+/* ══ DASHBOARD / OVERVIEW ══ */
 function renderDash(){
+  if(isSuperadmin()){renderSuperadminOverview();return;}
   // KPI cards — computed dynamically from real data
   const kpiRow=document.getElementById('dash-kpi-row');
   if(kpiRow){
@@ -1377,6 +1426,129 @@ function renderDash(){
   window.renderRevSnapshot=renderRevSnapshot;
   renderRevSnapshot('month');
   lucide.createIcons();
+}
+
+function renderSuperadminOverview(){
+  const greet=document.getElementById('dash-greeting');
+  if(greet) greet.textContent='Platform Overview';
+  const sub=document.querySelector('#view-dashboard > div:first-child > div:last-child');
+  if(sub) sub.textContent='Analytics across all tenants, users, and clients.';
+
+  // Update section labels for superadmin
+  let da=document.getElementById('dash-attn');
+  if(da && da.previousElementSibling && da.previousElementSibling.classList.contains('slbl')) da.previousElementSibling.textContent='Expiring trials';
+  let dc=document.getElementById('dash-clients');
+  if(dc && dc.previousElementSibling && dc.previousElementSibling.classList.contains('slbl')) dc.previousElementSibling.textContent='Recent tenants';
+  let ac=document.getElementById('dash-act');
+  if(ac && ac.previousElementSibling && ac.previousElementSibling.classList.contains('slbl')) ac.previousElementSibling.textContent='Platform activity';
+  let rv=document.getElementById('dash-rev');
+  if(rv && rv.previousElementSibling && rv.previousElementSibling.classList.contains('slbl')) rv.previousElementSibling.textContent='Plan distribution';
+
+  const tenants=DATA.tenants||[];
+  const activeTenants=tenants.filter(t=>t.status==='active');
+  const totalUsers=tenants.reduce((s,t)=>s+(t.userCount||0),0);
+  const totalClients=tenants.reduce((s,t)=>s+(t.clientCount||0),0);
+  const now=Date.now();
+  const expiringSoon=tenants.filter(t=>t.plan==='trial'&&t.trialEndsAt&&new Date(t.trialEndsAt)<now+14*86400000&&new Date(t.trialEndsAt)>now);
+
+  const kpiRow=document.getElementById('dash-kpi-row');
+  if(kpiRow){
+    kpiRow.innerHTML=`<div class="dash-kpi" style="color:#0B4F52"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#E2EDE9;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B4F52" stroke-width="1.75" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="st teal" style="font-size:10px">Active</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#0A2E2F;line-height:1">${tenants.length}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Total tenants</div></div>
+      <div class="dash-kpi" style="color:#5E3B9E"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#F0EDFD;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5E3B9E" stroke-width="1.75" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="st purple" style="font-size:10px">Users</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#5E3B9E;line-height:1">${totalUsers}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Total users</div></div>
+      <div class="dash-kpi" style="color:#8E5510"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#FDF1E1;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8E5510" stroke-width="1.75" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="st amber" style="font-size:10px">Clients</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#8E5510;line-height:1">${totalClients}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Total clients</div></div>
+      <div class="dash-kpi" style="color:#B91C1C"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#FEF2F2;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="1.75" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><span class="st red" style="font-size:10px">Expiring</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#B91C1C;line-height:1">${expiringSoon.length}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Trials <14 days</div></div>`;
+  }
+
+  // Expiring trials
+  da=document.getElementById('dash-attn');
+  if(da){
+    const expLabel=(d)=>{const days=Math.ceil((new Date(d)-now)/86400000);return days<=0?'Expired':`${days}d left`;}
+    if(expiringSoon.length){
+      da.innerHTML=expiringSoon.sort((a,b)=>new Date(a.trialEndsAt)-new Date(b.trialEndsAt)).map(t=>`<div class="attn-row" onclick="openTenantProfile(${t.id})">
+        <div style="width:32px;height:32px;border-radius:9px;background:#FEF2F2;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:700;color:#0B4F52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px">${t.name}</div><div style="font-size:11.5px;color:#7A9E99">${t.ownerEmail||'No admin'}</div></div>
+        <span class="st red" style="font-size:10px;flex-shrink:0">${expLabel(t.trialEndsAt)}</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C0D4D0" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-left:4px"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`).join('');
+    } else {
+      da.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No trials expiring in the next 14 days.</div>`;
+    }
+  }
+
+  // Recent tenants
+  dc=document.getElementById('dash-clients');
+  if(dc){
+    const recent=tenants.slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,5);
+    if(recent.length){
+      dc.innerHTML=recent.map(t=>{
+        const init=t.name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'T';
+        return `<div style="background:#fff;border:1px solid #E2EBE9;border-radius:16px;padding:18px 20px;cursor:pointer;transition:all .18s;box-shadow:0 1px 3px rgba(15,61,62,.04),0 3px 12px rgba(15,61,62,.04)" onclick="openTenantProfile(${t.id})" onmouseenter="this.style.boxShadow='0 8px 28px rgba(15,61,62,.1)';this.style.borderColor='#BDDAD2';this.style.transform='translateY(-1px)'" onmouseleave="this.style.boxShadow='0 1px 3px rgba(15,61,62,.04),0 3px 12px rgba(15,61,62,.04)';this.style.borderColor='#E2EBE9';this.style.transform=''">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div style="width:36px;height:36px;border-radius:10px;background:#E2EDE9;color:#0B4F52;display:flex;align-items:center;justify-content:center;font-family:'General Sans',sans-serif;font-size:12px;font-weight:800;flex-shrink:0">${init}</div>
+            <div style="flex:1;min-width:0">
+              <div class="ht" style="font-size:13.5px;font-weight:700;color:#0A2E2F;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.015em">${t.name}</div>
+              <div style="font-size:12px;color:#7A9E99;margin-top:1px">${t.plan||'trial'} · ${t.userCount||0} users</div>
+            </div>
+            <span class="st ${t.status==='active'?'green':'gray'}" style="font-size:9.5px">${t.status==='active'?'Active':'Suspended'}</span>
+          </div>
+          <div style="font-size:12px;color:#6A8E89;padding-top:11px;border-top:1px solid #EEF3F0;line-height:1.5">↳ Created ${t.createdAt?new Date(t.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—'}</div>
+        </div>`;
+      }).join('');
+    } else {
+      dc.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No tenants yet.</div>`;
+    }
+  }
+
+  // Platform activity (placeholder based on tenant creation)
+  ac=document.getElementById('dash-act');
+  if(ac){
+    const acts=tenants.slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,5);
+    if(acts.length){
+      ac.innerHTML=acts.map(t=>`<div class="act"><div class="adot" style="background:#E2EDE9"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0B4F52" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div style="flex:1;min-width:0"><div class="atext">Tenant "${t.name}" created</div><div style="font-size:11px;color:#7A9E99;margin-top:2px">${t.ownerEmail||'No admin'}</div></div><div class="atime">${t.createdAt?new Date(t.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—'}</div></div>`).join('');
+    } else {
+      ac.innerHTML=`<div style="padding:24px;text-align:center;color:#8E9E9E;font-size:13px">No recent platform activity.</div>`;
+    }
+  }
+
+  // Plan distribution
+  rv=document.getElementById('dash-rev');
+  if(rv){
+    const plans={trial:0,starter:0,pro:0,enterprise:0};
+    tenants.forEach(t=>{if(plans[t.plan]!==undefined) plans[t.plan]++; else plans.trial++;});
+    const total=tenants.length||1;
+    const bar=(label,count,color,bg)=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:12px;color:#5A8A80;font-weight:500;width:70px">${label}</span><div style="flex:1;height:8px;background:#EEF3F0;border-radius:4px;overflow:hidden"><div style="width:${(count/total*100).toFixed(1)}%;height:100%;background:${color};border-radius:4px"></div></div><span class="ht" style="font-weight:800;color:${color};font-size:13px;width:30px;text-align:right">${count}</span></div>`;
+    rv.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><span class="slbl" style="margin-bottom:0">Plan distribution</span></div>
+      ${bar('Trial',plans.trial,'#8E5510','#FDF1E1')}
+      ${bar('Starter',plans.starter,'#0B4F52','#E2EDE9')}
+      ${bar('Pro',plans.pro,'#5E3B9E','#F0EDFD')}
+      ${bar('Enterprise',plans.enterprise,'#22C55E','#E0F2EC')}`;
+  }
+  lucide.createIcons();
+}
+
+function renderPlans(){
+  const el=document.getElementById('plans-content');
+  if(!el)return;
+  const tenants=DATA.tenants||[];
+  const plans={trial:[],starter:[],pro:[],enterprise:[]};
+  tenants.forEach(t=>{const p=t.plan||'trial';if(plans[p])plans[p].push(t);else plans.trial.push(t);});
+  const planMeta={
+    trial:{label:'Trial',color:'#8E5510',bg:'#FDF1E1',desc:'14-day free evaluation period'},
+    starter:{label:'Starter',color:'#0B4F52',bg:'#E2EDE9',desc:'Small teams getting started'},
+    pro:{label:'Pro',color:'#5E3B9E',bg:'#F0EDFD',desc:'Growing teams with advanced needs'},
+    enterprise:{label:'Enterprise',color:'#22C55E',bg:'#E0F2EC',desc:'Large organizations with custom requirements'}
+  };
+  el.innerHTML=Object.entries(plans).map(([key,list])=>{
+    const m=planMeta[key];
+    return `<div style="background:#fff;border:1px solid #E2EBE9;border-radius:16px;padding:22px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(11,79,82,.03)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <div style="width:40px;height:40px;border-radius:10px;background:${m.bg};display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${m.color}" stroke-width="1.75" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+        <div style="flex:1"><div class="ht" style="font-size:15px;font-weight:800;color:#0A2E2F">${m.label}</div><div style="font-size:12px;color:#7A9E99">${m.desc} · ${list.length} tenant${list.length!==1?'s':''}</div></div>
+        <span class="ht" style="font-size:24px;font-weight:900;color:${m.color}">${list.length}</span>
+      </div>
+      ${list.length?`<div style="display:flex;flex-direction:column;gap:8px">${list.map(t=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#F8FBFA;border-radius:10px;cursor:pointer" onclick="openTenantProfile(${t.id})"><div style="width:28px;height:28px;border-radius:8px;background:#E2EDE9;color:#0B4F52;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">${t.name.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'T'}</div><div style="flex:1;min-width:0"><div class="ht" style="font-size:12.5px;font-weight:700;color:#0B4F52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.name}</div><div style="font-size:11px;color:#7A9E99">${t.ownerEmail||'No admin'}</div></div><span class="st ${t.status==='active'?'green':'gray'}" style="font-size:9.5px">${t.status==='active'?'Active':'Suspended'}</span></div>`).join('')}</div>`:`<div style="padding:12px;text-align:center;color:#8E9E9E;font-size:12.5px">No tenants on this plan.</div>`}
+    </div>`;
+  }).join('');
 }
 
 /* ══ CLIENT LIST ══ */
