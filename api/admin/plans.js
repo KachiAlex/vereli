@@ -7,8 +7,9 @@ export default async function handler(req, res) {
   const user = await requireAuth(req, res);
   if (!user) return;
 
-  // Only superadmins can manage plans
-  if (user.role !== 'superadmin' && user.email !== 'admin@vereli.com') {
+  // Only superadmins can mutate plans; GET is open to all authenticated users
+  const isAdmin = user.role === 'superadmin' || user.email === 'admin@vereli.com';
+  if (!isAdmin && req.method !== 'GET') {
     sendJson(res, 403, { error: 'Forbidden: superadmin only' });
     return;
   }

@@ -19,11 +19,13 @@ export default async function handler(req, res) {
       await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS primary_color TEXT`;
       // Fetch full user data with tenant info
       const [userData] = await sql`
-        SELECT u.id, u.email, u.name, u.role, u.tenant_id, t.name as tenant_name, t.slug as tenant_slug, t.status as tenant_status, t.logo_url, t.primary_color
+        SELECT u.id, u.email, u.name, u.role, u.tenant_id, t.name as tenant_name, t.slug as tenant_slug, t.status as tenant_status, t.plan as tenant_plan, t.trial_ends_at as tenant_trial_ends, t.logo_url, t.primary_color
         FROM users u
         LEFT JOIN tenants t ON u.tenant_id = t.id
         WHERE u.id = ${user.userId}
       `;
+      const [{ count: userCount }] = userData.tenant_id ? await sql`SELECT COUNT(*)::int AS count FROM users WHERE tenant_id = ${userData.tenant_id}` : [{ count: 0 }];
+      const [{ count: clientCount }] = userData.tenant_id ? await sql`SELECT COUNT(*)::int AS count FROM clients WHERE tenant_id = ${userData.tenant_id}` : [{ count: 0 }];
 
       if (!userData) {
         sendJson(res, 404, { error: 'User not found' });
@@ -43,6 +45,10 @@ export default async function handler(req, res) {
           company: userData.tenant_name || null,
           logoUrl: userData.logo_url || null,
           primary: userData.primary_color || null,
+          plan: userData.tenant_plan || null,
+          trialEndsAt: userData.tenant_trial_ends || null,
+          userCount,
+          clientCount,
         },
       });
     } catch (err) {
