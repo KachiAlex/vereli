@@ -26,6 +26,7 @@ export default async function handler(req, res) {
     try {
       await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS logo_url TEXT`;
       await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS primary_color TEXT`;
+      await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMPTZ`;
 
       const { tenantId, status, plan } = req.query || {};
 
@@ -185,6 +186,7 @@ export default async function handler(req, res) {
     try {
       await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS logo_url TEXT`;
       await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS primary_color TEXT`;
+      await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMPTZ`;
 
       // Check if admin email already exists
       const [existingUser] = await sql`SELECT id FROM users WHERE email = ${adminEmail.toLowerCase()}`;
@@ -301,6 +303,7 @@ export default async function handler(req, res) {
     try {
       await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS logo_url TEXT`;
       await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS primary_color TEXT`;
+      await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMPTZ`;
 
       const fields = [];
       const values = [];

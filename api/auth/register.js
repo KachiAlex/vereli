@@ -75,6 +75,9 @@ export default async function handler(req, res) {
         return;
       }
 
+      // Ensure trial_ends_at column exists
+      await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMPTZ`;
+
       // Create new tenant for this user with 14-day free trial
       const [tenant] = await sql`
         INSERT INTO tenants (name, slug, status, plan, trial_ends_at)

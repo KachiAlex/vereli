@@ -1446,13 +1446,13 @@ function apiTenantToData(t, idx) {
     tc: tc,
     plan: t.plan || 'free',
     status: t.status || 'active',
-    ownerEmail: t.owner_email || '—',
-    ownerName: t.owner_name || '—',
-    userCount: t.user_count || 0,
-    clientCount: t.client_count || 0,
-    trialEndsAt: t.trial_ends_at,
-    createdAt: t.created_at,
-    updatedAt: t.updated_at
+    ownerEmail: t.owner_email || t.ownerEmail || '—',
+    ownerName: t.owner_name || t.ownerName || '—',
+    userCount: t.user_count || t.userCount || 0,
+    clientCount: t.client_count || t.clientCount || 0,
+    trialEndsAt: t.trial_ends_at || t.trialEndsAt,
+    createdAt: t.created_at || t.createdAt,
+    updatedAt: t.updated_at || t.updatedAt
   };
 }
 
