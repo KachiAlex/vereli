@@ -42,17 +42,15 @@ export default async function handler(req, res) {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `;
-    // Seed default plans if none exist
-    const existingPlans = await sql`SELECT id FROM plans LIMIT 1`;
-    if (!existingPlans.length) {
-      await sql`
-        INSERT INTO plans (name, slug, description, price_monthly, price_yearly, currency, user_limit, client_limit, features, sort_order) VALUES
-        ('Trial', 'trial', '14-day free evaluation period', 0, 0, 'NGN', 5, 5, '{"5 users","5 clients","Basic support"}', 1),
-        ('Starter', 'starter', 'Small teams getting started', 2900, 29000, 'NGN', 10, 20, '{"10 users","20 clients","Email support","Standard reports"}', 2),
-        ('Pro', 'pro', 'Growing teams with advanced needs', 7900, 79000, 'NGN', 50, 100, '{"50 users","100 clients","Priority support","Advanced reports","Custom branding"}', 3),
-        ('Enterprise', 'enterprise', 'Large organizations with custom requirements', 0, 0, 'NGN', NULL, NULL, '{"Unlimited users","Unlimited clients","Dedicated support","Custom integrations","SLA guarantee"}', 4);
-      `;
-    }
+    // Always ensure default plans exist (safe to re-run)
+    await sql`
+      INSERT INTO plans (name, slug, description, price_monthly, price_yearly, currency, user_limit, client_limit, features, sort_order) VALUES
+      ('Trial', 'trial', '14-day free evaluation period', 0, 0, 'NGN', 5, 5, '{"5 users","5 clients","Basic support"}', 1),
+      ('Starter', 'starter', 'Small teams getting started', 2900, 29000, 'NGN', 10, 20, '{"10 users","20 clients","Email support","Standard reports"}', 2),
+      ('Pro', 'pro', 'Growing teams with advanced needs', 7900, 79000, 'NGN', 50, 100, '{"50 users","100 clients","Priority support","Advanced reports","Custom branding"}', 3),
+      ('Enterprise', 'enterprise', 'Large organizations with custom requirements', 0, 0, 'NGN', NULL, NULL, '{"Unlimited users","Unlimited clients","Dedicated support","Custom integrations","SLA guarantee"}', 4)
+      ON CONFLICT (slug) DO NOTHING;
+    `;
 
     // 2. Update users table with tenant support
     await sql`
