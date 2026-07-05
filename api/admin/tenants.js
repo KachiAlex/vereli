@@ -397,6 +397,40 @@ export default async function handler(req, res) {
       return;
     }
 
+    const deleteAction = req.query && req.query.action;
+
+    // ── Hard delete tenant ──
+    if (deleteAction === 'delete') {
+      try {
+        const [tenant] = await sql`
+          DELETE FROM tenants WHERE id = ${tenantId}
+          RETURNING id, name, slug, status, plan, trial_ends_at, created_at;
+        `;
+
+        if (!tenant) {
+          sendJson(res, 404, { error: 'Tenant not found' });
+          return;
+        }
+
+        sendJson(res, 200, {
+          message: 'Tenant deleted permanently',
+          data: {
+            id: tenant.id,
+            name: tenant.name,
+            slug: tenant.slug,
+            status: tenant.status,
+            plan: tenant.plan,
+            trialEndsAt: tenant.trial_ends_at,
+            createdAt: tenant.created_at,
+          }
+        });
+      } catch (err) {
+        console.error('Error deleting tenant:', err);
+        sendJson(res, 500, { error: 'Failed to delete tenant' });
+      }
+      return;
+    }
+
     // ── Soft delete / suspend tenant ──
     try {
       const [tenant] = await sql`

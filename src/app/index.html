@@ -1655,6 +1655,7 @@ function renderTenantProfile(t){
           <div style="display:flex;gap:8px">
             ${t.status==='active'?`<button onclick="suspendTenant(${t.id})" class="tb-btn" style="background:#FEF2F2;color:#B91C1C;border-color:#FECACA"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Suspend</button>`:`<button onclick="activateTenant(${t.id})" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>Activate</button>`}
             <button onclick="editTenantModal(${t.id})" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+            <button onclick="deleteTenant(${t.id})" class="tb-btn" style="background:#FEF2F2;color:#B91C1C;border-color:#FECACA"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Delete</button>
           </div>
         </div>
       </div>
@@ -1718,6 +1719,18 @@ async function activateTenant(id){
     await fetchTenants();
     if(ST&&ST.id===id){ST.status='active';renderTenantProfile(ST);}
   }catch(err){toast('Failed to activate tenant');}
+}
+async function deleteTenant(id){
+  const t=DATA.tenants.find(x=>x.id===id);
+  const name=t?t.name:'this tenant';
+  if(!confirm(`Permanently delete "${name}"? This cannot be undone and will remove all associated data (clients, invoices, files, etc.).`))return;
+  try{
+    const res=await apiFetch(`/admin/tenants?tenantId=${id}&action=delete`,{method:'DELETE'});
+    if(!res.ok) throw new Error('Failed to delete');
+    toast('Tenant deleted permanently');
+    await fetchTenants();
+    closeTenantProfile();
+  }catch(err){toast('Failed to delete tenant');}
 }
 function editTenantModal(id){
   const t=DATA.tenants.find(x=>x.id===id);
