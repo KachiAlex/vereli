@@ -9,6 +9,10 @@ function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' });
 }
 
+export const config = {
+  api: { bodyParser: false }
+};
+
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
@@ -21,14 +25,17 @@ export default async function handler(req, res) {
   let event;
 
   try {
+    const rawBody = await new Promise((resolve, reject) => {
+      const chunks = [];
+      req.on('data', chunk => chunks.push(chunk));
+      req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+      req.on('error', reject);
+    });
     const stripe = getStripe();
     if (endpointSecret && sig) {
-      // Signature verification requires the raw body. Vercel parses JSON by default,
-      // so reconstruct it. For production, set STRIPE_WEBHOOK_SECRET and use the raw body.
-      const rawBody = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
       event = stripe.webhooks.constructEvent(rawBody, sig, endpointSecret);
     } else {
-      event = req.body;
+      event = rawBody ? JSON.parse(rawBody) : {};
     }
   } catch (err) {
     console.error('[webhooks/stripe] body/error:', err.message);
