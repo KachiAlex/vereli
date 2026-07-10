@@ -12,6 +12,7 @@
   
   <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
   <script src="https://checkout.flutterwave.com/v3.js"></script>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
   <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;color:#0B3D3F;background:#F5F8F7}
@@ -794,6 +795,31 @@ async function payPortalInvoiceWithFlutterwave(invoiceId){
     });
   }catch(err){showToast('Failed to start payment');}
 }
+async function payPortalInvoiceWithPaystack(invoiceId){
+  try{
+    const res=await apiFetch('/portal/payments/paystack',{method:'POST',body:JSON.stringify({invoiceId})});
+    const json=await res.json();
+    if(!res.ok){showToast(json.error||'Could not start payment');return;}
+    const cfg=json.data;
+    if(!window.PaystackPop){showToast('Payment provider not loaded');return;}
+    const handler=PaystackPop.setup({
+      key: cfg.publicKey,
+      email: cfg.customerEmail,
+      amount: cfg.amount,
+      ref: cfg.txRef,
+      currency: cfg.currency,
+      metadata: { invoiceId: cfg.invoiceId, name: cfg.customerName || PORTAL_DATA.client?.name || 'Client' },
+      callback: async function(response){
+        const vRes=await apiFetch('/payments/paystack?verify',{method:'POST',body:JSON.stringify({reference:response.reference, txRef:cfg.txRef})});
+        const vJson=await vRes.json();
+        if(vRes.ok){showToast('Payment successful'); await loadPortalData();}
+        else {showToast(vJson.error||'Payment verification failed');}
+      },
+      onClose: function(){}
+    });
+    handler.openIframe();
+  }catch(err){showToast('Failed to start payment');}
+}
 
 function renderPayments(){
   const{client,invoices}=PORTAL_DATA;
@@ -810,7 +836,7 @@ function renderPayments(){
         inv.lineItems.forEach(li=>{html+='<div style="display:flex;justify-content:space-between;font-size:13px;color:#3A3A38;margin-bottom:7px"><span>'+esc(li.desc||li.description)+'</span><span class="ht" style="font-weight:600">'+fmtCurrency(Number(li.rate||li.amount)*(li.qty||1),inv.currency)+'</span></div>';});
         html+='<div style="display:flex;justify-content:space-between;font-size:14px;font-weight:800;padding-top:7px;border-top:1px solid #E2EBE9;margin-top:4px" class="ht"><span>Total</span><span>'+fmtCurrency(inv.amount,inv.currency)+'</span></div></div>';
       }
-      html+='<div style="display:flex;gap:10px"><button class="act-btn act-pay" style="font-size:13px;padding:10px 20px;border-radius:10px" onclick="payPortalInvoiceWithFlutterwave('+inv.id+')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pay '+fmtCurrency(inv.amount,inv.currency)+'</button><button class="act-btn act-comment" style="font-size:13px;padding:10px 20px;border-radius:10px" onclick="showToast(\'Invoice PDF coming soon\')">Download PDF</button></div></div>';
+      html+='<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="act-btn act-pay" style="font-size:13px;padding:10px 20px;border-radius:10px" onclick="payPortalInvoiceWithFlutterwave('+inv.id+')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pay FLW</button><button class="act-btn" style="font-size:13px;padding:10px 20px;border-radius:10px;background:#10B981;color:#fff" onclick="payPortalInvoiceWithPaystack('+inv.id+')">Pay Paystack</button><button class="act-btn act-comment" style="font-size:13px;padding:10px 20px;border-radius:10px" onclick="showToast(\'Invoice PDF coming soon\')">Download PDF</button></div></div>';
     });
     html+='</div>';
   }

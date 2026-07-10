@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
   <script src="https://checkout.flutterwave.com/v3.js"></script>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
   <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-serif;background:#F6F9F8;color:#0B4F52;-webkit-font-smoothing:antialiased}
@@ -3291,6 +3292,31 @@ async function payInvoiceWithFlutterwave(invoiceId, clientName){
     });
   }catch(err){toast('Failed to start payment');}
 }
+async function payInvoiceWithPaystack(invoiceId, clientName){
+  try{
+    const res=await apiFetch('/payments/paystack',{method:'POST',body:JSON.stringify({invoiceId})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Could not start payment');return;}
+    const cfg=json.data;
+    if(!window.PaystackPop){toast('Payment provider not loaded');return;}
+    const handler=PaystackPop.setup({
+      key: cfg.publicKey,
+      email: cfg.customerEmail,
+      amount: cfg.amount,
+      ref: cfg.txRef,
+      currency: cfg.currency,
+      metadata: { invoiceId: cfg.invoiceId, name: cfg.customerName || clientName || 'Client' },
+      callback: async function(response){
+        const vRes=await apiFetch('/payments/paystack?verify',{method:'POST',body:JSON.stringify({reference:response.reference, txRef:cfg.txRef})});
+        const vJson=await vRes.json();
+        if(vRes.ok){toast('Payment successful'); await refreshInvoices(); renderInv();}
+        else {toast(vJson.error||'Payment verification failed');}
+      },
+      onClose: function(){}
+    });
+    handler.openIframe();
+  }catch(err){toast('Failed to start payment');}
+}
 async function refreshInvoices(){
   try{
     const res=await apiFetch('/invoices');
@@ -3312,7 +3338,7 @@ function renderInv(){
     const client=DATA.clients.find(c=>c.id===inv.clientId);
     return {...apiInvoiceToData(inv),id:inv.id,cname:client?client.name:'',cid:inv.clientId};
   }):DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.invoices.map(i=>({...i,cname:c.name,wa:w.name,cid:c.id}))));
-  el.innerHTML=all.map(inv=>`<div class="ir" style="cursor:pointer;align-items:center" onclick="openCP(${inv.cid})"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${inv.status==='paid'?'#EAF2EE':'#F5F0FF'};display:flex;align-items:center;justify-content:center"><i data-lucide="${inv.status==='paid'?'check':'clock'}" style="width:12px;height:12px;color:${inv.status==='paid'?'#2D6A4F':'#6B3FA0'}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id} <span style="font-weight:400;color:#8E9E9E;font-family:'Inter',sans-serif">· ${inv.cname}</span></div><div class="imeta">${inv.desc} · Due ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span>${inv.status!=='paid'?`<button class="tb-btn pri" style="font-size:11px;padding:5px 12px;margin-right:8px" onclick="event.stopPropagation();payInvoiceWithFlutterwave(${inv.id},'${esc(inv.cname)}')">Pay</button>`:''}<span class="st ${inv.status==='paid'?'green':'purple'}" style="font-size:10px">${inv.status==='paid'?'Paid':'Unpaid'}</span></div>`).join('');
+  el.innerHTML=all.map(inv=>`<div class="ir" style="cursor:pointer;align-items:center" onclick="openCP(${inv.cid})"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${inv.status==='paid'?'#EAF2EE':'#F5F0FF'};display:flex;align-items:center;justify-content:center"><i data-lucide="${inv.status==='paid'?'check':'clock'}" style="width:12px;height:12px;color:${inv.status==='paid'?'#2D6A4F':'#6B3FA0'}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id} <span style="font-weight:400;color:#8E9E9E;font-family:'Inter',sans-serif">· ${inv.cname}</span></div><div class="imeta">${inv.desc} · Due ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span>${inv.status!=='paid'?`<span style="display:flex;gap:6px;margin-right:8px"><button class="tb-btn pri" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation();payInvoiceWithFlutterwave(${inv.id},'${esc(inv.cname)}')">Pay FLW</button><button class="tb-btn" style="font-size:11px;padding:5px 10px;background:#10B981;color:#fff;border-color:#10B981" onclick="event.stopPropagation();payInvoiceWithPaystack(${inv.id},'${esc(inv.cname)}')">Pay PS</button></span>`:''}<span class="st ${inv.status==='paid'?'green':'purple'}" style="font-size:10px">${inv.status==='paid'?'Paid':'Unpaid'}</span></div>`).join('');
   // Update invoice stats
   const rev=computeRevenue('month');
   const sp=document.getElementById('inv-stat-paid');if(sp)sp.textContent=formatCurrency(rev.collected,'NGN');

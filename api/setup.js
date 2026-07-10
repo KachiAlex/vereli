@@ -178,6 +178,8 @@ export default async function handler(req, res) {
     await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS stripe_payment_intent_id TEXT`;
     await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS flutterwave_tx_ref TEXT`;
     await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS flutterwave_transaction_id TEXT`;
+    await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS paystack_tx_ref TEXT`;
+    await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS paystack_transaction_id TEXT`;
     await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS gateway TEXT NOT NULL DEFAULT 'manual'`;
     await sql`ALTER TABLE payments ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending'`;
 
