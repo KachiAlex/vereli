@@ -154,4 +154,3 @@ export default async function handler(req, res) {
     sendJson(res, 500, { error: err.message });
   }
 }
-}
