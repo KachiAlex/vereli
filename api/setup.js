@@ -17,12 +17,22 @@ export default async function handler(req, res) {
         logo_url TEXT,
         primary_color TEXT,
         trial_ends_at TIMESTAMPTZ,
+        subscription_status TEXT NOT NULL DEFAULT 'trialing',
+        subscription_interval TEXT,
+        stripe_customer_id TEXT,
+        stripe_subscription_id TEXT,
+        subscription_current_period_end TIMESTAMPTZ,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
     `;
     await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS logo_url TEXT`;
     await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS primary_color TEXT`;
     await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMPTZ`;
+    await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS subscription_status TEXT NOT NULL DEFAULT 'trialing'`;
+    await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS subscription_interval TEXT`;
+    await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT`;
+    await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT`;
+    await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS subscription_current_period_end TIMESTAMPTZ`;
     await sql`ALTER TABLE tenants ALTER COLUMN plan SET DEFAULT 'starter';`;
 
     // 1b. Plans / subscription tiers

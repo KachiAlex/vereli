@@ -1,6 +1,6 @@
 import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
-import { canManageTenant } from './lib/auth.js';
+import { canManageTenant, checkTenantLimit } from './lib/auth.js';
 import { randomBytes } from 'crypto';
 import { sendEmail } from './lib/email.js';
 
@@ -58,6 +58,13 @@ export default async function handler(req, res) {
 
     const { email, name, role = 'member' } = req.body || {};
     if (!email) { badRequest(res, 'email is required'); return; }
+
+    // Check plan user limit
+    const limitCheck = await checkTenantLimit(sql, targetTenantId, 'users');
+    if (!limitCheck.allowed) {
+      sendJson(res, 403, { error: limitCheck.reason, limit: limitCheck.limit, current: limitCheck.current });
+      return;
+    }
     
     // Check if already invited in this tenant
     const [existing] = await sql`SELECT id FROM team_members WHERE tenant_id = ${targetTenantId} AND email = ${email.toLowerCase()}`;

@@ -54,6 +54,11 @@ export default function handler(req, res) {
       { method: 'POST', path: '/api/payments/flutterwave?verify', description: 'Verify Flutterwave payment' },
       { method: 'POST', path: '/api/portal/payments/flutterwave', description: 'Initialize portal Flutterwave payment' },
       { method: 'POST', path: '/api/webhooks/flutterwave', description: 'Flutterwave payment webhook' },
+      { method: 'GET',  path: '/api/billing/plans', description: 'List available subscription plans' },
+      { method: 'GET',  path: '/api/billing/subscription', description: 'Current tenant subscription' },
+      { method: 'POST', path: '/api/billing/checkout', description: 'Create Stripe checkout session' },
+      { method: 'POST', path: '/api/billing/portal', description: 'Create Stripe billing portal session' },
+      { method: 'POST', path: '/api/webhooks/stripe', description: 'Stripe subscription webhook' },
     ],
   });
 }

@@ -1,6 +1,6 @@
 import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
-import { canManageData } from './lib/auth.js';
+import { canManageData, checkTenantLimit } from './lib/auth.js';
 import { ensureAuditTable, logAudit } from './lib/audit.js';
 import bcryptjs from 'bcryptjs';
 
@@ -87,6 +87,13 @@ export default async function handler(req, res) {
     const { name, contact, email, type = 'Service', status = 'active', portal_on, portal_url, portal_logo, portal_banner } = req.body || {};
     if (!name || !contact || !email) {
       badRequest(res, 'name, contact, and email are required');
+      return;
+    }
+
+    // Check plan client limit
+    const limitCheck = await checkTenantLimit(sql, tenantId, 'clients');
+    if (!limitCheck.allowed) {
+      sendJson(res, 403, { error: limitCheck.reason, limit: limitCheck.limit, current: limitCheck.current });
       return;
     }
     

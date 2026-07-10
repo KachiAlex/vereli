@@ -1,6 +1,6 @@
 import { sendJson, handleCors, badRequest, setCookie } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
-import { createTokens } from '../lib/auth.js';
+import { createTokens, checkTenantLimit } from '../lib/auth.js';
 import bcryptjs from 'bcryptjs';
 import { checkRateLimit } from '../lib/rate-limit.js';
 
@@ -62,6 +62,13 @@ export default async function handler(req, res) {
       tenantId = invitation.tenant_id;
       userRole = invitation.role;
       
+      // Check plan user limit
+      const limitCheck = await checkTenantLimit(sql, tenantId, 'users');
+      if (!limitCheck.allowed) {
+        sendJson(res, 403, { error: limitCheck.reason, limit: limitCheck.limit, current: limitCheck.current });
+        return;
+      }
+
       // Get tenant info
       const [tenant] = await sql`SELECT name, slug FROM tenants WHERE id = ${tenantId}`;
       if (tenant) {

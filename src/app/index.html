@@ -963,6 +963,15 @@ async function initFromApi() {
         }
       }
     }
+
+    // Handle Stripe billing redirect
+    const url = new URL(window.location.href);
+    const billing = url.searchParams.get('billing');
+    if (billing === 'success' || billing === 'cancel') {
+      toast(billing === 'success' ? 'Subscription updated successfully' : 'Subscription checkout cancelled');
+      url.searchParams.delete('billing');
+      history.replaceState({}, '', url.toString());
+    }
   } catch (err) {
     console.warn('API fetch failed:', err.message);
   }
@@ -1393,7 +1402,7 @@ async function goView(name,el){
     if(!isSuperadmin()){goView('dashboard');return;}
     tba.innerHTML=`<button onclick="downloadEarlyAccessCSV()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Download CSV</button>`;renderEarlyAccess();
   }
-  if(name==='plans'){ await fetchPlans(); if(isSuperadmin()) renderPlans(); else renderTenantPlans(); }
+  if(name==='plans'){ await fetchPlans(); if(isSuperadmin()) renderPlans(); else { await fetchBillingSubscription(); renderTenantPlans(); } }
   closeSB();
 }
 
@@ -1615,8 +1624,43 @@ async function switchPlansTab(tab){
 
 function curSym(c){if(c==='NGN')return '₦';if(c==='USD')return '$';if(c==='EUR')return '€';if(c==='GBP')return '£';return c+' ';}
 function fmtPrice(n,c){if(!n&&n!==0)return '—';return curSym(c)+(n/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+let BILLING_SUBSCRIPTION=null;
+async function fetchBillingSubscription(){
+  try{
+    const res=await apiFetch('/billing/subscription');
+    if(!res.ok)throw new Error('Failed');
+    const json=await res.json();
+    BILLING_SUBSCRIPTION=json.data||null;
+    if(BILLING_SUBSCRIPTION&&BILLING_SUBSCRIPTION.tenant){
+      CURRENT_USER.plan=BILLING_SUBSCRIPTION.tenant.plan;
+      CURRENT_USER.subscriptionStatus=BILLING_SUBSCRIPTION.tenant.subscriptionStatus;
+      CURRENT_USER.subscriptionInterval=BILLING_SUBSCRIPTION.tenant.subscriptionInterval;
+      CURRENT_USER.trialEndsAt=BILLING_SUBSCRIPTION.tenant.trialEndsAt;
+      CURRENT_USER.userCount=BILLING_SUBSCRIPTION.usage.users;
+      CURRENT_USER.clientCount=BILLING_SUBSCRIPTION.usage.clients;
+    }
+  }catch(err){console.error('fetchBillingSubscription:',err);}
+}
+async function upgradePlan(planSlug, interval){
+  try{
+    const res=await apiFetch('/billing/checkout',{method:'POST',body:JSON.stringify({planSlug, interval})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Could not start checkout');return;}
+    if(json.data&&json.data.url){window.location.href=json.data.url;}
+  }catch(err){toast('Failed to start checkout');}
+}
+async function openBillingPortal(){
+  try{
+    const res=await apiFetch('/billing/portal',{method:'POST'});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Could not open billing portal');return;}
+    if(json.data&&json.data.url){window.open(json.data.url,'_blank');}
+  }catch(err){toast('Failed to open billing portal');}
+}
+
 function renderTenantPlans(){
   const el=document.getElementById('plans-content');if(!el)return;
+  const sub=BILLING_SUBSCRIPTION||{};
   const plans=DATA.plans||[];
   const currentSlug=CURRENT_USER.plan||'starter';
   const currentPlan=plans.find(p=>p.slug===currentSlug)||{name:'Starter',slug:'starter',description:'',priceMonthly:2900,priceYearly:29000,currency:'NGN',userLimit:10,clientLimit:20,features:['10 users','20 clients','Email support','Standard reports'],active:true};
@@ -1627,6 +1671,10 @@ function renderTenantPlans(){
   const userPct=currentPlan.userLimit?Math.min(100,Math.round((userCount/currentPlan.userLimit)*100)):0;
   const clientPct=currentPlan.clientLimit?Math.min(100,Math.round((clientCount/currentPlan.clientLimit)*100)):0;
   const otherPlans=plans.filter(p=>p.slug!==currentSlug&&p.active).sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0));
+  const subStatus=CURRENT_USER.subscriptionStatus||'trialing';
+  const subInterval=CURRENT_USER.subscriptionInterval||'monthly';
+  const statusLabel={trialing:'Trial',active:'Active',past_due:'Past due',canceled:'Canceled'}[subStatus]||'Trial';
+  const statusColor={trialing:'#0B4F52',active:'#0B4F52',past_due:'#B91C1C',canceled:'#8E9E99'}[subStatus]||'#0B4F52';
   el.innerHTML=`<div style="display:flex;flex-direction:column;gap:16px">
     <div style="background:#fff;border:2px solid #0B4F52;border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(11,79,82,.08)">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
@@ -1638,6 +1686,7 @@ function renderTenantPlans(){
         <div style="text-align:right">
           <div class="ht" style="font-size:20px;font-weight:900;color:#0B4F52">${fmtPrice(currentPlan.priceMonthly,currentPlan.currency)}<span style="font-size:12px;font-weight:500;color:#7A9E99">/mo</span></div>
           <div style="font-size:12px;color:#7A9E99">${fmtPrice(currentPlan.priceYearly,currentPlan.currency)}/yr</div>
+          <div style="font-size:11px;font-weight:700;color:${statusColor};margin-top:4px">${statusLabel}${subInterval&&subStatus!=='trialing'?' · '+esc(subInterval):''}</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">
@@ -1653,15 +1702,20 @@ function renderTenantPlans(){
         </div>
         <div style="background:#F8FBFA;border-radius:10px;padding:12px">
           <div style="font-size:11px;color:#7A9E99;margin-bottom:4px">Status</div>
-          <div class="ht" style="font-size:14px;font-weight:800;color:#0B4F52">${isTrial?'Trial':'Active'}</div>
+          <div class="ht" style="font-size:14px;font-weight:800;color:${statusColor}">${statusLabel}</div>
           ${isTrial?`<div style="font-size:11px;color:#7A9E99;margin-top:2px">Ends ${new Date(trialEnds).toLocaleDateString()}</div>`:''}
         </div>
       </div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px">${(currentPlan.features||[]).map(f=>`<span class="st gray" style="font-size:10px">${esc(f)}</span>`).join(' ')}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">${(currentPlan.features||[]).map(f=>`<span class="st gray" style="font-size:10px">${esc(f)}</span>`).join(' ')}</div>
+      <div style="display:flex;gap:10px">
+        <button onclick="openBillingPortal()" class="tb-btn" style="font-size:11.5px;padding:5px 12px">Manage billing</button>
+        ${subStatus==='past_due'?`<button onclick="openBillingPortal()" class="tb-btn pri" style="font-size:11.5px;padding:5px 12px">Update payment method</button>`:''}
+      </div>
     </div>
     ${otherPlans.length?`<div style="font-size:15px;font-weight:800;color:#0A2E2F;margin-bottom:4px" class="ht">Available plans</div>`:''}
     ${otherPlans.map(p=>{
       const feats=(p.features||[]).map(f=>`<span class="st gray" style="font-size:10px">${esc(f)}</span>`).join(' ');
+      const canUpgrade=p.priceMonthly>0;
       return `<div style="background:#fff;border:1px solid #E2EBE9;border-radius:16px;padding:20px 22px;box-shadow:0 1px 3px rgba(11,79,82,.03)">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:10px">
           <div style="display:flex;align-items:center;gap:12px">
@@ -1673,7 +1727,7 @@ function renderTenantPlans(){
           </div>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">${feats}</div>
-        <button onclick="toast('Contact support to upgrade your plan')" class="tb-btn pri" style="font-size:11.5px;padding:5px 12px">Upgrade to ${esc(p.name)}</button>
+        ${canUpgrade?`<div style="display:flex;gap:8px"><button onclick="upgradePlan('${p.slug}','monthly')" class="tb-btn" style="font-size:11.5px;padding:5px 12px">Monthly</button><button onclick="upgradePlan('${p.slug}','yearly')" class="tb-btn pri" style="font-size:11.5px;padding:5px 12px">Yearly</button></div>`:`<button class="tb-btn" style="font-size:11.5px;padding:5px 12px" disabled>Contact sales</button>`}
       </div>`;
     }).join('')}
   </div>`;
