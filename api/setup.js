@@ -186,6 +186,30 @@ export default async function handler(req, res) {
       );
     `;
 
+    // 7c. contracts table for e-signature workflow
+    await sql`
+      CREATE TABLE IF NOT EXISTS contracts (
+        id SERIAL PRIMARY KEY,
+        tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        client_id INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+        user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL DEFAULT '',
+        status TEXT NOT NULL DEFAULT 'draft',
+        sender_name TEXT,
+        signed_by TEXT,
+        signature_data TEXT,
+        signature_type TEXT,
+        signed_at TIMESTAMPTZ,
+        signed_ip TEXT,
+        sent_at TIMESTAMPTZ,
+        viewed_at TIMESTAMPTZ,
+        pdf_url TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `;
+
     // 8. Update work_areas table with tenant_id
     await sql`
       CREATE TABLE IF NOT EXISTS work_areas (
