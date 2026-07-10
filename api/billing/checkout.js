@@ -50,7 +50,8 @@ export default async function handler(req, res) {
       await sql`UPDATE tenants SET stripe_customer_id = ${customerId} WHERE id = ${tenantId}`;
     }
 
-    const base = successUrl || (req.headers.origin || process.env.VERCEL_URL || 'https://vereli.vercel.app');
+    const origin = req.headers.origin || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '') || 'https://vereli.vercel.app';
+    const base = successUrl || origin;
     const session = await createCheckoutSession({
       customerId,
       plan,

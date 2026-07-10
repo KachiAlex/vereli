@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    const base = req.headers.origin || process.env.VERCEL_URL || 'https://vereli.vercel.app';
+    const base = req.headers.origin || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '') || 'https://vereli.vercel.app';
     const session = await createBillingPortalSession({
       customerId: tenant.stripe_customer_id,
       returnUrl: `${base}/app?billing=portal`,
