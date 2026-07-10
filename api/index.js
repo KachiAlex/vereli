@@ -50,6 +50,10 @@ export default function handler(req, res) {
       { method: 'POST', path: '/api/contracts/:id/sign', description: 'Sign a contract' },
       { method: 'GET',  path: '/api/portal/contracts', description: 'Client portal contracts' },
       { method: 'POST', path: '/api/portal/contracts/:id/sign', description: 'Client portal sign contract' },
+      { method: 'POST', path: '/api/payments/flutterwave', description: 'Initialize Flutterwave payment' },
+      { method: 'POST', path: '/api/payments/flutterwave?verify', description: 'Verify Flutterwave payment' },
+      { method: 'POST', path: '/api/portal/payments/flutterwave', description: 'Initialize portal Flutterwave payment' },
+      { method: 'POST', path: '/api/webhooks/flutterwave', description: 'Flutterwave payment webhook' },
     ],
   });
 }
