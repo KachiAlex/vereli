@@ -2,8 +2,12 @@ import { sendJson, handleCors } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2024-06-20' });
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) return null;
+  return new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' });
+}
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -17,6 +21,7 @@ export default async function handler(req, res) {
   let event;
 
   try {
+    const stripe = getStripe();
     if (endpointSecret && sig) {
       // Signature verification requires the raw body. Vercel parses JSON by default,
       // so reconstruct it. For production, set STRIPE_WEBHOOK_SECRET and use the raw body.
@@ -36,6 +41,8 @@ export default async function handler(req, res) {
   const tenantId = metadata.tenant_id ? Number(metadata.tenant_id) : null;
 
   try {
+    const stripe = getStripe();
+    if (!stripe) { sendJson(res, 503, { error: 'Stripe is not configured' }); return; }
     if (event.type === 'checkout.session.completed') {
       if (!tenantId) {
         sendJson(res, 200, { message: 'No tenant metadata' });

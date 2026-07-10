@@ -2,7 +2,10 @@ import { sendJson, handleCors, badRequest, requireAuth } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2024-06-20' });
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) return null;
+  return new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' });
+}
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -21,6 +24,8 @@ export default async function handler(req, res) {
     if (invoice.status === 'paid') { sendJson(res, 400, { error: 'Invoice already paid' }); return; }
 
     try {
+      const stripe = getStripe();
+      if (!stripe) { sendJson(res, 503, { error: 'Stripe is not configured' }); return; }
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount * 100), // cents
         currency: currency.toLowerCase(),
@@ -46,6 +51,8 @@ export default async function handler(req, res) {
     if (!paymentIntentId || !invoiceId) { badRequest(res, 'paymentIntentId and invoiceId required'); return; }
 
     try {
+      const stripe = getStripe();
+      if (!stripe) { sendJson(res, 503, { error: 'Stripe is not configured' }); return; }
       const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
       if (intent.status === 'succeeded') {
         await sql`UPDATE invoices SET status = 'paid', paid_at = NOW() WHERE id = ${Number(invoiceId)}`;

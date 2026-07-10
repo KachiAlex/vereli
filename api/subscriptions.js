@@ -3,7 +3,10 @@ import { sql } from './lib/neon.js';
 import { canManageData } from './lib/auth.js';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2024-06-20' });
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) return null;
+  return new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' });
+}
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -34,7 +37,8 @@ export default async function handler(req, res) {
 
     // Create Stripe subscription if key is configured
     let stripeSubId = null;
-    if (process.env.STRIPE_SECRET_KEY) {
+    const stripe = getStripe();
+    if (stripe) {
       try {
         const product = await stripe.products.create({ name: `${name} — ${interval}` });
         const price = await stripe.prices.create({ unit_amount: Math.round(amount * 100), currency: currency.toLowerCase(), recurring: { interval }, product: product.id });
