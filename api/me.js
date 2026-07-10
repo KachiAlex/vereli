@@ -19,7 +19,12 @@ export default async function handler(req, res) {
       await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS primary_color TEXT`;
       // Fetch full user data with tenant info
       const [userData] = await sql`
-        SELECT u.id, u.email, u.name, u.role, u.tenant_id, t.name as tenant_name, t.slug as tenant_slug, t.status as tenant_status, t.plan as tenant_plan, t.trial_ends_at as tenant_trial_ends, t.logo_url, t.primary_color
+        SELECT u.id, u.email, u.name, u.role, u.tenant_id,
+          t.name as tenant_name, t.slug as tenant_slug, t.status as tenant_status,
+          t.plan as tenant_plan, t.trial_ends_at as tenant_trial_ends,
+          t.subscription_status, t.subscription_interval,
+          t.stripe_customer_id, t.stripe_subscription_id,
+          t.subscription_current_period_end, t.logo_url, t.primary_color
         FROM users u
         LEFT JOIN tenants t ON u.tenant_id = t.id
         WHERE u.id = ${user.userId}
@@ -47,6 +52,11 @@ export default async function handler(req, res) {
           primary: userData.primary_color || null,
           plan: userData.tenant_plan || null,
           trialEndsAt: userData.tenant_trial_ends || null,
+          subscriptionStatus: userData.subscription_status || null,
+          subscriptionInterval: userData.subscription_interval || null,
+          stripeCustomerId: userData.stripe_customer_id || null,
+          stripeSubscriptionId: userData.stripe_subscription_id || null,
+          subscriptionCurrentPeriodEnd: userData.subscription_current_period_end || null,
           userCount,
           clientCount,
         },
