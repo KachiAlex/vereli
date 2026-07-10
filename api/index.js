@@ -43,6 +43,13 @@ export default function handler(req, res) {
       { method: 'GET',  path: '/api/team', description: 'List team members' },
       { method: 'POST', path: '/api/team', description: 'Invite a team member' },
       { method: 'GET',  path: '/api/team/:id', description: 'Update/remove a team member' },
+      { method: 'GET',  path: '/api/contracts', description: 'List contracts' },
+      { method: 'POST', path: '/api/contracts', description: 'Create a contract' },
+      { method: 'GET',  path: '/api/contracts/:id', description: 'Get/update/delete a contract' },
+      { method: 'POST', path: '/api/contracts/:id/send', description: 'Send contract for signature' },
+      { method: 'POST', path: '/api/contracts/:id/sign', description: 'Sign a contract' },
+      { method: 'GET',  path: '/api/portal/contracts', description: 'Client portal contracts' },
+      { method: 'POST', path: '/api/portal/contracts/:id/sign', description: 'Client portal sign contract' },
     ],
   });
 }

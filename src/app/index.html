@@ -372,6 +372,71 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
   </div>
 </div>
 
+<!-- CONTRACT MODAL -->
+<div id="contract-mod" style="display:none;position:fixed;inset:0;background:rgba(6,24,26,.46);z-index:200;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)">
+  <div class="modal" style="width:100%;max-width:640px;max-height:90vh;overflow:auto">
+    <div class="mh">
+      <div style="width:36px;height:36px;border-radius:10px;background:#DDE8E0;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#17A39B" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h6"/></svg>
+      </div>
+      <div style="flex:1">
+        <div class="ht" style="font-size:15px;font-weight:800;color:#121212">New contract</div>
+        <div style="font-size:12px;color:#8E9E9E;margin-top:1px">Create an agreement to send for e-signature</div>
+      </div>
+      <button onclick="closeContractModal()" style="background:none;border:none;cursor:pointer;color:#8E9E9E;padding:4px;display:flex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="mb">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div>
+          <label class="flbl">Client <span style="color:#E87070">*</span></label>
+          <select class="field" id="ct-client" style="appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236B6B68%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22/></svg>');background-repeat:no-repeat;background-position:right 12px center;padding-right:36px">
+            <option value="">Select a client…</option>
+          </select>
+        </div>
+        <div>
+          <label class="flbl">Contract title <span style="color:#E87070">*</span></label>
+          <input type="text" class="field" placeholder="e.g. Service Agreement 2026" id="ct-title">
+        </div>
+        <div>
+          <label class="flbl">Agreement content</label>
+          <textarea class="field" id="ct-content" rows="10" placeholder="Paste or type the agreement text here…" style="resize:vertical;font-family:'Inter',sans-serif;line-height:1.5"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button onclick="closeContractModal()" class="tb-btn">Cancel</button>
+      <button onclick="saveContract()" class="tb-btn pri">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Save draft
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTRACT VIEW MODAL -->
+<div id="contract-view-mod" style="display:none;position:fixed;inset:0;background:rgba(6,24,26,.46);z-index:200;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)">
+  <div class="modal" style="width:100%;max-width:720px;max-height:90vh;overflow:auto">
+    <div class="mh">
+      <div style="flex:1">
+        <div class="ht" style="font-size:15px;font-weight:800;color:#121212" id="cv-title">Contract</div>
+        <div style="font-size:12px;color:#8E9E9E;margin-top:1px" id="cv-meta">—</div>
+      </div>
+      <button onclick="closeContractViewModal()" style="background:none;border:none;cursor:pointer;color:#8E9E9E;padding:4px;display:flex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="mb">
+      <div id="cv-status" style="margin-bottom:16px"></div>
+      <div id="cv-body" style="background:#F8FBFA;border:1px solid #E2EBE9;border-radius:12px;padding:20px;font-size:13px;line-height:1.6;color:#0A2E2F;white-space:pre-wrap"></div>
+    </div>
+    <div class="mf" id="cv-actions">
+      <button onclick="closeContractViewModal()" class="tb-btn">Close</button>
+    </div>
+  </div>
+</div>
+
 <div id="auth-overlay" style="display:none;position:fixed;inset:0;background:#F6F9F8;z-index:9999;align-items:center;justify-content:center;padding:24px;overflow-y:auto">
   <div style="width:100%;max-width:380px">
     <div style="text-align:center;margin-bottom:32px">
@@ -621,7 +686,7 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
       <div style="max-width:760px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px">
           <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Contracts</div><div style="font-size:13.5px;color:#7A9E99">Agreements sent, signed, and stored</div></div>
-          <button onclick="document.getElementById('contract-file').click()" class="tb-btn pri">
+          <button onclick="openContractModal()" class="tb-btn pri">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New contract</button>
         </div>
         <div class="card" style="overflow:hidden" id="contracts-list"></div>
@@ -1320,7 +1385,7 @@ async function goView(name,el){
   if(name==='payments'){renderPay();switchPayWin('month',document.querySelector('#pay-win-tabs button'));document.getElementById('tba').innerHTML=`<button onclick="openPayModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Record payment</button>`;}
   if(name==='deliverables')renderDeliverables();
   if(name==='kanban')renderKanban();
-  if(name==='contracts')renderContracts();
+  if(name==='contracts'){await fetchContracts();renderContracts();}
   if(name==='team')renderTeam();
   if(name==='settings')renderSettings('general');
   if(name==='early-access'){
@@ -2908,32 +2973,121 @@ function renderDeliverables(){
   lucide.createIcons();
 }
 
+let CONTRACTS = [];
+
+async function fetchContracts(){
+  try{
+    const res=await apiFetch('/contracts');
+    if(!res.ok){console.warn('Failed to fetch contracts',res.status);return;}
+    const json=await res.json();
+    CONTRACTS=json.data||[];
+  }catch(err){console.error('fetchContracts error',err);}
+}
+
+function contractStatusBadge(status){
+  const map={
+    draft:{cls:'gray',label:'Draft',icon:'file-text'},
+    sent:{cls:'amber',label:'Sent',icon:'send'},
+    viewed:{cls:'amber',label:'Viewed',icon:'eye'},
+    signed:{cls:'green',label:'Signed',icon:'file-check'},
+    declined:{cls:'red',label:'Declined',icon:'x-circle'}
+  };
+  const m=map[status]||map.draft;
+  return `<span class="st ${m.cls}" style="font-size:10px;display:flex;align-items:center;gap:4px"><i data-lucide="${m.icon}" style="width:10px;height:10px"></i>${m.label}</span>`;
+}
+
 function renderContracts(){
-  const contracts=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.files.filter(f=>f.type==='sig').map(f=>({...f,cname:c.name,wa:w.name,cid:c.id}))));
   const el=document.getElementById('contracts-list');if(!el)return;
-  const empty='<div class="emp"><div class="emp-ico"><i data-lucide="file-text" style="width:20px;height:20px;color:#B0B0AD"></i></div><div class="emp-t">No contracts yet</div><div class="emp-b">Uploaded contracts and signed agreements appear here.</div></div>';
-  if(!contracts.length){el.innerHTML=empty;lucide.createIcons();return;}
-  const hdr='<div style="padding:12px 18px 10px;border-bottom:1px solid #EAF0EC;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#0B4F52">'+contracts.length+' agreements</span><input type="file" id="contract-file" style="display:none" onchange="handleContractUpload(this)"><button onclick="document.getElementById(\'contract-file\').click()" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> New contract</button></div>';
-  const rows=contracts.map(f=>{const signed=f.signing==='signed';const awaiting=f.signing==='awaiting-signature';return '<div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EAF0EC;cursor:pointer" onclick="openCP('+f.cid+')"><div style="width:30px;height:30px;border-radius:8px;background:'+(signed?'#E4F3EC':awaiting?'#FFF3E6':'#F0F0EE')+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+(signed?'file-check':awaiting?'pen-line':'file-text')+'" style="width:13px;height:13px;color:'+(signed?'#17A39B':awaiting?'#CC6B1A':'#7A9E99')+'"></i></div><div style="flex:1;min-width:0;margin-left:8px"><div class="ht" style="font-size:13px;font-weight:600;color:#0B4F52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+f.n+'</div><div style="font-size:11px;color:#7A9E99;margin-top:1px">'+f.cname+' · '+f.wa+'</div></div><span style="font-size:11px;color:#8E9E9E;margin-right:10px">'+f.date+'</span><span class="st '+(signed?'green':awaiting?'amber':'gray')+'" style="font-size:10px">'+(signed?'Signed':awaiting?'Awaiting sig.':'Draft')+'</span></div>';}).join('');
+  const empty='<div class="emp"><div class="emp-ico"><i data-lucide="file-text" style="width:20px;height:20px;color:#B0B0AD"></i></div><div class="emp-t">No contracts yet</div><div class="emp-b">Create an agreement and send it to a client for e-signature.</div></div>';
+  if(!CONTRACTS.length){el.innerHTML=empty;lucide.createIcons();return;}
+  const hdr='<div style="padding:12px 18px 10px;border-bottom:1px solid #EAF0EC;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#0B4F52">'+CONTRACTS.length+' agreement'+(CONTRACTS.length===1?'':'s')+'</span></div>';
+  const rows=CONTRACTS.map(ct=>{
+    const date=ct.createdAt?new Date(ct.createdAt).toLocaleDateString():'—';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #EAF0EC;cursor:pointer" onclick="viewContract(${ct.id})">
+      <div style="width:30px;height:30px;border-radius:8px;background:${ct.status==='signed'?'#E4F3EC':ct.status==='sent'||ct.status==='viewed'?'#FFF3E6':'#F0F0EE'};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${ct.status==='signed'?'file-check':ct.status==='sent'||ct.status==='viewed'?'pen-line':'file-text'}" style="width:13px;height:13px;color:${ct.status==='signed'?'#17A39B':ct.status==='sent'||ct.status==='viewed'?'#CC6B1A':'#7A9E99'}"></i></div>
+      <div style="flex:1;min-width:0;margin-left:8px">
+        <div class="ht" style="font-size:13px;font-weight:600;color:#0B4F52;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(ct.title)}</div>
+        <div style="font-size:11px;color:#7A9E99;margin-top:1px">${esc(ct.clientName)} · ${date}</div>
+      </div>
+      ${contractStatusBadge(ct.status)}
+    </div>`;
+  }).join('');
   el.innerHTML=hdr+'<div>'+rows+'</div>';
   lucide.createIcons();
 }
-async function handleContractUpload(input){
-  const file=input.files[0];if(!file)return;
-  if(!DATA.clients.length||!DATA.clients[0].workAreas.length){toast('No project available');return;}
-  const waApiId=DATA.clients[0].workAreas[0].apiId;
+
+function openContractModal(){
+  const sel=document.getElementById('ct-client');
+  sel.innerHTML='<option value="">Select a client…</option>'+DATA.clients.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  document.getElementById('ct-title').value='';
+  document.getElementById('ct-content').value='';
+  document.getElementById('contract-mod').style.display='flex';
+}
+function closeContractModal(){document.getElementById('contract-mod').style.display='none';}
+
+async function saveContract(){
+  const clientId=Number(document.getElementById('ct-client').value);
+  const title=document.getElementById('ct-title').value.trim();
+  const content=document.getElementById('ct-content').value.trim();
+  if(!clientId){toast('Select a client');return;}
+  if(!title){toast('Enter a contract title');return;}
   try{
-    toast('Uploading file…');
-    const uploadData=await uploadFileBlob(file);
-    const name=file.name;const size=(file.size/(1024*1024)).toFixed(1)+' MB';
-    const res=await apiFetch('/files',{method:'POST',body:JSON.stringify({workAreaId:waApiId,name,type:'SIG',size,visibility:'shared',uploaderName:CURRENT_USER?CURRENT_USER.name:'You',url:uploadData.url||''})});
+    const res=await apiFetch('/contracts',{method:'POST',body:JSON.stringify({clientId,title,content})});
     const json=await res.json();
-    if(!res.ok){toast(json.error||'Upload failed');return;}
-    const f=json.data;
-    DATA.clients[0].workAreas[0].files.push({apiId:f.id,n:f.name,type:'sig',sz:f.size||'—',vis:'shared',uploader:f.uploaderName||'—',date:'now',url:f.url||''});
-    toast('Contract uploaded');renderContracts();lucide.createIcons();
-  }catch(err){toast(err.message||'Upload failed');}
-  input.value='';
+    if(!res.ok){toast(json.error||'Failed to save');return;}
+    await fetchContracts();
+    renderContracts();
+    closeContractModal();
+    toast('Contract draft saved');
+  }catch(err){toast('Failed to save contract');}
+}
+
+let VIEWING_CONTRACT_ID=null;
+
+function viewContract(id){
+  const ct=CONTRACTS.find(c=>c.id===id);if(!ct)return;
+  VIEWING_CONTRACT_ID=id;
+  document.getElementById('cv-title').textContent=ct.title||'Contract';
+  document.getElementById('cv-meta').textContent=`${ct.clientName || '—'} · Created ${ct.createdAt?new Date(ct.createdAt).toLocaleString():'—'}`;
+  document.getElementById('cv-body').textContent=ct.content||'(No content)';
+  const statusEl=document.getElementById('cv-status');
+  const actionsEl=document.getElementById('cv-actions');
+  let actions='<button onclick="closeContractViewModal()" class="tb-btn">Close</button>';
+  if(ct.status==='draft'){
+    actions+=`<button onclick="sendContract(${ct.id})" class="tb-btn pri">Send for signature</button><button onclick="deleteContract(${ct.id})" class="tb-btn" style="background:#FEF2F2;color:#B91C1C;border-color:#FECACA">Delete</button>`;
+  }
+  if(ct.status==='signed'&&ct.pdfUrl){
+    actions+=`<a href="${ct.pdfUrl}" target="_blank" class="tb-btn pri" download>Download signed PDF</a>`;
+  }
+  statusEl.innerHTML=contractStatusBadge(ct.status);
+  actionsEl.innerHTML=actions;
+  document.getElementById('contract-view-mod').style.display='flex';
+  lucide.createIcons();
+}
+function closeContractViewModal(){document.getElementById('contract-view-mod').style.display='none';VIEWING_CONTRACT_ID=null;}
+
+async function sendContract(id){
+  try{
+    const res=await apiFetch(`/contracts/${id}/send`,{method:'POST'});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Failed to send');return;}
+    await fetchContracts();
+    renderContracts();
+    closeContractViewModal();
+    toast('Contract sent to client');
+  }catch(err){toast('Failed to send contract');}
+}
+
+async function deleteContract(id){
+  if(!confirm('Delete this contract draft?'))return;
+  try{
+    const res=await apiFetch(`/contracts/${id}`,{method:'DELETE'});
+    if(!res.ok){toast('Failed to delete');return;}
+    await fetchContracts();
+    renderContracts();
+    closeContractViewModal();
+    toast('Contract deleted');
+  }catch(err){toast('Failed to delete contract');}
 }
 
 /* ══ GLOBAL VIEWS ══ */
