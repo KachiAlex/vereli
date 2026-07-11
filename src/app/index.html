@@ -1040,18 +1040,50 @@ async function loadTeam() {
 function apiInvoiceToData(inv) {
   const fmt = new Intl.NumberFormat('en-NG', { style: 'currency', currency: inv.currency || 'NGN', maximumFractionDigits: 0 });
   const amtStr = fmt.format(inv.amount);
+  const status = inv.status || (inv.storedStatus || 'draft');
+  const dueDate = inv.dueDate;
+  const isOverdue = (status === 'sent' || status === 'pending') && dueDate && new Date(dueDate) < new Date();
+  const displayStatus = status === 'paid' ? 'paid' : status === 'draft' ? 'draft' : isOverdue ? 'overdue' : 'sent';
   return {
     id: 'INV-' + String(inv.id).padStart(3, '0'),
     apiId: inv.id,
     desc: (inv.lineItems && inv.lineItems[0] && inv.lineItems[0].desc) || 'Invoice',
     amt: amtStr,
-    status: inv.status,
-    date: inv.dueDate ? new Date(inv.dueDate).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' }) : '—',
-    dueDate: inv.dueDate,
+    status: displayStatus,
+    rawStatus: status,
+    date: dueDate ? new Date(dueDate).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' }) : '—',
+    dueDate: dueDate,
     lineItems: inv.lineItems || [],
     sentAt: inv.sentAt,
     paidAt: inv.paidAt,
   };
+}
+
+function invoiceStatusConfig(status){
+  const map={
+    paid:{cls:'green',label:'Paid',icon:'check',bg:'#EAF2EE',tc:'#2D6A4F'},
+    draft:{cls:'gray',label:'Draft',icon:'file-text',bg:'#F0F0EE',tc:'#7A9E99'},
+    sent:{cls:'purple',label:'Sent',icon:'send',bg:'#F5F0FF',tc:'#6B3FA0'},
+    overdue:{cls:'red',label:'Overdue',icon:'alert-circle',bg:'#FDECEA',tc:'#B91C1C'}
+  };
+  return map[status]||map.draft;
+}
+
+function invoiceStatusBadge(status){
+  const cfg=invoiceStatusConfig(status);
+  return `<span class="st ${cfg.cls}" style="font-size:10px;display:flex;align-items:center;gap:4px"><i data-lucide="${cfg.icon}" style="width:10px;height:10px"></i>${cfg.label}</span>`;
+}
+
+function invoiceStatusIconBg(status){
+  return invoiceStatusConfig(status).bg;
+}
+
+function invoiceStatusIconColor(status){
+  return invoiceStatusConfig(status).tc;
+}
+
+function invoiceStatusIconName(status){
+  return invoiceStatusConfig(status).icon;
 }
 
 function formatCurrency(amount, currency) {
@@ -1416,8 +1448,8 @@ function computeRevenue(win){
     const inWin=win==='month'?d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear():win==='year'?d.getFullYear()===now.getFullYear():true;
     if(!inWin)return;
     if(inv.status==='paid') collected+=Number(inv.amount)||0;
-    else if(inv.status==='sent'||inv.status==='pending'){
-      if(d<now) overdue+=Number(inv.amount)||0;
+    else if(inv.status==='sent'||inv.status==='overdue'){
+      if(d<now||inv.status==='overdue') overdue+=Number(inv.amount)||0;
       else pending+=Number(inv.amount)||0;
     }
   });
@@ -1432,7 +1464,7 @@ function renderDash(){
   if(kpiRow){
     const activeClients=DATA.clients.length;
     const awaitingApproval=DATA.clients.reduce((sum,c)=>sum+(c.workAreas||[]).reduce((s,wa)=>s+wa.approvals.filter(a=>a.status==='waiting').length,0),0);
-    const unpaidInvoices=DATA.clients.reduce((sum,c)=>sum+(c.invoices||[]).filter(inv=>inv.status==='sent'||inv.status==='pending').length,0);
+    const unpaidInvoices=DATA.clients.reduce((sum,c)=>sum+(c.invoices||[]).filter(inv=>inv.status==='sent'||inv.status==='overdue').length,0);
     const revMonth=computeRevenue('month').collected;
     const revStr=revMonth>=1000?(revMonth/1000).toFixed(1)+'k':revMonth.toString();
     kpiRow.innerHTML=`<div class="dash-kpi" style="color:#0B4F52"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="width:34px;height:34px;border-radius:10px;background:#E2EDE9;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B4F52" stroke-width="1.75" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="st teal" style="font-size:10px">Active</span></div><div class="ht" style="font-size:36px;font-weight:900;letter-spacing:-.05em;color:#0A2E2F;line-height:1">${activeClients}</div><div style="font-size:12px;color:#8AADA8;margin-top:6px;font-weight:500;letter-spacing:.01em">Active clients</div></div>
@@ -1451,7 +1483,7 @@ function renderDash(){
       });
       // Overdue invoices
       if(c.invoices){
-        c.invoices.filter(inv=>inv.status==='sent'&&new Date(inv.dueDate)<new Date()).forEach(inv=>{
+        c.invoices.filter(inv=>(inv.status==='sent'&&new Date(inv.dueDate)<new Date())||inv.status==='overdue').forEach(inv=>{
           attnItems.push({cls:'red',label:'Invoice overdue',txt:`${inv.id} — Due ${inv.date}`,sub:c.name,cid:c.id});
         });
       }
@@ -1919,7 +1951,7 @@ function renderCG(filter){
   const rows=list.map(c=>{
     const wa=c.workAreas||[];
     const pend=wa.flatMap(w=>w.approvals.filter(a=>a.status==='waiting')).length;
-    const unpaid=wa.flatMap(w=>w.invoices.filter(i=>i.status==='unpaid')).length;
+    const unpaid=wa.flatMap(w=>w.invoices.filter(i=>i.status==='sent'||i.status==='overdue')).length;
     const openT=wa.flatMap(w=>w.tasks.filter(t=>!t.done)).length;
     const statusColor=c.eng==='active'?'green':c.eng==='paused'?'gray':'amber';
     const statusLabel=c.eng==='active'?'Active':c.eng==='paused'?'Paused':'Prospect';
@@ -2446,7 +2478,7 @@ function renderCP(){
   const c=SC; if(!c)return;
   const wa=c.workAreas||[];
   const pend=wa.flatMap(w=>w.approvals.filter(a=>a.status==='waiting')).length;
-  const unpaid=wa.flatMap(w=>w.invoices.filter(i=>i.status==='unpaid')).length;
+  const unpaid=wa.flatMap(w=>w.invoices.filter(i=>i.status==='sent'||i.status==='overdue')).length;
   const openT=wa.flatMap(w=>w.tasks.filter(t=>!t.done)).length;
   const pv=document.getElementById('cp-view');
   // Update topbar breadcrumb
@@ -2557,7 +2589,7 @@ async function handleDelFileUpload(cid,input){
 
 function renderCTOverview(c){
   const pend=c.workAreas.flatMap(w=>w.approvals.filter(a=>a.status==='waiting'));
-  const unpaid=c.workAreas.flatMap(w=>w.invoices.filter(i=>i.status==='unpaid'));
+  const unpaid=c.workAreas.flatMap(w=>w.invoices.filter(i=>i.status==='sent'||i.status==='overdue'));
   const openT=c.workAreas.flatMap(w=>w.tasks.filter(t=>!t.done));
   const recentAct=buildActivity(c).slice(0,3);
   const nextAction=c.nextAction;
@@ -2788,7 +2820,13 @@ async function updateApproval(apiId, status, idx){
 
 function renderWAInvoices(wa){
   if(!wa.invoices.length)return emp('No invoices','Invoices for this project appear here.','file-text');
-  return `<div class="card" style="padding:0 16px">${wa.invoices.map(inv=>`<div class="ir"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${inv.status==='paid'?'#EAF2EE':'#F5F0FF'};display:flex;align-items:center;justify-content:center"><i data-lucide="${inv.status==='paid'?'check':'clock'}" style="width:12px;height:12px;color:${inv.status==='paid'?'#2D6A4F':'#6B3FA0'}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id}</div><div class="imeta">${inv.desc} · Due ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span><span class="st ${inv.status==='paid'?'green':'purple'}" style="font-size:10px">${inv.status==='paid'?'Paid':'Unpaid'}</span></div>`).join('')}</div>`;
+  return `<div class="card" style="padding:0 16px">${wa.invoices.map(inv=>{
+    const cfg=invoiceStatusConfig(inv.status);
+    const canPay=inv.status==='sent'||inv.status==='overdue';
+    const canSend=inv.status==='draft';
+    const canResend=inv.status==='sent'||inv.status==='overdue';
+    return `<div class="ir"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${cfg.bg};display:flex;align-items:center;justify-content:center"><i data-lucide="${cfg.icon}" style="width:12px;height:12px;color:${cfg.tc}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id}</div><div class="imeta">${inv.desc} · Due ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span>${canPay?`<span style="display:flex;gap:6px;margin-right:8px"><button class="tb-btn pri" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation();payInvoiceWithFlutterwave(${inv.apiId},'${esc(inv.cname||'Client')}')">Pay FLW</button><button class="tb-btn" style="font-size:11px;padding:5px 10px;background:#10B981;color:#fff;border-color:#10B981" onclick="event.stopPropagation();payInvoiceWithPaystack(${inv.apiId},'${esc(inv.cname||'Client')}')">Pay PS</button></span>`:''}${canSend?`<button class="tb-btn" style="font-size:11px;padding:5px 10px;margin-right:8px" onclick="event.stopPropagation();sendInvoice(${inv.apiId})">Send</button>`:''}${canResend?`<button class="tb-btn" style="font-size:11px;padding:5px 10px;margin-right:8px" onclick="event.stopPropagation();sendInvoice(${inv.apiId})">Resend</button>`:''}${invoiceStatusBadge(inv.status)}</div>`;
+  }).join('')}</div>`;
 }
 
 function buildActivity(c){
@@ -2852,7 +2890,7 @@ async function saveClientInvoice(cid){
   if(!projectId||!amount||!dueDate){toast('Please fill all required fields');return;}
   try{
     const lineItems=desc?[{desc,qty:1,rate:amount}]:[];
-    const res=await apiFetch('/invoices',{method:'POST',body:JSON.stringify({clientId:cid,projectId,amount,currency:'NGN',dueDate,status:'pending',lineItems})});
+    const res=await apiFetch('/invoices',{method:'POST',body:JSON.stringify({clientId:cid,projectId,amount,currency:'NGN',dueDate,status:'draft',lineItems})});
     const json=await res.json();
     if(!res.ok){toast(json.error||'Failed to create invoice');return;}
     INVOICES.push(json.data);
@@ -2870,8 +2908,14 @@ function renderCTInvoices(c){
   if(!all.length){
     return `<div style="max-width:640px"><div style="margin-bottom:14px"><button onclick="openClientInvModal(${c.id})" class="tb-btn pri" style="font-size:11.5px;padding:6px 12px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Create invoice</button></div>${emp('No invoices','Create an invoice for this client.','file-text')}</div>`;
   }
-  const total=all.filter(i=>i.status==='unpaid').reduce((s,i)=>s+parseFloat(i.amt.replace(/[^0-9.]/g,'')||0),0);
-  return `<div style="max-width:640px"><div style="margin-bottom:14px"><button onclick="openClientInvModal(${c.id})" class="tb-btn pri" style="font-size:11.5px;padding:6px 12px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Create invoice</button></div>${total>0?`<div style="padding:14px 18px;border-radius:12px;background:#FFF5F0;border:1px solid #FFD4BA;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between"><div><div class="ht" style="font-size:13px;font-weight:700;color:#121212">Outstanding balance</div><div style="font-size:12px;color:#CC5A25;margin-top:2px">${all.filter(i=>i.status==='unpaid').length} unpaid</div></div><div class="ht" style="font-size:20px;font-weight:900;color:#A0621A">$${total.toLocaleString()}</div></div>`:''}<div class="card" style="padding:0 18px">${all.map(inv=>`<div class="ir"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${inv.status==='paid'?'#EAF2EE':'#F5F0FF'};display:flex;align-items:center;justify-content:center"><i data-lucide="${inv.status==='paid'?'check':'clock'}" style="width:12px;height:12px;color:${inv.status==='paid'?'#2D6A4F':'#6B3FA0'}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id}</div><div class="imeta">${inv.desc} · ${inv.wa} · ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span><span class="st ${inv.status==='paid'?'green':'purple'}" style="font-size:10px">${inv.status==='paid'?'Paid':'Unpaid'}</span></div>`).join('')}</div></div>`;
+  const total=all.filter(i=>i.status==='sent'||i.status==='overdue').reduce((s,i)=>s+parseFloat(i.amt.replace(/[^0-9.]/g,'')||0),0);
+  return `<div style="max-width:640px"><div style="margin-bottom:14px"><button onclick="openClientInvModal(${c.id})" class="tb-btn pri" style="font-size:11.5px;padding:6px 12px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Create invoice</button></div>${total>0?`<div style="padding:14px 18px;border-radius:12px;background:#FFF5F0;border:1px solid #FFD4BA;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between"><div><div class="ht" style="font-size:13px;font-weight:700;color:#121212">Outstanding balance</div><div style="font-size:12px;color:#CC5A25;margin-top:2px">${all.filter(i=>i.status==='sent'||i.status==='overdue').length} unpaid</div></div><div class="ht" style="font-size:20px;font-weight:900;color:#A0621A">$${total.toLocaleString()}</div></div>`:''}<div class="card" style="padding:0 18px">${all.map(inv=>{
+    const cfg=invoiceStatusConfig(inv.status);
+    const canPay=inv.status==='sent'||inv.status==='overdue';
+    const canSend=inv.status==='draft';
+    const canResend=inv.status==='sent'||inv.status==='overdue';
+    return `<div class="ir"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${cfg.bg};display:flex;align-items:center;justify-content:center"><i data-lucide="${cfg.icon}" style="width:12px;height:12px;color:${cfg.tc}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id}</div><div class="imeta">${inv.desc} · ${inv.wa} · ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span>${canPay?`<span style="display:flex;gap:6px;margin-right:8px"><button class="tb-btn pri" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation();payInvoiceWithFlutterwave(${inv.apiId},'${esc(c.name)}')">Pay FLW</button><button class="tb-btn" style="font-size:11px;padding:5px 10px;background:#10B981;color:#fff;border-color:#10B981" onclick="event.stopPropagation();payInvoiceWithPaystack(${inv.apiId},'${esc(c.name)}')">Pay PS</button></span>`:''}${canSend?`<button class="tb-btn" style="font-size:11px;padding:5px 10px;margin-right:8px" onclick="event.stopPropagation();sendInvoice(${inv.apiId})">Send</button>`:''}${canResend?`<button class="tb-btn" style="font-size:11px;padding:5px 10px;margin-right:8px" onclick="event.stopPropagation();sendInvoice(${inv.apiId})">Resend</button>`:''}${invoiceStatusBadge(inv.status)}</div>`;
+  }).join('')}</div></div>`;
 }
 
 function renderCTPayments(c){
@@ -3257,7 +3301,7 @@ async function saveInvoice(){
   if(!clientId||!projectId||!amount||!dueDate){toast('Please fill all required fields');return;}
   try {
     const lineItems = desc ? [{desc, qty:1, rate:amount}] : [];
-    const res = await apiFetch('/invoices', {method:'POST', body:JSON.stringify({clientId, projectId, amount, currency:'NGN', dueDate, status:'pending', lineItems})});
+    const res = await apiFetch('/invoices', {method:'POST', body:JSON.stringify({clientId, projectId, amount, currency:'NGN', dueDate, status:'draft', lineItems})});
     const json = await res.json();
     if(!res.ok){toast(json.error||'Failed to create invoice');return;}
     INVOICES.push(json.data);
@@ -3317,6 +3361,18 @@ async function payInvoiceWithPaystack(invoiceId, clientName){
     handler.openIframe();
   }catch(err){toast('Failed to start payment');}
 }
+async function sendInvoice(invoiceId, clientName){
+  try{
+    const res=await apiFetch(`/invoices/${invoiceId}/send`,{method:'POST'});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Could not send invoice');return;}
+    toast(json.data.status==='sent'?'Invoice sent':'Invoice resent');
+    await refreshInvoices();
+    renderInv();
+    if(SC){await loadClientWorkspace(SC.id);renderCP();}
+  }catch(err){toast('Failed to send invoice');}
+}
+
 async function refreshInvoices(){
   try{
     const res=await apiFetch('/invoices');
@@ -3338,14 +3394,20 @@ function renderInv(){
     const client=DATA.clients.find(c=>c.id===inv.clientId);
     return {...apiInvoiceToData(inv),id:inv.id,cname:client?client.name:'',cid:inv.clientId};
   }):DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.invoices.map(i=>({...i,cname:c.name,wa:w.name,cid:c.id}))));
-  el.innerHTML=all.map(inv=>`<div class="ir" style="cursor:pointer;align-items:center" onclick="openCP(${inv.cid})"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${inv.status==='paid'?'#EAF2EE':'#F5F0FF'};display:flex;align-items:center;justify-content:center"><i data-lucide="${inv.status==='paid'?'check':'clock'}" style="width:12px;height:12px;color:${inv.status==='paid'?'#2D6A4F':'#6B3FA0'}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id} <span style="font-weight:400;color:#8E9E9E;font-family:'Inter',sans-serif">· ${inv.cname}</span></div><div class="imeta">${inv.desc} · Due ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span>${inv.status!=='paid'?`<span style="display:flex;gap:6px;margin-right:8px"><button class="tb-btn pri" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation();payInvoiceWithFlutterwave(${inv.id},'${esc(inv.cname)}')">Pay FLW</button><button class="tb-btn" style="font-size:11px;padding:5px 10px;background:#10B981;color:#fff;border-color:#10B981" onclick="event.stopPropagation();payInvoiceWithPaystack(${inv.id},'${esc(inv.cname)}')">Pay PS</button></span>`:''}<span class="st ${inv.status==='paid'?'green':'purple'}" style="font-size:10px">${inv.status==='paid'?'Paid':'Unpaid'}</span></div>`).join('');
+  el.innerHTML=all.map(inv=>{
+    const cfg=invoiceStatusConfig(inv.status);
+    const canPay=inv.status==='sent'||inv.status==='overdue';
+    const canSend=inv.status==='draft';
+    const canResend=inv.status==='sent'||inv.status==='overdue';
+    return `<div class="ir" style="cursor:pointer;align-items:center" onclick="openCP(${inv.cid})"><div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:${cfg.bg};display:flex;align-items:center;justify-content:center"><i data-lucide="${cfg.icon}" style="width:12px;height:12px;color:${cfg.tc}"></i></div><div style="flex:1;min-width:0;margin-left:10px"><div class="iname">${inv.id} <span style="font-weight:400;color:#8E9E99;font-family:'Inter',sans-serif">· ${inv.cname}</span></div><div class="imeta">${inv.desc} · Due ${inv.date}</div></div><span class="ht" style="font-size:14px;font-weight:800;color:#121212;margin-right:8px">${inv.amt}</span>${canPay?`<span style="display:flex;gap:6px;margin-right:8px"><button class="tb-btn pri" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation();payInvoiceWithFlutterwave(${inv.id},'${esc(inv.cname)}')">Pay FLW</button><button class="tb-btn" style="font-size:11px;padding:5px 10px;background:#10B981;color:#fff;border-color:#10B981" onclick="event.stopPropagation();payInvoiceWithPaystack(${inv.id},'${esc(inv.cname)}')">Pay PS</button></span>`:''}${canSend?`<button class="tb-btn" style="font-size:11px;padding:5px 10px;margin-right:8px" onclick="event.stopPropagation();sendInvoice(${inv.id},'${esc(inv.cname)}')">Send</button>`:''}${canResend?`<button class="tb-btn" style="font-size:11px;padding:5px 10px;margin-right:8px" onclick="event.stopPropagation();sendInvoice(${inv.id},'${esc(inv.cname)}')">Resend</button>`:''}${invoiceStatusBadge(inv.status)}</div>`;
+  }).join('');
   // Update invoice stats
   const rev=computeRevenue('month');
   const sp=document.getElementById('inv-stat-paid');if(sp)sp.textContent=formatCurrency(rev.collected,'NGN');
   const spp=document.getElementById('inv-stat-pending');if(spp)spp.textContent=formatCurrency(rev.pending,'NGN');
   const spo=document.getElementById('inv-stat-overdue');if(spo)spo.textContent=formatCurrency(rev.overdue,'NGN');
   const ub=document.getElementById('inv-unpaid-badge');
-  if(ub){const uCount=all.filter(i=>i.status!=='paid').length;ub.textContent=uCount?`${uCount} unpaid`:'All paid';ub.className=`st ${uCount?'purple':'green'}`;ub.style.fontSize='10px';}
+  if(ub){const uCount=all.filter(i=>i.status==='sent'||i.status==='overdue').length;ub.textContent=uCount?`${uCount} unpaid`:'All paid';ub.className=`st ${uCount?'purple':'green'}`;ub.style.fontSize='10px';}
   lucide.createIcons();
 }
 

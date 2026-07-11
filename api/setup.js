@@ -159,6 +159,7 @@ export default async function handler(req, res) {
     await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS line_items JSONB`;
     await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS sent_at TIMESTAMPTZ`;
     await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ`;
+    await sql`ALTER TABLE invoices ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`;
 
     // 7. Create payments table
     await sql`

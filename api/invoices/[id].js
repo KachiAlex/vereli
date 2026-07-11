@@ -1,5 +1,6 @@
 import { sendJson, handleCors, badRequest, notFound, requireAuth } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
+import { canManageData } from '../lib/auth.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -52,10 +53,15 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST' && req.query.action === 'mark-sent') {
+    if (!canManageData(user)) { sendJson(res, 403, { error: 'Insufficient permissions' }); return; }
+    const [existing] = user.role === 'superadmin'
+      ? await sql`SELECT status FROM invoices WHERE id = ${id}`
+      : await sql`SELECT status FROM invoices WHERE id = ${id} AND tenant_id = ${user.tenantId}`;
+    if (!existing) { notFound(res); return; }
+    if (existing.status === 'paid') { sendJson(res, 400, { error: 'Paid invoices cannot be marked sent' }); return; }
     const [row] = user.role === 'superadmin'
       ? await sql`UPDATE invoices SET status = 'sent', sent_at = NOW() WHERE id = ${id} RETURNING id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at, created_at`
       : await sql`UPDATE invoices SET status = 'sent', sent_at = NOW() WHERE id = ${id} AND tenant_id = ${user.tenantId} RETURNING id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at, created_at`;
-    if (!row) { notFound(res); return; }
     sendJson(res, 200, { data: { id: row.id, clientId: row.client_id, projectId: row.project_id, amount: row.amount, currency: row.currency, status: row.status, dueDate: row.due_date, lineItems: row.line_items || [], sentAt: row.sent_at, paidAt: row.paid_at, createdAt: row.created_at } });
     return;
   }

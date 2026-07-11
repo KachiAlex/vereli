@@ -53,19 +53,23 @@ export default async function handler(req, res) {
       return;
     }
 
-    const data = rows.map(r => ({
-      id: r.id,
-      clientId: r.client_id,
-      projectId: r.project_id,
-      amount: r.amount,
-      currency: r.currency,
-      status: r.status,
-      dueDate: r.due_date,
-      lineItems: r.line_items || [],
-      sentAt: r.sent_at,
-      paidAt: r.paid_at,
-      createdAt: r.created_at,
-    }));
+    const data = rows.map(r => {
+      const isOverdue = r.status === 'sent' && r.due_date && new Date(r.due_date) < new Date();
+      return {
+        id: r.id,
+        clientId: r.client_id,
+        projectId: r.project_id,
+        amount: r.amount,
+        currency: r.currency,
+        status: isOverdue ? 'overdue' : r.status,
+        storedStatus: r.status,
+        dueDate: r.due_date,
+        lineItems: r.line_items || [],
+        sentAt: r.sent_at,
+        paidAt: r.paid_at,
+        createdAt: r.created_at,
+      };
+    });
     sendJson(res, 200, { data });
     return;
   }
@@ -76,9 +80,14 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { clientId, projectId, amount, currency = 'NGN', dueDate, status = 'pending', lineItems } = req.body || {};
+    const { clientId, projectId, amount, currency = 'NGN', dueDate, status = 'draft', lineItems } = req.body || {};
+    const allowedStatuses = ['draft', 'sent', 'paid', 'overdue'];
     if (!clientId || !projectId || !amount || !dueDate) {
       badRequest(res, 'clientId, projectId, amount, and dueDate are required');
+      return;
+    }
+    if (!allowedStatuses.includes(status)) {
+      badRequest(res, 'Invalid invoice status');
       return;
     }
     
