@@ -410,7 +410,7 @@ function closeSidebar(){
 </script>
 <script>
 const API_BASE='/api';
-let PORTAL_DATA={client:null,workAreas:[],tasks:[],files:[],comments:[],approvals:[],invoices:[],contracts:[]};
+let PORTAL_DATA={client:null,workAreas:[],tasks:[],files:[],comments:[],approvals:[],invoices:[],contracts:[],paymentGateways:{}};
 async function apiFetch(path,opts={}){
   const url=path.startsWith('http')?path:API_BASE+path;
   const res=await fetch(url,{...opts,credentials:'include'});
@@ -504,7 +504,7 @@ async function loadPortalData(){
   const clientId=CLIENT_AUTH?CLIENT_AUTH.id:urlClientId;
   if(!clientId){document.getElementById('render-overview').innerHTML='<div style="padding:40px;text-align:center;color:#88AAA4">No client selected.</div>';return;}
   try{
-    let client=null,workAreas=[],tasks=[],files=[],comments=[],approvals=[],invoices=[],contracts=[];
+    let client=null,workAreas=[],tasks=[],files=[],comments=[],approvals=[],invoices=[],contracts=[],paymentGateways={};
     if(useClientAuth){
       const res=await apiFetch('/portal/data');
       if(!res.ok){throw new Error('Unauthorized');}
@@ -517,6 +517,7 @@ async function loadPortalData(){
       comments=d.comments||[];
       approvals=d.approvals||[];
       invoices=d.invoices||[];
+      paymentGateways=d.paymentGateways||{};
       const ctRes=await apiFetch('/portal/contracts').catch(()=>null);
       if(ctRes&&ctRes.ok){const j=await ctRes.json();contracts=j.data||[];}
     }else{
@@ -536,7 +537,7 @@ async function loadPortalData(){
       const ctRes=await apiFetch('/portal/contracts').catch(()=>null);
       if(ctRes&&ctRes.ok){const j=await ctRes.json();contracts=j.data||[];}
     }
-    PORTAL_DATA={client,workAreas,tasks,files,comments,approvals,invoices,contracts};
+    PORTAL_DATA={client,workAreas,tasks,files,comments,approvals,invoices,contracts,paymentGateways};
     if(client){
       document.getElementById('portal-name').textContent=client.name;
       document.getElementById('portal-av').textContent=getInitials(client.name);
@@ -553,7 +554,7 @@ function updateBadges(){
   const{approvals,files,invoices,contracts}=PORTAL_DATA;
   const pendingAp=approvals.filter(a=>a.status==='waiting').length;
   const sharedFiles=files.filter(f=>f.visibility==='shared'||f.visibility==='client').length;
-  const unpaidInv=invoices.filter(i=>i.status==='unpaid'||i.status==='pending').length;
+  const unpaidInv=invoices.filter(i=>i.status==='sent'||i.status==='overdue'||i.status==='unpaid'||i.status==='pending').length;
   const pendingContracts=contracts.filter(c=>c.status==='sent'||c.status==='viewed').length;
   document.getElementById('badge-approvals').style.display=pendingAp?'':'none';
   document.getElementById('badge-files').style.display=sharedFiles?'':'none';
@@ -567,7 +568,7 @@ function renderOverview(){
   if(!client)return;
   const firstName=(client.contact||'there').split(' ')[0];
   const pendingApprovals=approvals.filter(a=>a.status==='waiting');
-  const unpaidInvoices=invoices.filter(i=>i.status==='unpaid'||i.status==='pending');
+  const unpaidInvoices=invoices.filter(i=>{const s=getInvoiceDisplayStatus(i);return s==='sent'||s==='overdue';});
   const sharedFiles=files.filter(f=>f.visibility==='shared'||f.visibility==='client');
   let attentionHtml='';
   pendingApprovals.forEach(a=>{
@@ -579,7 +580,11 @@ function renderOverview(){
     attentionHtml+='<div class="attn-item"><div style="width:36px;height:36px;border-radius:10px;background:#E6F4EE;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1A6B55" stroke-width="2" stroke-linecap="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B3D3F;margin-bottom:3px">'+esc(f.name)+'</div><div style="font-size:12px;color:#88AAA4">'+esc(wa?wa.name:'Project')+' &middot; Shared '+timeAgo(f.createdAt)+'</div></div><span class="st st-brand" style="margin-right:12px;flex-shrink:0">Ready to review</span><button class="act-btn act-approve" onclick="showToast(\'Downloading...\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Download</button></div>';
   });
   unpaidInvoices.slice(0,2).forEach(inv=>{
-    attentionHtml+='<div class="attn-item"><div style="width:36px;height:36px;border-radius:10px;background:#FDECEA;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B01C1C" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B3D3F;margin-bottom:3px">'+esc('INV-'+String(inv.id).padStart(3,'0'))+' &middot; '+fmtCurrency(inv.amount,inv.currency)+'</div><div style="font-size:12px;color:#B01C1C;font-weight:600">Due '+fmtDate(inv.dueDate)+'</div></div><button class="act-btn act-pay" style="flex-shrink:0" onclick="payPortalInvoiceWithFlutterwave('+inv.id+')">Pay now</button></div>';
+    const gws=PORTAL_DATA.paymentGateways||{};
+    const enabled=Object.keys(gws).filter(k=>gws[k].enabled);
+    const payFn=enabled[0]==='paystack'?'payPortalInvoiceWithPaystack':'payPortalInvoiceWithFlutterwave';
+    const payBtn=enabled.length?`<button class="act-btn act-pay" style="flex-shrink:0" onclick="${payFn}(${inv.id})">Pay now</button>`:'';
+    attentionHtml+='<div class="attn-item"><div style="width:36px;height:36px;border-radius:10px;background:#FDECEA;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B01C1C" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13.5px;font-weight:700;color:#0B3D3F;margin-bottom:3px">'+esc('INV-'+String(inv.id).padStart(3,'0'))+' &middot; '+fmtCurrency(inv.amount,inv.currency)+'</div><div style="font-size:12px;color:#B01C1C;font-weight:600">Due '+fmtDate(inv.dueDate)+'</div></div>'+payBtn+'</div>';
   });
   if(!attentionHtml)attentionHtml='<div class="attn-item" style="justify-content:center;color:#88AAA4"><div style="padding:22px">Nothing needs your attention right now.</div></div>';
   let projectsHtml='';
@@ -829,6 +834,26 @@ async function payPortalInvoiceWithPaystack(invoiceId){
   }catch(err){showToast('Failed to start payment');}
 }
 
+function getPortalPayButtons(invId){
+  const gws=PORTAL_DATA.paymentGateways||{};
+  const enabled=Object.keys(gws).filter(k=>gws[k].enabled);
+  if(!enabled.length){
+    return '<button class="act-btn act-pay" style="font-size:13px;padding:10px 20px;border-radius:10px" onclick="showToast(\'No payment methods available\')">No payment methods</button>';
+  }
+  return enabled.map(gw=>{
+    if(gw==='flutterwave'){
+      return '<button class="act-btn act-pay" style="font-size:13px;padding:10px 20px;border-radius:10px" onclick="payPortalInvoiceWithFlutterwave('+invId+')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Flutterwave</button>';
+    }
+    if(gw==='paystack'){
+      return '<button class="act-btn" style="font-size:13px;padding:10px 20px;border-radius:10px;background:#10B981;color:#fff" onclick="payPortalInvoiceWithPaystack('+invId+')">Paystack</button>';
+    }
+    if(gw==='stripe'){
+      return '<button class="act-btn" style="font-size:13px;padding:10px 20px;border-radius:10px;background:#635BFF;color:#fff" onclick="showToast(\'Stripe payment coming soon\')">Stripe</button>';
+    }
+    return '';
+  }).join('');
+}
+
 function renderPayments(){
   const{client,invoices}=PORTAL_DATA;
   if(!client)return;
@@ -846,7 +871,7 @@ function renderPayments(){
         inv.lineItems.forEach(li=>{html+='<div style="display:flex;justify-content:space-between;font-size:13px;color:#3A3A38;margin-bottom:7px"><span>'+esc(li.desc||li.description)+'</span><span class="ht" style="font-weight:600">'+fmtCurrency(Number(li.rate||li.amount)*(li.qty||1),inv.currency)+'</span></div>';});
         html+='<div style="display:flex;justify-content:space-between;font-size:14px;font-weight:800;padding-top:7px;border-top:1px solid #E2EBE9;margin-top:4px" class="ht"><span>Total</span><span>'+fmtCurrency(inv.amount,inv.currency)+'</span></div></div>';
       }
-      html+='<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="act-btn act-pay" style="font-size:13px;padding:10px 20px;border-radius:10px" onclick="payPortalInvoiceWithFlutterwave('+inv.id+')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pay FLW</button><button class="act-btn" style="font-size:13px;padding:10px 20px;border-radius:10px;background:#10B981;color:#fff" onclick="payPortalInvoiceWithPaystack('+inv.id+')">Pay Paystack</button><button class="act-btn act-comment" style="font-size:13px;padding:10px 20px;border-radius:10px" onclick="showToast(\'Invoice PDF coming soon\')">Download PDF</button></div></div>';
+      html+='<div style="display:flex;gap:10px;flex-wrap:wrap">'+getPortalPayButtons(inv.id)+'<button class="act-btn act-comment" style="font-size:13px;padding:10px 20px;border-radius:10px" onclick="showToast(\'Invoice PDF coming soon\')">Download PDF</button></div></div>';
     });
     html+='</div>';
   }

@@ -33,6 +33,9 @@ export default async function handler(req, res) {
     await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT`;
     await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT`;
     await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS subscription_current_period_end TIMESTAMPTZ`;
+    await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS flutterwave_subscription_id TEXT`;
+    await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS flutterwave_payment_plan_id INTEGER`;
+    await sql`ALTER TABLE tenants ADD COLUMN IF NOT EXISTS flutterwave_tx_ref TEXT`;
     await sql`ALTER TABLE tenants ALTER COLUMN plan SET DEFAULT 'starter';`;
 
     // 1b. Plans / subscription tiers

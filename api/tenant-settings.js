@@ -22,6 +22,7 @@ export default async function handler(req, res) {
           categories: settings.categories || ['Strategy','Communications','Media','Editorial','Advisory','Design','Production','Marketing'],
           stages: settings.stages || ['Todo','In progress','Review','Approved','Completed'],
           labels: settings.labels || ['Project','Campaign','Retainer','Advisory','Engagement'],
+          paymentGateways: settings.paymentGateways || {},
         }
       });
     } catch (err) {
@@ -32,8 +33,8 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PATCH' || req.method === 'PUT') {
-    const { categories, stages, labels } = req.body || {};
-    if (categories === undefined && stages === undefined && labels === undefined) {
+    const { categories, stages, labels, paymentGateways } = req.body || {};
+    if (categories === undefined && stages === undefined && labels === undefined && paymentGateways === undefined) {
       badRequest(res, 'No fields to update');
       return;
     }
@@ -45,6 +46,7 @@ export default async function handler(req, res) {
       if (categories !== undefined) next.categories = categories;
       if (stages !== undefined) next.stages = stages;
       if (labels !== undefined) next.labels = labels;
+      if (paymentGateways !== undefined) next.paymentGateways = paymentGateways;
 
       await sql`UPDATE tenants SET settings = ${JSON.stringify(next)} WHERE id = ${tenantId}`;
 
@@ -53,6 +55,7 @@ export default async function handler(req, res) {
           categories: next.categories || [],
           stages: next.stages || [],
           labels: next.labels || [],
+          paymentGateways: next.paymentGateways || {},
         }
       });
     } catch (err) {

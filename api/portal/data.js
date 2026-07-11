@@ -31,10 +31,26 @@ export default async function handler(req, res) {
     await sql`ALTER TABLE comments ADD COLUMN IF NOT EXISTS reference TEXT`;
 
     // Fetch client details
-    const [clientRow] = await sql`SELECT id, name, contact, email, portal_on, portal_url, portal_logo, portal_banner FROM clients WHERE id = ${clientId}`;
+    const [clientRow] = await sql`SELECT id, name, contact, email, portal_on, portal_url, portal_logo, portal_banner, tenant_id FROM clients WHERE id = ${clientId}`;
     if (!clientRow) {
       sendJson(res, 404, { error: 'Client not found' });
       return;
+    }
+
+    // Fetch tenant payment gateway settings
+    let paymentGateways = {};
+    if (clientRow.tenant_id) {
+      const [tenant] = await sql`SELECT settings FROM tenants WHERE id = ${clientRow.tenant_id}`;
+      const settings = tenant?.settings || {};
+      const gwSettings = settings.paymentGateways || {};
+      const fwConfigured = !!(process.env.FLUTTERWAVE_SECRET_KEY && process.env.FLUTTERWAVE_PUBLIC_KEY);
+      const psConfigured = !!(process.env.PAYSTACK_SECRET_KEY && process.env.PAYSTACK_PUBLIC_KEY);
+      const stripeConfigured = !!process.env.STRIPE_SECRET_KEY;
+      paymentGateways = {
+        flutterwave: { enabled: gwSettings.flutterwave?.enabled && fwConfigured, publicKey: process.env.FLUTTERWAVE_PUBLIC_KEY || '' },
+        paystack: { enabled: gwSettings.paystack?.enabled && psConfigured, publicKey: process.env.PAYSTACK_PUBLIC_KEY || '' },
+        stripe: { enabled: gwSettings.stripe?.enabled && stripeConfigured },
+      };
     }
 
     // Fetch related data
@@ -52,6 +68,7 @@ export default async function handler(req, res) {
 
     sendJson(res, 200, {
       data: {
+        paymentGateways,
         client: {
           id: clientRow.id,
           name: clientRow.name,

@@ -23,7 +23,7 @@ export default async function handler(req, res) {
           t.name as tenant_name, t.slug as tenant_slug, t.status as tenant_status,
           t.plan as tenant_plan, t.trial_ends_at as tenant_trial_ends,
           t.subscription_status, t.subscription_interval,
-          t.stripe_customer_id, t.stripe_subscription_id,
+          t.flutterwave_subscription_id, t.flutterwave_payment_plan_id,
           t.subscription_current_period_end, t.logo_url, t.primary_color
         FROM users u
         LEFT JOIN tenants t ON u.tenant_id = t.id
@@ -54,8 +54,8 @@ export default async function handler(req, res) {
           trialEndsAt: userData.tenant_trial_ends || null,
           subscriptionStatus: userData.subscription_status || null,
           subscriptionInterval: userData.subscription_interval || null,
-          stripeCustomerId: userData.stripe_customer_id || null,
-          stripeSubscriptionId: userData.stripe_subscription_id || null,
+          flutterwaveSubscriptionId: userData.flutterwave_subscription_id || null,
+          flutterwavePaymentPlanId: userData.flutterwave_payment_plan_id || null,
           subscriptionCurrentPeriodEnd: userData.subscription_current_period_end || null,
           userCount,
           clientCount,

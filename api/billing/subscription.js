@@ -20,8 +20,9 @@ export default async function handler(req, res) {
 
   try {
     const [tenant] = await sql`
-      SELECT id, name, plan, subscription_status, subscription_interval, stripe_customer_id,
-             stripe_subscription_id, subscription_current_period_end, trial_ends_at
+      SELECT id, name, plan, subscription_status, subscription_interval,
+             flutterwave_subscription_id, flutterwave_payment_plan_id,
+             subscription_current_period_end, trial_ends_at
       FROM tenants WHERE id = ${tenantId}
     `;
     if (!tenant) {
@@ -45,8 +46,8 @@ export default async function handler(req, res) {
           plan: tenant.plan,
           subscriptionStatus: tenant.subscription_status,
           subscriptionInterval: tenant.subscription_interval,
-          stripeCustomerId: tenant.stripe_customer_id,
-          stripeSubscriptionId: tenant.stripe_subscription_id,
+          flutterwaveSubscriptionId: tenant.flutterwave_subscription_id,
+          flutterwavePaymentPlanId: tenant.flutterwave_payment_plan_id,
           currentPeriodEnd: tenant.subscription_current_period_end,
           trialEndsAt: tenant.trial_ends_at,
         },
