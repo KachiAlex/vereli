@@ -954,8 +954,8 @@ async function initFromApi() {
     renderDash();
     if (document.getElementById('view-clients').classList.contains('active')) renderCG();
     // Restore client detail view from URL if present
-    const url=new URL(window.location.href);
-    const cid=url.searchParams.get('client');
+    const curl=new URL(window.location.href);
+    const cid=curl.searchParams.get('client');
     if(cid){
       const id=parseInt(cid,10);
       if(!isNaN(id)){
