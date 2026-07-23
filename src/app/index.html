@@ -941,28 +941,26 @@ async function initFromApi() {
     const res = await apiFetch('/clients');
     if (!res.ok) throw new Error('Failed to fetch clients');
     const json = await res.json();
-    if (json.data && json.data.length) {
-      DATA.clients = json.data.map((c, i) => apiClientToData(c, i));
-      document.getElementById('cl-bdg').textContent = DATA.clients.length;
-      const activeCount = DATA.clients.filter(c => c.eng === 'active').length;
-      const sub = document.getElementById('cl-subtitle');
-      if (sub) sub.textContent = `${activeCount} active engagement${activeCount !== 1 ? 's' : ''}`;
-      await loadInvoices();
-      await loadPayments();
-      await loadProjects();
-      await loadTeam();
-      await loadAllWorkspaces();
-      renderDash();
-      if (document.getElementById('view-clients').classList.contains('active')) renderCG();
-      // Restore client detail view from URL if present
-      const url=new URL(window.location.href);
-      const cid=url.searchParams.get('client');
-      if(cid){
-        const id=parseInt(cid,10);
-        if(!isNaN(id)){
-          goView('clients');
-          openCP(id);
-        }
+    DATA.clients = (json.data || []).map((c, i) => apiClientToData(c, i));
+    document.getElementById('cl-bdg').textContent = DATA.clients.length;
+    const activeCount = DATA.clients.filter(c => c.eng === 'active').length;
+    const sub = document.getElementById('cl-subtitle');
+    if (sub) sub.textContent = `${activeCount} active engagement${activeCount !== 1 ? 's' : ''}`;
+    await loadInvoices();
+    await loadPayments();
+    await loadProjects();
+    await loadTeam();
+    await loadAllWorkspaces();
+    renderDash();
+    if (document.getElementById('view-clients').classList.contains('active')) renderCG();
+    // Restore client detail view from URL if present
+    const url=new URL(window.location.href);
+    const cid=url.searchParams.get('client');
+    if(cid){
+      const id=parseInt(cid,10);
+      if(!isNaN(id)){
+        goView('clients');
+        openCP(id);
       }
     }
 
@@ -1249,6 +1247,8 @@ async function doRegister() {
 
 async function doLogout() {
   try { await fetch(`${API_BASE}/auth/logout`, { method: 'POST', credentials: 'include' }); } catch {}
+  CURRENT_USER=null;
+  DATA={clients:[],tenants:[],plans:[]};
   showAuth();
 }
 
@@ -1265,28 +1265,37 @@ function isSuperadmin() {
 }
 
 function streamlineSuperadminUI() {
-  if (!isSuperadmin()) return;
-  // Remove irrelevant nav items from DOM for superadmin
-  const toRemoveNav = [
+  const toHideNav = [
     'nav-deliverables','nav-kanban','nav-contracts',
     'nav-invoices','nav-payments','nav-files','nav-team'
   ];
-  toRemoveNav.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.remove();
-  });
-  // Remove irrelevant view divs from DOM for superadmin
-  const toRemoveViews = [
+  const toHideViews = [
     'view-deliverables','view-kanban','view-contracts',
     'view-invoices','view-payments','view-files','view-team'
   ];
-  toRemoveViews.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.remove();
-  });
+  if (isSuperadmin()) {
+    toHideNav.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    toHideViews.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+  } else {
+    // Restore visibility for tenant admins
+    toHideNav.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = '';
+    });
+    toHideViews.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = '';
+    });
+  }
   // Rename Dashboard nav to Overview
   const dashNav = document.querySelector('#nav-dashboard .ni-label');
-  if (dashNav) dashNav.textContent = 'Overview';
+  if (dashNav) dashNav.textContent = isSuperadmin() ? 'Overview' : 'Dashboard';
 }
 
 function updateNavLabels() {
@@ -1432,6 +1441,7 @@ async function goView(name,el){
     const url=new URL(window.location.href);
     if(url.searchParams.has('client')){url.searchParams.delete('client');history.pushState({},'',url);}
   }
+  if(name==='dashboard')renderDash();
   if(name==='files')renderFiles();
   if(name==='invoices')renderInv();
   if(name==='payments'){renderPay();switchPayWin('month',document.querySelector('#pay-win-tabs button'));document.getElementById('tba').innerHTML=`<button onclick="openPayModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Record payment</button>`;}
@@ -1468,6 +1478,20 @@ function computeRevenue(win){
 /* ══ DASHBOARD / OVERVIEW ══ */
 function renderDash(){
   if(isSuperadmin()){renderSuperadminOverview();return;}
+  // Reset section labels (in case renderSuperadminOverview changed them)
+  const da0=document.getElementById('dash-attn');
+  if(da0 && da0.previousElementSibling && da0.previousElementSibling.classList.contains('slbl')) da0.previousElementSibling.textContent='Needs attention';
+  const dc0=document.getElementById('dash-clients');
+  if(dc0 && dc0.previousElementSibling && dc0.previousElementSibling.classList.contains('slbl')) dc0.previousElementSibling.textContent='Active clients';
+  const ac0=document.getElementById('dash-act');
+  if(ac0 && ac0.previousElementSibling && ac0.previousElementSibling.classList.contains('slbl')) ac0.previousElementSibling.textContent='Recent activity';
+  const rv0=document.getElementById('dash-rev');
+  if(rv0 && rv0.previousElementSibling && rv0.previousElementSibling.classList.contains('slbl')) rv0.previousElementSibling.textContent='Revenue';
+  // Reset greeting
+  const greet0=document.getElementById('dash-greeting');
+  if(greet0) greet0.textContent=getGreeting()+', '+(CURRENT_USER?.name?.split(' ')[0]||'');
+  const sub0=document.querySelector('#view-dashboard > div:first-child > div:last-child');
+  if(sub0) sub0.textContent="Here's what's happening with your clients today.";
   // KPI cards — computed dynamically from real data
   const kpiRow=document.getElementById('dash-kpi-row');
   if(kpiRow){

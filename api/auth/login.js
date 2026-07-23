@@ -84,7 +84,7 @@ export default async function handler(req, res) {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role,
+          role,
           tenantId: user.tenant_id,
           tenantName: user.tenant_name,
           tenantSlug: user.tenant_slug,
