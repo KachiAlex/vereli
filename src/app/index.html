@@ -505,6 +505,49 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
   </div>
 </div>
 
+<!-- PROJECT MODAL -->
+<div id="project-mod" style="display:none;position:fixed;inset:0;background:rgba(6,24,26,.46);z-index:200;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)">
+  <div class="modal" style="width:100%;max-width:480px">
+    <div class="mh">
+      <div style="width:36px;height:36px;border-radius:10px;background:#DDE8E0;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#17A39B" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div style="flex:1">
+        <div class="ht" style="font-size:15px;font-weight:800;color:#121212">New project</div>
+        <div style="font-size:12px;color:#8E9E9E;margin-top:1px" id="proj-mod-subtitle">Add a project to this client</div>
+      </div>
+      <button onclick="closeProjectMod()" style="background:none;border:none;cursor:pointer;color:#8E9E9E;padding:4px;display:flex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="mb">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div>
+          <label class="flbl">Project name <span style="color:#E87070">*</span></label>
+          <input type="text" class="field" placeholder="e.g. Website Redesign" id="proj-name" onkeydown="if(event.key==='Enter')saveProjectModal()">
+        </div>
+        <div>
+          <label class="flbl">Project type</label>
+          <select class="field" id="proj-type" style="appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236B6B68%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22/></svg>');background-repeat:no-repeat;background-position:right 12px center;padding-right:36px">
+            <option value="general">General</option>
+            <option value="design">Design</option>
+            <option value="development">Development</option>
+            <option value="marketing">Marketing</option>
+            <option value="consulting">Consulting</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button onclick="closeProjectMod()" class="tb-btn">Cancel</button>
+      <button onclick="saveProjectModal()" class="tb-btn pri">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Create project
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- CONTRACT MODAL -->
 <div id="contract-mod" style="display:none;position:fixed;inset:0;background:rgba(6,24,26,.46);z-index:200;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)">
   <div class="modal" style="width:100%;max-width:640px;max-height:90vh;overflow:auto">
@@ -2850,11 +2893,26 @@ function renderWAList(c){
   if(!c.workAreas.length)return empty+addBtn;
   return `<div style="max-width:680px"><div class="card" style="overflow:hidden;margin-bottom:12px">${c.workAreas.map(w=>`<div class="wa-row" onclick="SWA=DATA.clients.find(x=>x.id===${c.id}).workAreas.find(x=>x.id==='${w.id}');SWATAB='tasks';document.getElementById('ct').innerHTML=renderWADrill(SC);lucide.createIcons()"><div class="wa-ico" style="background:${w.ibg}"><i data-lucide="${w.icon}" style="width:14px;height:14px;color:${w.itc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:700;color:#121212">${w.name}</div><div style="font-size:11.5px;color:#8E9E9E;margin-top:2px">${w.type} · ${w.tasks.length} tasks · ${w.files.length} files</div><div class="prog" style="max-width:160px;margin-top:6px"><div class="prog-f" style="width:${w.progress}%"></div></div></div><span class="st ${w.status==='active'?'amber':'green'}" style="font-size:10px">${w.status==='active'?'In progress':'Complete'}</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C8C8C4" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg></div>`).join('')}</div>${addBtn}</div>`;
 }
-async function createWorkArea(cid){
-  const name = prompt('Project name:');
-  if(!name) return;
+let PROJECT_MODAL_CID=null;
+function createWorkArea(cid){
+  PROJECT_MODAL_CID=cid;
+  const c=DATA.clients.find(x=>x.id===cid);
+  const sub=document.getElementById('proj-mod-subtitle');
+  if(sub&&c)sub.textContent='Add a project to '+c.name;
+  document.getElementById('proj-name').value='';
+  document.getElementById('proj-type').value='general';
+  document.getElementById('project-mod').style.display='flex';
+  setTimeout(()=>document.getElementById('proj-name').focus(),50);
+}
+function closeProjectMod(){document.getElementById('project-mod').style.display='none';PROJECT_MODAL_CID=null;}
+async function saveProjectModal(){
+  const cid=PROJECT_MODAL_CID;
+  if(!cid){toast('No client selected');return;}
+  const name=document.getElementById('proj-name').value.trim();
+  const type=document.getElementById('proj-type').value||'general';
+  if(!name){toast('Please enter a project name');return;}
   try {
-    const res = await apiFetch('/work-areas', {method:'POST', body:JSON.stringify({clientId:cid, name, type:'general'})});
+    const res = await apiFetch('/work-areas', {method:'POST', body:JSON.stringify({clientId:cid, name, type})});
     const json = await res.json();
     if(!res.ok){toast(json.error||'Failed to create project');return;}
     const client = DATA.clients.find(c=>c.id===cid);
@@ -2865,6 +2923,7 @@ async function createWorkArea(cid){
       lucide.createIcons();
     }
     toast('Project created');
+    closeProjectMod();
   } catch(err){toast('Failed to create project');}
 }
 
@@ -3224,7 +3283,19 @@ function renderCTActivity(c){
 }
 
 function renderCTContacts(c){
-  return `<div style="max-width:480px"><div class="card" style="padding:22px"><div class="ht" style="font-size:12.5px;font-weight:700;color:#121212;margin-bottom:16px">Primary contact</div><div style="display:flex;flex-direction:column;gap:12px"><div><label class="flbl">Name</label><input type="text" class="field" value="${c.contact}" oninput="SC.contact=this.value"></div><div><label class="flbl">Email</label><input type="email" class="field" value="${c.email}" oninput="SC.email=this.value"></div><div style="display:flex;gap:10px;margin-top:4px"><button onclick="toast('Contact saved')" class="tb-btn pri">Save</button></div></div></div></div>`;
+  return `<div style="max-width:480px"><div class="card" style="padding:22px"><div class="ht" style="font-size:12.5px;font-weight:700;color:#121212;margin-bottom:16px">Primary contact</div><div style="display:flex;flex-direction:column;gap:12px"><div><label class="flbl">Name</label><input type="text" class="field" value="${c.contact}" id="ct-contact-name"></div><div><label class="flbl">Email</label><input type="email" class="field" value="${c.email}" id="ct-contact-email"></div><div style="display:flex;gap:10px;margin-top:4px"><button onclick="saveContactInfo(${c.id})" class="tb-btn pri">Save</button></div></div></div></div>`;
+}
+async function saveContactInfo(cid){
+  const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
+  const name=document.getElementById('ct-contact-name').value.trim();
+  const email=document.getElementById('ct-contact-email').value.trim();
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Please enter a valid email');return;}
+  try{
+    const res=await apiFetch(`/clients/${cid}`,{method:'PATCH',body:JSON.stringify({contact:name,email})});
+    if(!res.ok){toast('Failed to save contact');return;}
+    c.contact=name;c.email=email;
+    toast('Contact saved');
+  }catch(err){toast('Failed to save contact');}
 }
 
 function renderCTPortal(c){
@@ -4135,19 +4206,20 @@ async function handleCPFileUpload(cid,input){
   }catch(err){toast(err.message||'Upload failed');}
   input.value='';
 }
-async function quickAddTask(cid){
-  const text=prompt('Task text:');if(!text)return;
+function quickAddTask(cid){
   const c=DATA.clients.find(x=>x.id===cid);
   if(!c||!c.workAreas.length){toast('No project to add task');return;}
   const waApiId=c.workAreas[0].apiId;
-  try{
-    const res=await apiFetch('/tasks',{method:'POST',body:JSON.stringify({workAreaId:waApiId,text,status:'todo',priority:'medium'})});
-    const json=await res.json();
-    if(!res.ok){toast(json.error||'Failed to add task');return;}
-    const t=json.data;
-    c.workAreas[0].tasks.push({apiId:t.id,t:t.text,done:t.done,a:t.assignee||'—',status:t.status,p:t.priority});
-    toast('Task added');renderCP();lucide.createIcons();
-  }catch(err){toast('Failed to add task');}
+  EDITING_TASK=null;
+  document.getElementById('task-mod-title').textContent='New Task';
+  document.getElementById('task-text').value='';
+  document.getElementById('task-assignee').value='';
+  document.getElementById('task-status').value='todo';
+  document.getElementById('task-priority').value='medium';
+  document.getElementById('task-save-btn').innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create task';
+  populateTaskWorkAreas(waApiId);
+  document.getElementById('task-mod').style.display='flex';
+  setTimeout(()=>document.getElementById('task-text').focus(),50);
 }
 async function openFileUploadGlobal(){
   const sel=document.getElementById('file-wa');
@@ -4390,7 +4462,10 @@ async function handlePortalLogoUpload(cid,input){
     toast('Uploading logo…');
     const uploadData=await uploadFileBlob(file);
     const c=DATA.clients.find(x=>x.id===cid);
-    if(c){c.portal.logo=uploadData.url||'';renderCP();lucide.createIcons();toast('Logo uploaded');}
+    if(c){c.portal.logo=uploadData.url||'';renderCP();lucide.createIcons();
+      try{await apiFetch(`/clients/${cid}`,{method:'PATCH',body:JSON.stringify({portal_logo:c.portal.logo})});}catch(e){console.error('Portal logo persist failed:',e);}
+      toast('Logo uploaded');
+    }
   }catch(err){toast(err.message||'Upload failed');}
   input.value='';
 }
@@ -4400,17 +4475,22 @@ async function handlePortalBannerUpload(cid,input){
     toast('Uploading banner…');
     const uploadData=await uploadFileBlob(file);
     const c=DATA.clients.find(x=>x.id===cid);
-    if(c){c.portal.banner=uploadData.url||'';renderCP();lucide.createIcons();toast('Banner uploaded');}
+    if(c){c.portal.banner=uploadData.url||'';renderCP();lucide.createIcons();
+      try{await apiFetch(`/clients/${cid}`,{method:'PATCH',body:JSON.stringify({portal_banner:c.portal.banner})});}catch(e){console.error('Portal banner persist failed:',e);}
+      toast('Banner uploaded');
+    }
   }catch(err){toast(err.message||'Upload failed');}
   input.value='';
 }
-function removePortalLogo(cid){
+async function removePortalLogo(cid){
   const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
   c.portal.logo='';renderCP();lucide.createIcons();
+  try{await apiFetch(`/clients/${cid}`,{method:'PATCH',body:JSON.stringify({portal_logo:''})});toast('Logo removed');}catch(e){toast('Failed to remove logo');}
 }
-function removePortalBanner(cid){
+async function removePortalBanner(cid){
   const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
   c.portal.banner='';renderCP();lucide.createIcons();
+  try{await apiFetch(`/clients/${cid}`,{method:'PATCH',body:JSON.stringify({portal_banner:''})});toast('Banner removed');}catch(e){toast('Failed to remove banner');}
 }
 async function savePortalBranding(cid){
   const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
@@ -4551,6 +4631,7 @@ document.getElementById('task-mod').addEventListener('click',function(e){if(e.ta
 document.getElementById('file-mod').addEventListener('click',function(e){if(e.target===this)closeFileMod();});
 document.getElementById('invite-mod').addEventListener('click',function(e){if(e.target===this)closeInviteMod();});
 document.getElementById('contract-mod').addEventListener('click',function(e){if(e.target===this)closeContractModal();});
+document.getElementById('project-mod').addEventListener('click',function(e){if(e.target===this)closeProjectMod();});
 document.getElementById('contract-view-mod').addEventListener('click',function(e){if(e.target===this)closeContractViewModal();});
 
 /* ══ INIT ══ */
