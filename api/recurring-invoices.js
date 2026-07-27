@@ -161,6 +161,11 @@ export default async function handler(req, res) {
     const { id } = req.query || {};
     if (!id) { badRequest(res, 'id is required'); return; }
 
+    if (!canManageData(user)) {
+      sendJson(res, 403, { error: 'Insufficient permissions to delete recurring invoices' });
+      return;
+    }
+
     try {
       const [row] = user.role === 'superadmin'
         ? await sql`DELETE FROM recurring_invoices WHERE id = ${Number(id)} RETURNING id`

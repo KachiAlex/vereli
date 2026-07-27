@@ -3,6 +3,7 @@ import { sql } from '../lib/neon.js';
 import { isFlutterwaveConfigured, getFlutterwavePublicKey } from '../lib/flutterwaveBilling.js';
 import { isPaystackConfigured, getPaystackPublicKey } from '../lib/paystack.js';
 import { isStripeConfigured } from '../lib/stripeBilling.js';
+import { canManageTenant } from '../lib/auth.js';
 
 const GATEWAY_META = {
   flutterwave: { name: 'Flutterwave', color: '#F5A623', description: 'Accept payments via cards, bank transfers, USSD' },
@@ -53,6 +54,10 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PATCH' || req.method === 'PUT') {
+    if (!canManageTenant(user)) {
+      sendJson(res, 403, { error: 'Only workspace admins can manage payment settings' });
+      return;
+    }
     const { gateways } = req.body || {};
     if (!gateways || typeof gateways !== 'object') {
       badRequest(res, 'gateways object is required');

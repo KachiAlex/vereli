@@ -1,5 +1,6 @@
 import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
+import { canManageData } from './lib/auth.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -85,6 +86,10 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
+    if (!canManageData(user)) {
+      sendJson(res, 403, { error: 'Insufficient permissions to log time' });
+      return;
+    }
     const { taskId, projectId, clientId, description, hours, loggedDate, billable = true } = req.body || {};
     if (hours === undefined || Number(hours) <= 0) {
       badRequest(res, 'hours is required and must be > 0');
@@ -122,6 +127,10 @@ export default async function handler(req, res) {
     const { id } = req.query || {};
     if (!id) { badRequest(res, 'id is required'); return; }
 
+    if (!canManageData(user)) {
+      sendJson(res, 403, { error: 'Insufficient permissions to delete timesheets' });
+      return;
+    }
     try {
       const [row] = user.role === 'superadmin'
         ? await sql`DELETE FROM timesheets WHERE id = ${Number(id)} RETURNING id`

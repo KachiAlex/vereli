@@ -1,5 +1,6 @@
 import { sendJson, handleCors, badRequest, notFound, requireAuth } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
+import { canManageTenant } from '../lib/auth.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -20,6 +21,10 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'DELETE') {
+    if (!canManageTenant(user)) {
+      sendJson(res, 403, { error: 'Only admins can remove team members' });
+      return;
+    }
     const [row] = user.role === 'superadmin'
       ? await sql`DELETE FROM team_members WHERE id = ${id} RETURNING id`
       : await sql`DELETE FROM team_members WHERE id = ${id} AND tenant_id = ${user.tenantId} RETURNING id`;
@@ -29,6 +34,10 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
+    if (!canManageTenant(user)) {
+      sendJson(res, 403, { error: 'Only admins can update team members' });
+      return;
+    }
     const { name, role, status } = req.body || {};
     const fields = [];
     const values = [];
