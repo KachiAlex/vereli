@@ -1,8 +1,8 @@
 import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
 import { canManageData } from './lib/auth.js';
+import { uploadBuffer as uploadR2Buffer, isR2Configured } from './lib/r2.js';
 import { uploadBuffer as uploadS3Buffer, isS3Configured } from './lib/s3.js';
-import { uploadBase64, isCloudinaryConfigured } from './lib/cloudinary.js';
 import crypto from 'crypto';
 
 export default async function handler(req, res) {
@@ -32,15 +32,15 @@ export default async function handler(req, res) {
     await sql`ALTER TABLE files ADD COLUMN IF NOT EXISTS url TEXT`;
 
     let url = '';
-    if (isCloudinaryConfigured()) {
-      url = await uploadBase64(name, data, contentType);
+    const buffer = Buffer.from(data, 'base64');
+    const ext = name.split('.').pop() || 'bin';
+    const key = `tenants/${user.tenantId || 'global'}/${crypto.randomUUID()}.${ext}`;
+    if (isR2Configured()) {
+      url = await uploadR2Buffer(key, buffer, contentType || 'application/octet-stream');
     } else if (isS3Configured()) {
-      const buffer = Buffer.from(data, 'base64');
-      const ext = name.split('.').pop() || 'bin';
-      const key = `tenants/${user.tenantId || 'global'}/${crypto.randomUUID()}.${ext}`;
       url = await uploadS3Buffer(key, buffer, contentType || 'application/octet-stream');
     } else {
-      sendJson(res, 503, { error: 'File storage is not configured. Set CLOUDINARY_URL or S3 credentials.' });
+      sendJson(res, 503, { error: 'File storage is not configured. Set R2 or S3 credentials.' });
       return;
     }
 

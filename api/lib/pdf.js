@@ -1,6 +1,6 @@
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { uploadBuffer as uploadS3Buffer, isS3Configured } from './s3.js';
-import { uploadBase64, isCloudinaryConfigured } from './cloudinary.js';
+import { uploadBuffer as uploadR2Buffer, isR2Configured } from './r2.js';
 import crypto from 'crypto';
 
 function formatDate(date) {
@@ -116,8 +116,9 @@ export async function uploadSignedPdf(tenantId, contractId, pdfBytes, name) {
   const ext = 'pdf';
   const fileName = name || `contract-${contractId}-signed.pdf`;
 
-  if (isCloudinaryConfigured()) {
-    return await uploadBase64(fileName, buffer.toString('base64'), 'application/pdf');
+  if (isR2Configured()) {
+    const key = `tenants/${tenantId}/contracts/${contractId}-${crypto.randomUUID()}.${ext}`;
+    return await uploadR2Buffer(key, buffer, 'application/pdf');
   }
 
   if (isS3Configured()) {
