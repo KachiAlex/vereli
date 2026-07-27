@@ -1,6 +1,6 @@
 import { sendJson, handleCors, badRequest, notFound, requireAuth } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
-import { canManageData } from '../lib/auth.js';
+import { canManageData, canEditData } from '../lib/auth.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -21,6 +21,10 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
+    if (!canEditData(user)) {
+      sendJson(res, 403, { error: 'Insufficient permissions to edit invoices' });
+      return;
+    }
     const { amount, currency, status, due_date, lineItems, sentAt, paidAt } = req.body || {};
     const fields = [];
     const values = [];
@@ -44,6 +48,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST' && req.query.action === 'mark-paid') {
+    if (!canManageData(user)) { sendJson(res, 403, { error: 'Insufficient permissions' }); return; }
     const [row] = user.role === 'superadmin'
       ? await sql`UPDATE invoices SET status = 'paid', paid_at = NOW() WHERE id = ${id} RETURNING id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at, created_at`
       : await sql`UPDATE invoices SET status = 'paid', paid_at = NOW() WHERE id = ${id} AND tenant_id = ${user.tenantId} RETURNING id, client_id, project_id, amount, currency, status, due_date, line_items, sent_at, paid_at, created_at`;
@@ -67,6 +72,10 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'DELETE') {
+    if (!canEditData(user)) {
+      sendJson(res, 403, { error: 'Insufficient permissions to delete invoices' });
+      return;
+    }
     const [row] = user.role === 'superadmin'
       ? await sql`DELETE FROM invoices WHERE id = ${id} RETURNING id`
       : await sql`DELETE FROM invoices WHERE id = ${id} AND tenant_id = ${user.tenantId} RETURNING id`;

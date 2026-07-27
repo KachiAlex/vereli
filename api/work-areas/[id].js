@@ -1,5 +1,6 @@
 import { sendJson, handleCors, badRequest, notFound, requireAuth } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
+import { canEditData } from '../lib/auth.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -20,6 +21,10 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
+    if (!canEditData(user)) {
+      sendJson(res, 403, { error: 'Insufficient permissions to edit work areas' });
+      return;
+    }
     const { name, type, status, progress } = req.body || {};
     const fields = [];
     const values = [];
@@ -40,6 +45,10 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'DELETE') {
+    if (!canEditData(user)) {
+      sendJson(res, 403, { error: 'Insufficient permissions to delete work areas' });
+      return;
+    }
     const [row] = user.role === 'superadmin'
       ? await sql`DELETE FROM work_areas WHERE id = ${id} RETURNING id`
       : await sql`DELETE FROM work_areas WHERE id = ${id} AND tenant_id = ${user.tenantId} RETURNING id`;

@@ -78,6 +78,23 @@ export function canManageData(user) {
   return ['admin', 'manager', 'superadmin'].includes(user.role);
 }
 
+export function canEditData(user) {
+  // Admin, manager, and superadmin can edit/delete data
+  return ['admin', 'manager', 'superadmin'].includes(user.role);
+}
+
+export function canViewData(user) {
+  // All authenticated tenant users can view data
+  return true;
+}
+
+export function requireRole(...allowedRoles) {
+  return (user) => {
+    if (!user) return false;
+    return allowedRoles.includes(user.role);
+  };
+}
+
 export async function checkTenantLimit(sql, tenantId, limitType) {
   const [tenant] = await sql`SELECT plan, subscription_status FROM tenants WHERE id = ${tenantId}`;
   if (!tenant) return { allowed: false, reason: 'Tenant not found' };

@@ -1,5 +1,6 @@
 import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
+import { canManageData } from './lib/auth.js';
 import { uploadBuffer as uploadS3Buffer, isS3Configured } from './lib/s3.js';
 import { uploadBase64, isCloudinaryConfigured } from './lib/cloudinary.js';
 import crypto from 'crypto';
@@ -12,6 +13,11 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') {
     badRequest(res, 'Method not allowed');
+    return;
+  }
+
+  if (!canManageData(user)) {
+    sendJson(res, 403, { error: 'Insufficient permissions to upload files' });
     return;
   }
 

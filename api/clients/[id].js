@@ -1,5 +1,6 @@
 import { sendJson, handleCors, badRequest, notFound, requireAuth } from '../lib/utils.js';
 import { sql } from '../lib/neon.js';
+import { canEditData } from '../lib/auth.js';
 import bcryptjs from 'bcryptjs';
 
 function genPortalPassword(len = 10) {
@@ -43,6 +44,10 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
+    if (!canEditData(user)) {
+      sendJson(res, 403, { error: 'Insufficient permissions to edit clients' });
+      return;
+    }
     const { name, contact, email, type, status, portal_on, portal_url, portal_logo, portal_banner, reset_portal_password, portal_password } = req.body || {};
     const fields = [];
     const values = [];
@@ -126,6 +131,10 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'DELETE') {
+    if (!canEditData(user)) {
+      sendJson(res, 403, { error: 'Insufficient permissions to delete clients' });
+      return;
+    }
     const [row] = user.role === 'superadmin'
       ? await sql`DELETE FROM clients WHERE id = ${id} RETURNING id`
       : await sql`DELETE FROM clients WHERE id = ${id} AND tenant_id = ${user.tenantId} RETURNING id`;

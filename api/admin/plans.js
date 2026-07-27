@@ -8,8 +8,7 @@ export default async function handler(req, res) {
   if (!user) return;
 
   // Only superadmins can mutate plans; GET is open to all authenticated users
-  const isAdmin = user.role === 'superadmin' || user.email === 'admin@vereli.com';
-  if (!isAdmin && req.method !== 'GET') {
+  if (user.role !== 'superadmin' && req.method !== 'GET') {
     sendJson(res, 403, { error: 'Forbidden: superadmin only' });
     return;
   }

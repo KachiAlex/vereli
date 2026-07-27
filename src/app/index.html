@@ -1446,6 +1446,18 @@ function isSuperadmin() {
   if (!CURRENT_USER) return false;
   return CURRENT_USER.role === 'superadmin';
 }
+function canManageData() {
+  if (!CURRENT_USER) return false;
+  return ['admin', 'manager', 'superadmin'].includes(CURRENT_USER.role);
+}
+function canEditData() {
+  if (!CURRENT_USER) return false;
+  return ['admin', 'manager', 'superadmin'].includes(CURRENT_USER.role);
+}
+function canManageTenant() {
+  if (!CURRENT_USER) return false;
+  return CURRENT_USER.role === 'admin' || CURRENT_USER.role === 'superadmin';
+}
 
 function streamlineSuperadminUI() {
   const toHideNav = [
@@ -1505,6 +1517,12 @@ function updateNavLabels() {
   if (eaNav) {
     eaNav.style.display = isSuperadmin() ? '' : 'none';
   }
+
+  // Hide Team and Settings nav for non-admins (members/viewers can't manage)
+  const teamNav = document.getElementById('nav-team');
+  const settingsNav = document.getElementById('nav-settings');
+  if (teamNav) teamNav.style.display = canManageTenant() ? '' : 'none';
+  if (settingsNav) settingsNav.style.display = canManageTenant() ? '' : 'none';
 
   // Streamline UI for superadmin
   streamlineSuperadminUI();
@@ -1611,16 +1629,16 @@ async function goView(name,el){
   if(name==='clients'){
     if(isSuperadmin()){
       tba.innerHTML=`<button onclick="openTenantModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add tenant</button>`;
-    } else {
+    } else if(canManageData()) {
       tba.innerHTML=`<button onclick="openMod()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add client</button>`;
-    }
+    } else { tba.innerHTML=''; }
   }
-  else if(name==='invoices')tba.innerHTML=`<button onclick="openInvModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New invoice</button>`;
-  else if(name==='files')tba.innerHTML=`<button onclick="openFileUploadGlobal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>`;
-  else if(name==='kanban')tba.innerHTML=`<button onclick="openTaskModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New task</button>`;
-  else if(name==='contracts')tba.innerHTML=`<button onclick="openContractModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New contract</button>`;
-  else if(name==='deliverables')tba.innerHTML=`<button onclick="openFileUploadGlobal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button>`;
-  else if(name==='team')tba.innerHTML=`<button onclick="openInviteModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Invite member</button>`;
+  else if(name==='invoices')tba.innerHTML=canManageData()?`<button onclick="openInvModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New invoice</button>`:'';
+  else if(name==='files')tba.innerHTML=canManageData()?`<button onclick="openFileUploadGlobal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>`:'';
+  else if(name==='kanban')tba.innerHTML=canManageData()?`<button onclick="openTaskModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New task</button>`:'';
+  else if(name==='contracts')tba.innerHTML=canManageData()?`<button onclick="openContractModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New contract</button>`:'';
+  else if(name==='deliverables')tba.innerHTML=canManageData()?`<button onclick="openFileUploadGlobal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload &amp; share</button>`:'';
+  else if(name==='team')tba.innerHTML=canManageTenant()?`<button onclick="openInviteModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Invite member</button>`:'';
   else if(name==='plans') tba.innerHTML='';
   else tba.innerHTML='';
   if(name==='clients')showCG();
@@ -1631,7 +1649,7 @@ async function goView(name,el){
   if(name==='dashboard')renderDash();
   if(name==='files')renderFiles();
   if(name==='invoices')renderInv();
-  if(name==='payments'){renderPay();switchPayWin('month',document.querySelector('#pay-win-tabs button'));document.getElementById('tba').innerHTML=`<button onclick="openPayModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Record payment</button>`;}
+  if(name==='payments'){renderPay();switchPayWin('month',document.querySelector('#pay-win-tabs button'));document.getElementById('tba').innerHTML=canManageData()?`<button onclick="openPayModal()" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Record payment</button>`:'';}
   if(name==='deliverables')renderDeliverables();
   if(name==='kanban')renderKanban();
   if(name==='contracts'){await fetchContracts();renderContracts();}
@@ -2766,8 +2784,8 @@ function renderCP(){
   ptSub.textContent='/ '+c.name;ptSub.style.display='';
   document.getElementById('tba').innerHTML=`
     <button onclick="copyPortalLink(${c.id})" class="tb-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share portal</button>
-    <input type="file" id="cp-file-${c.id}" style="display:none" onchange="handleCPFileUpload(${c.id},this)"><button onclick="document.getElementById('cp-file-'+${c.id}).click()" class="tb-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>
-    <button onclick="quickAddTask(${c.id})" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add task</button>`;
+    ${canManageData()?`<input type="file" id="cp-file-${c.id}" style="display:none" onchange="handleCPFileUpload(${c.id},this)"><button onclick="document.getElementById('cp-file-'+${c.id}).click()" class="tb-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button>
+    <button onclick="quickAddTask(${c.id})" class="tb-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add task</button>`:''}`;
   pv.innerHTML=`
     <div style="margin-bottom:6px">
       <button onclick="showCG()" style="display:inline-flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#7A9E99;padding:0 0 16px;transition:color .1s" onmouseenter="this.style.color='#0B4F52'" onmouseleave="this.style.color='#7A9E99'">
@@ -2889,7 +2907,7 @@ function renderCTOverview(c){
 
 function renderWAList(c){
   const empty=emp('No projects','Add a project, campaign, or engagement.','folder');
-  const addBtn=`<button onclick="createWorkArea(${c.id})" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:1.5px dashed #D8D8D5;border-radius:10px;background:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:#8E9E9E;transition:all .12s;margin-top:12px" onmouseenter="this.style.borderColor='#B0B0AD';this.style.color='#555552'" onmouseleave="this.style.borderColor='#D8D8D5';this.style.color='#8E9E9E'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add project</button>`;
+  const addBtn=canManageData()?`<button onclick="createWorkArea(${c.id})" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:1.5px dashed #D8D8D5;border-radius:10px;background:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:#8E9E9E;transition:all .12s;margin-top:12px" onmouseenter="this.style.borderColor='#B0B0AD';this.style.color='#555552'" onmouseleave="this.style.borderColor='#D8D8D5';this.style.color='#8E9E9E'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add project</button>`:'';
   if(!c.workAreas.length)return empty+addBtn;
   return `<div style="max-width:680px"><div class="card" style="overflow:hidden;margin-bottom:12px">${c.workAreas.map(w=>`<div class="wa-row" onclick="SWA=DATA.clients.find(x=>x.id===${c.id}).workAreas.find(x=>x.id==='${w.id}');SWATAB='tasks';document.getElementById('ct').innerHTML=renderWADrill(SC);lucide.createIcons()"><div class="wa-ico" style="background:${w.ibg}"><i data-lucide="${w.icon}" style="width:14px;height:14px;color:${w.itc}"></i></div><div style="flex:1;min-width:0"><div class="ht" style="font-size:13px;font-weight:700;color:#121212">${w.name}</div><div style="font-size:11.5px;color:#8E9E9E;margin-top:2px">${w.type} · ${w.tasks.length} tasks · ${w.files.length} files</div><div class="prog" style="max-width:160px;margin-top:6px"><div class="prog-f" style="width:${w.progress}%"></div></div></div><span class="st ${w.status==='active'?'amber':'green'}" style="font-size:10px">${w.status==='active'?'In progress':'Complete'}</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C8C8C4" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg></div>`).join('')}</div>${addBtn}</div>`;
 }

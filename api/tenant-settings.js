@@ -1,5 +1,6 @@
 import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
+import { canManageTenant } from './lib/auth.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -33,6 +34,10 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PATCH' || req.method === 'PUT') {
+    if (!canManageTenant(user)) {
+      sendJson(res, 403, { error: 'Only workspace admins can manage settings' });
+      return;
+    }
     const { categories, stages, labels, paymentGateways } = req.body || {};
     if (categories === undefined && stages === undefined && labels === undefined && paymentGateways === undefined) {
       badRequest(res, 'No fields to update');

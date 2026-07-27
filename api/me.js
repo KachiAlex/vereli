@@ -1,5 +1,6 @@
 import { sendJson, handleCors, badRequest, requireAuth } from './lib/utils.js';
 import { sql } from './lib/neon.js';
+import { canManageTenant } from './lib/auth.js';
 
 export default async function handler(req, res) {
   if (handleCors(req, res)) return;
@@ -82,6 +83,11 @@ export default async function handler(req, res) {
         return;
       }
       const { name, company, logoUrl, primary } = req.body || {};
+      // Only admins can update company/branding fields
+      if ((company !== undefined || logoUrl !== undefined || primary !== undefined) && !canManageTenant(user)) {
+        sendJson(res, 403, { error: 'Only workspace admins can update branding settings' });
+        return;
+      }
       const fields = [];
       const values = [];
       if (name !== undefined) { fields.push('name = $' + (fields.length + 1)); values.push(name); }
