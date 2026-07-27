@@ -37,12 +37,19 @@ export default async function handler(req, res) {
         return;
       }
 
+      // Safeguard: only admin@vereli.com can be superadmin
+      let effectiveRole = userData.role;
+      if (effectiveRole === 'superadmin' && userData.email.toLowerCase() !== 'admin@vereli.com') {
+        effectiveRole = 'admin';
+        await sql`UPDATE users SET role = 'admin' WHERE id = ${userData.id}`;
+      }
+
       sendJson(res, 200, {
         data: {
           id: userData.id,
           email: userData.email,
           name: userData.name,
-          role: userData.role,
+          role: effectiveRole,
           tenantId: userData.tenant_id,
           tenantName: userData.tenant_name,
           tenantSlug: userData.tenant_slug,

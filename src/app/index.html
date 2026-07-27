@@ -1444,7 +1444,7 @@ function getGreeting() {
 
 function isSuperadmin() {
   if (!CURRENT_USER) return false;
-  return CURRENT_USER.role === 'superadmin' || CURRENT_USER.email === 'admin@vereli.com';
+  return CURRENT_USER.role === 'superadmin';
 }
 
 function streamlineSuperadminUI() {
