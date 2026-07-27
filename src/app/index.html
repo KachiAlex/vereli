@@ -836,14 +836,16 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px">
           <div><div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Files</div><div style="font-size:13.5px;color:#7A9E99">All files across your workspace</div></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <select style="height:36px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex:1;min-width:110px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
-              <option>All clients</option>${DATA.clients.map(c=>`<option>${c.name}</option>`).join('')}
+            <select id="files-client-filter" onchange="renderFiles()" style="height:36px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex:1;min-width:110px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
+              <option value="">All clients</option>
             </select>
-            <select style="height:36px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex:1;min-width:90px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
-              <option>All types</option><option>PDF</option><option>Figma</option><option>Image</option><option>Video</option>
+            <select id="files-type-filter" onchange="renderFiles()" style="height:36px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex:1;min-width:90px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
+              <option value="">All types</option>
             </select>
-            <select style="height:36px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex:1;min-width:110px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
-              <option>Visibility: All</option><option>Internal only</option><option>Shared with client</option>
+            <select id="files-vis-filter" onchange="renderFiles()" style="height:36px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12.5px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex:1;min-width:110px;box-shadow:0 1px 2px rgba(15,61,62,.04)">
+              <option value="">Visibility: All</option>
+              <option value="internal">Internal only</option>
+              <option value="shared">Shared with client</option>
             </select>
           </div>
         </div>
@@ -881,6 +883,8 @@ html,body{height:100%;overflow:hidden;max-width:100%;font-family:'Inter',sans-se
           <div class="ht" style="font-size:26px;font-weight:800;letter-spacing:-.035em;color:#0A2E2F;margin-bottom:5px;line-height:1.15">Payments</div>
           <div style="font-size:13.5px;color:#7A9E99">Revenue collected and outstanding balance</div>
         </div>
+        <!-- Financial summary grid -->
+        <div id="fin-summary-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:22px"></div>
         <!-- Premium payment hero card -->
         <div class="pay-card" style="margin-bottom:22px">
           <div style="position:relative;z-index:1">
@@ -2774,7 +2778,7 @@ function renderCP(){
       </div>
     </div>
     <div class="tab-bar">
-      ${['Overview','Projects','Deliverables','Files','Feedback & Approvals','Invoices','Payments','Activity','Contacts','Portal Settings'].map(t=>{const k=t.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-');return `<div class="tab ${STAB===k?'active':''}" onclick="switchCT('${k}')">${t}</div>`;}).join('')}
+      ${['Overview','Projects','Deliverables','Files','Feedback & Approvals','Messages','Invoices','Payments','Activity','Contacts','Portal Settings'].map(t=>{const k=t.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-');return `<div class="tab ${STAB===k?'active':''}" onclick="switchCT('${k}')">${t}</div>`;}).join('')}
     </div>
     <div id="ct">${renderCT(c)}</div>`;
 }
@@ -2787,6 +2791,7 @@ function renderCT(c){
   if(STAB==='deliverables')return renderCTDeliverables(c);
   if(STAB==='files')return renderCTFiles(c);
   if(STAB==='feedback---approvals')return renderCTFeedback(c);
+  if(STAB==='messages')return renderCTMessages(c);
   if(STAB==='invoices')return renderCTInvoices(c);
   if(STAB==='payments')return renderCTPayments(c);
   if(STAB==='activity')return renderCTActivity(c);
@@ -3086,10 +3091,67 @@ function renderCTFiles(c){
   return `<div style="max-width:680px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="slbl" style="margin-bottom:0">${files.length} files across all projects</div><button onclick="openFileUploadGlobal()" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:1.5px solid #EEF2F2;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;color:#121212;cursor:pointer;background:#fff;transition:all .12s"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload file</button></div>${files.length?('<div style="display:flex;flex-direction:column;gap:8px">'+rows+'</div>'):emp('No files yet','Upload files to a project.','folder')}</div>`;
 }
 
+function renderCTMessages(c){
+  const allMsgs=c.workAreas.flatMap(w=>w.feedback.map(f=>({...f,wa:w.name,waApiId:w.apiId})));
+  allMsgs.sort((a,b)=>{
+    const ta=a.time==='now'?Date.now():new Date(a.time).getTime()||0;
+    const tb=b.time==='now'?Date.now():new Date(b.time).getTime()||0;
+    return ta-tb;
+  });
+  const chatHtml=allMsgs.length?allMsgs.map(f=>{
+    const isMe=(f.from===CURRENT_USER?.name)||f.from==='You';
+    return `<div style="display:flex;gap:10px;flex-direction:${isMe?'row-reverse':'row'};margin-bottom:14px">
+      <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;background:${f.bg||'#E4F2F0'};display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:11px;font-weight:800;color:${f.tc||'#0B4F52'}">${f.init||'?'}</div>
+      <div style="flex:1;max-width:75%">
+        <div style="font-size:10.5px;color:#8E9E9E;margin-bottom:3px;${isMe?'text-align:right':''}">${f.from} · ${f.wa} · ${f.time}</div>
+        <div style="background:${isMe?'#E4F3EC':'#F8F7F4'};border-radius:12px;border:1px solid #E2EBE9;padding:11px 14px;word-wrap:break-word;overflow-wrap:break-word;white-space:normal;font-size:13px;color:#121212;line-height:1.5">${f.txt}</div>
+      </div>
+    </div>`;
+  }).join(''):'<div style="text-align:center;padding:30px 0;color:#B0B0AD;font-size:13px">No messages yet. Start the conversation below.</div>';
+  const waOpts=c.workAreas.map(w=>`<option value="${w.apiId}">${w.name}</option>`).join('');
+  const inputBox=`<div style="border-top:1px solid #E2EBE9;padding-top:14px;margin-top:10px">
+    <div style="display:flex;gap:8px;align-items:flex-end">
+      <select id="msg-wa-select" style="height:38px;padding:0 10px;border-radius:9px;border:1px solid #DCE5E6;font-size:12px;font-family:'Inter',sans-serif;color:#4A6E6B;background:#fff;cursor:pointer;flex-shrink:0;max-width:140px;overflow:hidden;text-overflow:ellipsis">
+        ${waOpts||'<option value="">No project</option>'}
+      </select>
+      <textarea id="msg-text-input" placeholder="Type a message…" rows="1" style="flex:1;min-height:38px;max-height:120px;padding:9px 12px;border-radius:10px;border:1px solid #DCE5E6;font-size:13px;font-family:'Inter',sans-serif;color:#121212;outline:none;resize:none;box-sizing:border-box" onfocus="this.style.borderColor='#0B4F52'" onblur="this.style.borderColor='#DCE5E6'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendClientMessage(${c.id})}"></textarea>
+      <button onclick="sendClientMessage(${c.id})" class="tb-btn pri" style="height:38px;padding:0 14px;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    </div>
+  </div>`;
+  return `<div style="max-width:680px"><div class="card" style="padding:20px 22px;max-height:520px;display:flex;flex-direction:column">
+    <div style="flex:1;overflow-y:auto;padding-bottom:8px">${chatHtml}</div>
+    ${inputBox}
+  </div></div>`;
+}
+async function sendClientMessage(cid){
+  const c=DATA.clients.find(x=>x.id===cid);if(!c)return;
+  const waSel=document.getElementById('msg-wa-select');
+  const textEl=document.getElementById('msg-text-input');
+  const waApiId=waSel?Number(waSel.value):0;
+  const text=textEl?textEl.value.trim():'';
+  if(!text){return;}
+  if(!waApiId){toast('No project available to message');return;}
+  try{
+    const initials=CURRENT_USER?CURRENT_USER.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase():'U';
+    const res=await apiFetch('/comments',{method:'POST',body:JSON.stringify({workAreaId:waApiId,authorName:CURRENT_USER?CURRENT_USER.name:'You',authorInitials:initials,authorBg:'#E4F2F0',authorTc:'#0B4F52',text})});
+    const json=await res.json();
+    if(!res.ok){toast(json.error||'Failed to send message');return;}
+    const msg=json.data;
+    const wa=c.workAreas.find(w=>w.apiId===waApiId);
+    if(wa){
+      wa.feedback.push({from:msg.authorName,init:msg.authorInitials||initials,bg:msg.authorBg||'#E4F2F0',tc:msg.authorTc||'#0B4F52',txt:msg.text,time:'now',ref:msg.reference||''});
+    }
+    textEl.value='';
+    document.getElementById('ct').innerHTML=renderCTMessages(SC);
+    lucide.createIcons();
+    toast('Message sent');
+  }catch(err){toast('Failed to send message');}
+}
+
 function renderCTFeedback(c){
   const all=c.workAreas.flatMap(w=>w.feedback.map(f=>({...f,wa:w.name})));
   const appr=c.workAreas.flatMap(w=>w.approvals.map(a=>({...a,wa:w.name})));
-  return `<div style="max-width:680px"><div class="slbl">Feedback</div><div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">${all.map(f=>`<div style="display:flex;gap:10px"><div style="width:28px;height:28px;border-radius:8px;flex-shrink:0;background:${f.bg};display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:10px;font-weight:800;color:${f.tc}">${f.init}</div><div style="flex:1;background:#F8F7F4;border-radius:10px;border:1px solid #E2EBE9;padding:11px 13px"><div style="font-size:10.5px;color:#8E9E9E;margin-bottom:4px">${f.wa} · On: ${f.ref}</div><p style="font-size:13px;color:#121212">${f.txt}</p><p style="font-size:10.5px;color:#8E9E9E;margin-top:5px">${f.from} · ${f.time}</p></div></div>`).join('')}</div><div class="slbl">Approvals</div><div class="card" style="padding:0 18px">${appr.map(a=>`<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #F5F5F3"><div style="width:28px;height:28px;border-radius:7px;background:${a.status==='approved'?'#EAF2EE':'#FEF3E2'};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${a.status==='approved'?'check':'clock'}" style="width:12px;height:12px;color:${a.status==='approved'?'#2D6A4F':'#A0621A'}"></i></div><div style="flex:1;min-width:0"><span class="ht" style="font-size:13px;font-weight:600;color:#121212">${a.item}</span><div style="font-size:11px;color:#8E9E9E">${a.wa}</div></div><span class="st ${a.status==='approved'?'green':'amber'}" style="font-size:10px">${a.status==='approved'?'Approved':'Waiting'}</span></div>`).join('')}</div></div>`;
+  return `<div style="max-width:680px"><div class="slbl">Feedback</div><div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">${all.map(f=>`<div style="display:flex;gap:10px"><div style="width:28px;height:28px;border-radius:8px;flex-shrink:0;background:${f.bg};display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:10px;font-weight:800;color:${f.tc}">${f.init}</div><div style="flex:1;background:#F8F7F4;border-radius:10px;border:1px solid #E2EBE9;padding:11px 13px;word-wrap:break-word;overflow-wrap:break-word"><div style="font-size:10.5px;color:#8E9E9E;margin-bottom:4px">${f.wa} · On: ${f.ref}</div><p style="font-size:13px;color:#121212;line-height:1.5;word-wrap:break-word;overflow-wrap:break-word">${f.txt}</p><p style="font-size:10.5px;color:#8E9E9E;margin-top:5px">${f.from} · ${f.time}</p></div></div>`).join('')}</div><div class="slbl">Approvals</div><div class="card" style="padding:0 18px">${appr.map(a=>`<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #F5F5F3"><div style="width:28px;height:28px;border-radius:7px;background:${a.status==='approved'?'#EAF2EE':'#FEF3E2'};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${a.status==='approved'?'check':'clock'}" style="width:12px;height:12px;color:${a.status==='approved'?'#2D6A4F':'#A0621A'}"></i></div><div style="flex:1;min-width:0"><span class="ht" style="font-size:13px;font-weight:600;color:#121212">${a.item}</span><div style="font-size:11px;color:#8E9E9E">${a.wa}</div></div><span class="st ${a.status==='approved'?'green':'amber'}" style="font-size:10px">${a.status==='approved'?'Approved':'Waiting'}</span></div>`).join('')}</div></div>`;
 }
 
 function openClientInvModal(cid){
@@ -3621,12 +3683,38 @@ function setupKanbanDrag(){
 }
 
 function renderFiles(){
-  const all=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.files.map(f=>({...f,cname:c.name,wa:w.name}))));
+  const clientSel=document.getElementById('files-client-filter');
+  if(clientSel && clientSel.options.length<=1){
+    DATA.clients.forEach(c=>{
+      const opt=document.createElement('option');
+      opt.value=c.id;
+      opt.textContent=c.name;
+      clientSel.appendChild(opt);
+    });
+  }
+  const typeSel=document.getElementById('files-type-filter');
+  if(typeSel && typeSel.options.length<=1){
+    const types=[...new Set(DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.files.map(f=>(f.type||'').toUpperCase()))))].filter(Boolean);
+    types.forEach(t=>{
+      const opt=document.createElement('option');
+      opt.value=t;
+      opt.textContent=t.charAt(0)+t.slice(1).toLowerCase();
+      typeSel.appendChild(opt);
+    });
+  }
+  const clientFilter=clientSel?clientSel.value:'';
+  const typeFilter=typeSel?typeSel.value:'';
+  const visSel=document.getElementById('files-vis-filter');
+  const visFilter=visSel?visSel.value:'';
+  let all=DATA.clients.flatMap(c=>c.workAreas.flatMap(w=>w.files.map(f=>({...f,cname:c.name,wa:w.name,cid:c.id}))));
+  if(clientFilter)all=all.filter(f=>String(f.cid)===clientFilter);
+  if(typeFilter)all=all.filter(f=>(f.type||'').toLowerCase()===typeFilter.toLowerCase());
+  if(visFilter)all=all.filter(f=>f.vis===visFilter);
   const el=document.getElementById('files-list');if(!el)return;
   const hdr='<div style="padding:12px 16px 10px;border-bottom:1px solid #EEF2F2;display:flex;align-items:center;justify-content:space-between"><span class="ht" style="font-size:13px;font-weight:700;color:#121212">'+all.length+' files</span><button onclick="openFileUploadGlobal()" class="tb-btn" style="font-size:11.5px;padding:6px 12px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload</button></div>';
   // Desktop table
   const thStyle='font-family:\'Inter\',sans-serif;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8E9E9E;padding:8px 16px;text-align:left;border-bottom:1px solid #E2EBE9';
-  const tableRows=all.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px;margin-left:5px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px;margin-left:5px">Awaiting signature</span>':'';return '<tr onmouseenter="this.style.background=\'#FBFBFA\'" onmouseleave="this.style.background=\'\'"><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;vertical-align:middle"><div style="display:flex;align-items:center;gap:8px"><div style="width:26px;height:26px;border-radius:6px;background:'+ic.bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+ic.i+'" style="width:12px;height:12px;color:'+ic.tc+'"></i></div><span class="ht" style="font-size:13px;font-weight:600;color:#121212;white-space:nowrap">'+f.n+'</span>'+sigBadge+'</div></td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#6B7C7D">'+f.cname+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#6B7C7D">'+f.wa+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#8E9E9E">'+(f.uploader||'—')+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#8E9E9E">'+f.date+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2"><span class="st '+(f.vis==='shared'?'green':'gray')+'" style="font-size:10px">'+(f.vis==='shared'?'Shared':'Internal')+'</span></td></tr>';}).join('');
+  const tableRows=all.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px;margin-left:5px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px;margin-left:5px">Awaiting signature</span>':'';return '<tr onmouseenter="this.style.background=\'#FBFBFA\'" onmouseleave="this.style.background=\'\'"><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;vertical-align:middle"><div style="display:flex;align-items:center;gap:8px"><div style="width:26px;height:26px;border-radius:6px;background:'+ic.bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+ic.i+'" style="width:12px;height:12px;color:'+ic.tc+'"></i></div><span class="ht" style="font-size:13px;font-weight:600;color:#121212;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px">'+f.n+'</span>'+sigBadge+'</div></td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#6B7C7D">'+f.cname+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#6B7C7D">'+f.wa+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#8E9E9E">'+(f.uploader||'—')+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2;font-size:12px;color:#8E9E9E">'+f.date+'</td><td style="padding:12px 16px;border-bottom:1px solid #EEF2F2"><span class="st '+(f.vis==='shared'?'green':'gray')+'" style="font-size:10px">'+(f.vis==='shared'?'Shared':'Internal')+'</span></td></tr>';}).join('');
   const desktopTable='<div class="files-table-wrap card" style="overflow:hidden">'+hdr+'<table style="width:100%;border-collapse:collapse"><thead><tr><th style="'+thStyle+'">File</th><th style="'+thStyle+'">Client</th><th style="'+thStyle+'">Project</th><th style="'+thStyle+'">Uploaded by</th><th style="'+thStyle+'">Date</th><th style="'+thStyle+'">Visibility</th></tr></thead><tbody>'+tableRows+'</tbody></table></div>';
   // Mobile card list
   const cardRows=all.map(f=>{const ic=IC[f.type]||IC.doc;const sigBadge=f.signing==='signed'?'<span class="st green" style="font-size:10px">Signed</span>':f.signing==='awaiting-signature'?'<span class="st amber" style="font-size:10px">Awaiting sig.</span>':'';return '<div style="background:#fff;border:1px solid #E2EBE9;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:8px;background:'+ic.bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="'+ic.i+'" style="width:14px;height:14px;color:'+ic.tc+'"></i></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span class="ht" style="font-size:13px;font-weight:600;color:#121212;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px">'+f.n+'</span>'+sigBadge+'</div><div style="font-size:11px;color:#8E9E9E;margin-top:2px">'+f.cname+' · '+f.wa+'</div></div><span class="st '+(f.vis==='shared'?'green':'gray')+'" style="font-size:10px;flex-shrink:0">'+(f.vis==='shared'?'Shared':'Internal')+'</span></div>';}).join('');
@@ -3743,12 +3831,21 @@ async function refreshInvoices(){
   }catch{}
 }
 
+function updateInvProjects(){
+  const cid=Number(document.getElementById('inv-client').value);
+  const projSel=document.getElementById('inv-project');
+  if(!projSel)return;
+  if(!cid){projSel.innerHTML='<option value="">Select a client first…</option>';return;}
+  const c=DATA.clients.find(x=>x.id===cid);
+  if(!c||!c.workAreas||!c.workAreas.length){projSel.innerHTML='<option value="">No projects for this client</option>';return;}
+  projSel.innerHTML=c.workAreas.map(w=>`<option value="${w.apiId}">${w.name}</option>`).join('');
+}
+
 function renderInv(){
   const el=document.getElementById('inv-list');if(!el)return;
   if(SHOW_INV_FORM){
     const clientOpts = DATA.clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-    const projectOpts = PROJECTS.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-    el.innerHTML=`<div class="card" style="padding:22px 24px;margin-bottom:14px"><div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52;margin-bottom:16px">New invoice</div><div style="display:flex;flex-direction:column;gap:14px"><div><label class="flbl">Client</label><select class="field" id="inv-client">${clientOpts}</select></div><div><label class="flbl">Project</label><select class="field" id="inv-project">${projectOpts}</select></div><div><label class="flbl">Amount (NGN)</label><input type="number" class="field" id="inv-amount" placeholder="500000"></div><div><label class="flbl">Due date</label><input type="date" class="field" id="inv-due"></div><div><label class="flbl">Description</label><input type="text" class="field" id="inv-desc" placeholder="Website design phase 1"></div><div style="display:flex;gap:10px"><button class="tb-btn" onclick="closeInvForm()">Cancel</button><button class="tb-btn pri" onclick="saveInvoice()">Create invoice</button></div></div></div>`;
+    el.innerHTML=`<div class="card" style="padding:22px 24px;margin-bottom:14px"><div class="ht" style="font-size:14px;font-weight:700;color:#0B4F52;margin-bottom:16px">New invoice</div><div style="display:flex;flex-direction:column;gap:14px"><div><label class="flbl">Client <span style="color:#E87070">*</span></label><select class="field" id="inv-client" onchange="updateInvProjects()"><option value="">Select a client…</option>${clientOpts}</select></div><div><label class="flbl">Project <span style="color:#E87070">*</span></label><select class="field" id="inv-project"><option value="">Select a client first…</option></select></div><div><label class="flbl">Amount (NGN) <span style="color:#E87070">*</span></label><input type="number" class="field" id="inv-amount" placeholder="500000"></div><div><label class="flbl">Due date <span style="color:#E87070">*</span></label><input type="date" class="field" id="inv-due"></div><div><label class="flbl">Description</label><input type="text" class="field" id="inv-desc" placeholder="Website design phase 1"></div><div style="display:flex;gap:10px"><button class="tb-btn" onclick="closeInvForm()">Cancel</button><button class="tb-btn pri" onclick="saveInvoice()">Create invoice</button></div></div></div>`;
     lucide.createIcons();
     return;
   }
@@ -3810,7 +3907,26 @@ async function savePayment(){
     toast('Payment recorded');
   } catch(err){toast('Failed to record payment');}
 }
+function renderFinSummary(){
+  const grid=document.getElementById('fin-summary-grid');if(!grid)return;
+  const allInv=INVOICES.length?INVOICES:[];
+  const totalRev=allInv.filter(i=>i.status==='paid').reduce((s,i)=>s+Number(i.amount||0),0);
+  const paidCount=allInv.filter(i=>i.status==='paid').length;
+  const outstanding=allInv.filter(i=>i.status==='sent'||i.status==='overdue').reduce((s,i)=>s+Number(i.amount||0),0);
+  const overdueCount=allInv.filter(i=>i.status==='overdue').length;
+  const totalCount=allInv.length;
+  const avgInv=totalCount?totalRev/paidCount:0;
+  const cards=[
+    {label:'Total revenue',value:formatCurrency(totalRev,'NGN'),icon:'trending-up',bg:'#EAF2EE',tc:'#2D6A4F'},
+    {label:'Paid invoices',value:paidCount+' / '+totalCount,icon:'check-circle',bg:'#EAF2EE',tc:'#2D6A4F'},
+    {label:'Outstanding',value:formatCurrency(outstanding,'NGN'),icon:'clock',bg:'#FEF3E2',tc:'#A0621A'},
+    {label:'Overdue',value:overdueCount+' invoice'+(overdueCount!==1?'s':''),icon:'alert-triangle',bg:'#FDECEA',tc:'#B91C1C'},
+  ];
+  grid.innerHTML=cards.map(c=>`<div class="card" style="padding:18px 20px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="width:30px;height:30px;border-radius:8px;background:${c.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="${c.icon}" style="width:14px;height:14px;color:${c.tc}"></i></div><div style="font-size:11px;color:#8E9E9E;font-weight:600;text-transform:uppercase;letter-spacing:.06em">${c.label}</div></div><div class="ht" style="font-size:22px;font-weight:900;color:#0A2E2F;letter-spacing:-.03em">${c.value}</div></div>`).join('');
+  lucide.createIcons();
+}
 function renderPay(){
+  renderFinSummary();
   const el=document.getElementById('pay-list');if(!el)return;
   if(SHOW_PAY_FORM){
     const invOpts = INVOICES.map(inv=>`<option value="${inv.id}">INV-${String(inv.id).padStart(3,'0')} — ${formatCurrency(inv.amount, inv.currency||'NGN')}</option>`).join('');
